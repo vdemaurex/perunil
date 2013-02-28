@@ -1,5 +1,4 @@
-/nbproject/
-/.idea/
+nbproject/
 assets/
 protected/runtime/
 themes/classic/views/
