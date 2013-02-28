@@ -1,0 +1,541 @@
+body
+{
+    margin: 0;
+    padding: 0;
+    color: #555;
+    font: normal 10pt Arial,Helvetica,sans-serif;
+    background: #DFDFDF;
+}
+
+#page
+{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: white;
+    border: 2px solid #D6D6D6;
+}
+
+#header
+{
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #CECECE;
+    background-image: url("../images/bandeau_unil_smush.jpg");
+    background-position: right center;
+    background-repeat: no-repeat;
+    height: 90px;
+
+}
+
+#content
+{
+    padding: 20px;
+}
+
+#sidebar
+{
+    padding-top: 50px;
+}
+
+#footer
+{
+    background-image: url("http://www.unil.ch/cms/images/background/common/fond_footer_blue.png");
+    background-repeat: repeat-x;
+    height: 131px;
+    position: relative;
+}
+
+#footer a:link, #footer a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+#vd {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+
+#swissu {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+}
+
+
+#logobottom {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
+
+
+#postaddress {
+    color: #000000;
+    margin: 2px auto 8px;
+    text-align: center;
+    width: 980px;
+}
+
+#linksbottom {
+    background-color: #CAD353;
+    bottom: 0;
+    height: 16px;
+    left: 200px;
+    position: absolute;
+    text-align: center;
+    width: 580px;
+}
+
+#logo a
+{
+    text-decoration: none;
+    color: black;
+}
+
+#slogan
+{
+    bottom: 12px;
+    font-size: 14px;
+    position: relative;
+    right: 273px;
+}
+
+
+/******************************************************************************
+ **  Menus
+ ******************************************************************************/
+
+#mainmenu
+{
+    /*background:white url(bg.gif) repeat-x left top;*/
+    background: #026390;
+}
+
+#mainmenu ul
+{
+    padding:6px 20px 5px 20px;
+    margin:0px;
+}
+
+#mainmenu ul li
+{
+    display: inline;
+}
+
+#mainmenu ul li a
+{
+    color:#ffffff;
+    background-color:transparent;
+    font-size:12px;
+    font-weight:bold;
+    text-decoration:none;
+    padding:5px 8px;
+}
+
+#mainmenu ul li a:hover, #mainmenu ul li.active a
+{
+    color: #026390; /*#6399cd;*/
+    background-color:#EFF4FA;
+    text-decoration:none;
+}
+
+
+#adminmenu
+{
+    /*background:white url(bg.gif) repeat-x left top;*/
+    background: #EFFDFF;
+}
+
+#adminmenu ul
+{
+    padding:6px 20px 5px 20px;
+    margin:0px;
+}
+
+#adminmenu ul li
+{
+    display: inline;
+}
+
+#adminmenu ul li a
+{
+    color:black;
+    background-color:transparent;
+    font-size:12px;
+    font-weight:normal;
+    text-decoration:none;
+    padding:5px 8px;
+}
+
+#adminmenu ul li a:hover, #adminmenu ul li.active a
+{
+    color: #1A2F3E; /*#6399cd;*/
+    background-color:#80CFFF;
+    text-decoration:none;
+}
+
+#smalllistmenu
+{
+    /*background:white url(bg.gif) repeat-x left top;*/
+}
+
+#smalllistmenu ul
+{
+    padding:6px 20px 5px 20px;
+    margin:0px;
+}
+
+#smalllistmenu ul li
+{
+    display: inline;
+}
+
+#smalllistmenu ul li a
+{
+    color:black;
+    background-color:transparent;
+    font-size:12px;
+    font-weight:normal;
+    text-decoration:none;
+    padding:5px 8px;
+}
+
+#smalllistmenu ul li a:hover, #smalllistmenu ul li.active a
+{
+    /*color: #1A2F3E; /*#6399cd;*/
+    /*background-color:#E5F1F4;*/
+    text-decoration:underline;
+}
+
+#sidebar ul li a:hover, #sidebar ul li.active a {
+    color: darkslategray;
+    /*font-weight: bold;*/
+    text-decoration:none;
+}
+
+/******************************************************************************
+ **  Flash box
+ ******************************************************************************/
+
+div.flash-error, div.flash-notice, div.flash-success
+{
+    padding:.8em;
+    margin-bottom:1em;
+    border:2px solid #ddd;
+}
+
+div.flash-error
+{
+    background:#FBE3E4;
+    color:#8a1f11;
+    border-color:#FBC2C4;
+}
+
+div.flash-notice
+{
+    background:#FFF6BF;
+    color:#514721;
+    border-color:#FFD324;
+}
+
+div.flash-success
+{
+    background:#E6EFC2;
+    color:#264409;
+    border-color:#C6D880;
+}
+
+div.flash-error a
+{
+    color:#8a1f11;
+}
+
+div.flash-notice a
+{
+    color:#514721;
+}
+
+div.flash-success a
+{
+    color:#264409;
+}
+
+div.form .rememberMe label
+{
+    display: inline;
+}
+
+div.breadcrumbs
+{
+    font-size: 0.9em;
+    padding: 5px 20px;
+}
+
+div.breadcrumbs span
+{
+    font-weight: bold;
+}
+
+div.search-form
+{
+    padding: 10px;
+    margin: 10px 0;
+    background: #eee;
+}
+
+.portlet
+{
+
+}
+
+.portlet-decoration
+{
+    padding: 3px 8px;
+    background: #B7D6E7;
+    border-left: 5px solid #6FACCF;
+}
+
+.portlet-title
+{
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    color: #298dcd;
+}
+
+.portlet-content
+{
+    font-size:0.9em;
+    margin: 0 0 15px 0;
+    padding: 5px 8px;
+    background:#EFFDFF;
+}
+
+.portlet-content ul
+{
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin: 0;
+    padding: 0;
+}
+
+.portlet-content li
+{
+    padding: 2px 0 4px 0px;
+}
+
+.operations
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.operations li
+{
+    padding-bottom: 2px;
+}
+
+.operations li a
+{
+    font: bold 12px Arial;
+    color: #0066A4;
+    display: block;
+    padding: 2px 0 2px 8px;
+    line-height: 15px;
+    text-decoration: none;
+}
+
+.operations li a:visited
+{
+    color: #0066A4;
+}
+
+.operations li a:hover
+{
+    background: #80CFFF;
+} 
+
+/*  AFFICHAGE DES JOURNAUX DANS PERUNIL 2  */
+
+.boitelienjournal{
+    background: none repeat scroll 0 0 WhiteSmoke;
+    border: 2px dotted powderblue;
+    border-radius: 4px 4px 4px 4px;
+    color: #333333;
+    margin: 10px 0 5px 19px;
+    padding: 7px 4px;
+}
+
+.boitelienjournal table{
+    margin-bottom: 0em;
+}
+
+.boitelienjournal table th{
+    color : darkgray;
+    font-size: small;
+}
+
+div.view h3 {
+    margin-bottom: 0.3em;
+}
+
+
+/*
+ * Recherche simple
+*/
+
+#q {
+    width:500px;
+}
+
+table.simplesearch{
+    width:500px;
+    margin: auto;
+}
+
+table.simplesearch td{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+/*
+ * Recherche avancée
+*/
+
+.advsearch{
+    width:630px;
+    margin: auto;
+}
+
+.advsearchfield{
+    width: 380px;
+}
+/*
+ * Affichage de la liste des journaux
+*/
+
+div.view
+{
+    padding: 5px 8px;
+    margin: 10px 0;
+    border: 1px solid #C9E0ED;
+} 
+
+table.journal{
+    margin: 0px; 
+    border-collapse: collapse;
+}
+
+table.journal td{
+    vertical-align: top;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+table.journal td.etiquette{
+    width:250px;
+}
+
+.titre{
+    font-size: medium;
+}
+
+.titre a{
+    text-decoration: none;
+}
+
+.titre a:hover{
+    text-decoration: underline;    
+}
+
+.sous-titre{
+    font-size: smaller;
+}
+
+.sujets{
+    font-size: smaller;
+    margin-top: 10px;
+}
+.sujets a {
+    text-decoration: none;
+    color: lightskyblue;
+
+}
+.sujets a:hover{
+    text-decoration: underline;    
+}
+
+table.journal td.support{
+    width:35px;
+    border-top: 2px dotted powderblue;
+    border-bottom: 2px dotted powderblue;
+    border-left: 2px dotted powderblue;
+}
+
+table.journal td.localisation{
+    width:285px;
+    padding-left: 0px;
+    border-top: 2px dotted powderblue;
+    border-bottom: 2px dotted powderblue;
+}
+
+table.journal td.etacoll{
+    border-top: 2px dotted powderblue;
+    border-bottom: 2px dotted powderblue;
+    border-right: 2px dotted powderblue;
+}
+
+
+
+/*
+ *Affichage des formulaires
+*/
+table.detail-view .null
+{
+    color: pink;
+}
+
+table.detail-view
+{
+    background: white;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+}
+
+table.detail-view th, table.detail-view td
+{
+    font-size: 0.9em;
+    border: 1px white solid;
+    padding: 0.3em 0.6em;
+    vertical-align: top;
+}
+
+table.detail-view th
+{
+    text-align: right;
+    width: 160px;
+}
+
+table.detail-view tr.odd
+{
+    background:#E5F1F4;
+}
+
+table.detail-view tr.even
+{
+    background:#F8F8F8;
+}
+
+table.detail-view tr.odd th
+{
+}
+
+table.detail-view tr.even th
+{
+}

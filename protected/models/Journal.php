@@ -1,0 +1,205 @@
+<?php
+
+/**
+ * This is the model class for table "journal".
+ *
+ * The followings are the available columns in table 'journal':
+ * @property string $perunilid
+ * @property string $titre
+ * @property string $soustitre
+ * @property string $titre_abrege
+ * @property string $titre_variante
+ * @property string $faitsuitea
+ * @property string $devient
+ * @property string $issn
+ * @property string $issnl
+ * @property string $nlmid
+ * @property string $reroid
+ * @property string $doi
+ * @property string $coden
+ * @property string $urn
+ * @property integer $publiunil
+ * @property string $url_rss
+ * @property string $commentaire_pub
+ * @property integer $parution_terminee
+ * @property integer $openaccess
+ * @property string $DEPRECATED_sujetsfm
+ * @property integer $DEPRECATED_fmid
+ * @property string $DEPRECARED_historique
+ *
+ * The followings are the available model relations:
+ * @property Abonnement[] $abonnements
+ * @property Biblio[] $biblios
+ * @property Sujet[] $sujets
+ */
+class Journal extends CActiveRecord {
+
+    public $perunilid;
+    public $titre;
+    public $soustitre;
+    public $titre_abrege;
+    public $titre_variante;
+    public $issn;
+    public $issnl;
+    public $nlmid;
+    public $reroid;
+    public $doi;
+    public $coden;
+    public $urn;
+
+    /**
+     * Returns the static model of the specified AR class.
+     * @param string $className active record class name.
+     * @return Journal the static model class
+     */
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
+    }
+
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName() {
+        return 'journal';
+    }
+
+    public function behaviors() {
+        return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
+    }
+    
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules() {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('titre', 'required'),
+            array('publiunil, parution_terminee, openaccess, DEPRECATED_fmid', 'numerical', 'integerOnly' => true),
+            array('titre, soustitre, titre_variante, faitsuitea, devient, doi, urn', 'length', 'max' => 250),
+            array('titre_abrege', 'length', 'max' => 100),
+            array('issn', 'length', 'max' => 120),
+            array('issnl', 'length', 'max' => 9),
+            array('nlmid', 'length', 'max' => 15),
+            array('reroid', 'length', 'max' => 50),
+            array('coden', 'length', 'max' => 6),
+            array('url_rss', 'length', 'max' => 2083),
+            array('commentaire_pub', 'length', 'max' => 500),
+            array('DEPRECATED_sujetsfm', 'length', 'max' => 1000),
+            array('DEPRECARED_historique', 'safe'),
+            // The following rule is used by search().
+            // Please remove those attributes that should not be searched.
+            array('perunilid, titre, soustitre, titre_abrege, titre_variante, faitsuitea, devient, issn, issnl, nlmid, reroid, doi, coden, urn, publiunil, url_rss, commentaire_pub, parution_terminee, openaccess, DEPRECATED_sujetsfm, DEPRECATED_fmid, DEPRECARED_historique', 'safe', 'on' => 'search'),
+        );
+    }
+
+    /**
+     * @return array relational rules.
+     */
+    public function relations() {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            'abonnements' => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
+            'activeabos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'condition' => 'titreexclu != 1',
+                'order' => 'support'),
+            'corecollection' => array(self::MANY_MANY, 'Biblio', 'corecollection(perunilid, biblio_id)'),
+            'sujets' => array(self::MANY_MANY, 'Sujet', 'journal_sujet(perunilid, sujet_id)'),
+        );
+    }
+
+    public function getId() {
+        return $this->perunilid;
+    }
+
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels() {
+        return array(
+            'perunilid' => 'Perunilid',
+            'titre' => 'Titre',
+            'soustitre' => 'Soustitre',
+            'titre_abrege' => 'Titre Abrege',
+            'titre_variante' => 'Titre Variante',
+            'faitsuitea' => 'Faitsuitea',
+            'devient' => 'Devient',
+            'issn' => 'Issn',
+            'issnl' => 'Issnl',
+            'nlmid' => 'Nlmid',
+            'reroid' => 'Reroid',
+            'doi' => 'Doi',
+            'coden' => 'Coden',
+            'urn' => 'Urn',
+            'publiunil' => 'Publiunil',
+            'url_rss' => 'Url Rss',
+            'commentaire_pub' => 'Commentaire Pub',
+            'parution_terminee' => 'Parution Terminee',
+            'openaccess' => 'Openaccess',
+            'DEPRECATED_sujetsfm' => 'Deprecated Sujetsfm',
+            'DEPRECATED_fmid' => 'Deprecated Fmid',
+            'DEPRECARED_historique' => 'Deprecared Historique',
+        );
+    }
+
+    public function sujets2str($delimiter = ",") {
+        $sujet_str = "";
+        foreach ($this->sujets as $s) {
+            $sujet_str .= CHtml::link($s->nom_fr, array(
+                        'site/adv',
+                        'advsearch' => "advsearch",
+                        'sujet' => $s->sujet_id,
+                    )) . "$delimiter ";
+        }
+        return trim($sujet_str, "$delimiter ");
+    }
+
+    public function corecollection2str() {
+        $corecollection_str = "";
+        // Etablissement de la liste des corecollection
+        foreach ($this->corecollection as $s) {
+            $corecollection_str .= $s->nom . ", ";
+        }
+        return trim($corecollection_str, ", ");
+    }
+
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+     */
+    public function search() {
+        // Warning: Please modify the following code to remove attributes that
+        // should not be searched.
+
+        $criteria = new CDbCriteria;
+
+        $criteria->compare('perunilid', $this->perunilid, true);
+        $criteria->compare('titre', $this->titre, true);
+        $criteria->compare('soustitre', $this->soustitre, true);
+        $criteria->compare('titre_abrege', $this->titre_abrege, true);
+        $criteria->compare('titre_variante', $this->titre_variante, true);
+        $criteria->compare('faitsuitea', $this->faitsuitea, true);
+        $criteria->compare('devient', $this->devient, true);
+        $criteria->compare('issn', $this->issn, true);
+        $criteria->compare('issnl', $this->issnl, true);
+        $criteria->compare('nlmid', $this->nlmid, true);
+        $criteria->compare('reroid', $this->reroid, true);
+        $criteria->compare('doi', $this->doi, true);
+        $criteria->compare('coden', $this->coden, true);
+        $criteria->compare('urn', $this->urn, true);
+        $criteria->compare('publiunil', $this->publiunil);
+        $criteria->compare('url_rss', $this->url_rss, true);
+        $criteria->compare('commentaire_pub', $this->commentaire_pub, true);
+        $criteria->compare('parution_terminee', $this->parution_terminee);
+        $criteria->compare('openaccess', $this->openaccess);
+        $criteria->compare('DEPRECATED_sujetsfm', $this->DEPRECATED_sujetsfm, true);
+        $criteria->compare('DEPRECATED_fmid', $this->DEPRECATED_fmid);
+        $criteria->compare('DEPRECARED_historique', $this->DEPRECARED_historique, true);
+
+        return new CActiveDataProvider($this, array(
+                    'criteria' => $criteria,
+                ));
+    }
+
+}
