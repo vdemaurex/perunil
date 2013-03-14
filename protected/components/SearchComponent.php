@@ -472,7 +472,10 @@ class SearchComponent extends CComponent {
         // [datemodifcrit2]	string	"equal"	
         // [datemodif2]	string	""	
         // 1. Anciens champs
-        if (trim($qt['pseudocreate'])){
+        if (trim($qt['signaturecreation'])){
+            
+        }
+        if (trim($qt['signaturemodification'])){
             
         }
 

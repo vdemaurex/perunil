@@ -140,10 +140,11 @@ class SiteController extends Controller {
     }
     
     function actionAutocomplete() {
-	    if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
+	    //if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
+            if (isset($_GET['term'])) {
                 $term = $_GET['term'];
 	        $models = Journal::model()->findAll(array(
-                    'select'   => 'titre',
+                    'select'   => 'titre,perunilid',
                     'condition'=> "titre LIKE '$term%'",
                     'order'    => "titre",
                     'distinct' =>  true,
@@ -152,7 +153,7 @@ class SiteController extends Controller {
                 // Si on a aucun résultat, on cherche avec le mot au milieu
                 if (!count($models)){
                     $models = Journal::model()->findAll(array(
-                    'select'   => 'titre',
+                    'select'   => 'titre,perunilid',
                     'condition'=> "titre LIKE '%$term%'",
                     'order'    => "titre",
                     'distinct' =>  true,
@@ -164,7 +165,7 @@ class SiteController extends Controller {
 	            $result[] = array(
 	                'label' => $m->titre,
 	                //'value' => $m->attribute_for_input_field,
-	                //'id' => $m->attribute_for_hidden_field_or_to_be_saved,
+	                'id' => $m->perunilid,
 	                //'field' => $m->attribute_for_another_field,
 	            );
 	 
