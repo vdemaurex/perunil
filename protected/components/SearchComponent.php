@@ -434,6 +434,7 @@ class SearchComponent extends CComponent {
      *                             critère n'a été fourni.
      */
     public function adminSearch($qt) {
+        $limite = 100;
         $ct = array('equal' => '=', 'before' => '<', 'after' => '>');
 
         $criteria = new CDbCriteria();
@@ -446,7 +447,7 @@ class SearchComponent extends CComponent {
             $criteria->addCondition("s.sujet_id ='{$qt['sujet']}'");
             $this->query_summary("sujet = " . Sujet::model()->findByPk($qt['sujet'])->nom_fr);
         }
-        
+
         // Jointure de la table editeur si nécessaire
         if (trim($qt['editeur_txt'])) {
             $criteria->join .= 'LEFT JOIN editeur ed ON (ed.editeur_id=abonnements.editeur)';
@@ -462,22 +463,199 @@ class SearchComponent extends CComponent {
                 $this->query_summary("perunilid " . $ct[$qt['perunilidcrit2']] . " " . $qt['perunilid2']);
             }
         }
+
+        // Modifications : Si un champ concernant le modifications est rempli
+        // 1. Création d'une requête pour la table modification
+        // 2. Liste de Perunilid ou d'abonnement_id comme resultat de la requête
+        //    avec une maximum selon $limite
+        // 3. la liste d'id est passée à une clause IN dans la requête principale.
+        if (trim($qt['signaturecreation'])
+                || trim($qt['signaturemodification'])
+                || trim($qt['datecreationcrit1'])
+                || trim($qt['datecreationcrit12'])
+                || trim($qt['datemodifcrit1'])
+                || trim($qt['datemodifcrit2'])) {
+
+            
+            $where_string = "";
+            $where_array  = array();
+            
+            // Préparation de la requête pour des recherche sur la création
+            if (trim($qt['datecreation1'])) {
+                // 
+                $phpdate = strtotime(trim($qt['datecreation1']));
+                $mysqldate = date( 'Y-m-d H:i:s', $phpdate );
+                $where_string = "stamp " . $ct[$qt['datecreationcrit1']] . " :stamp";
+                $where_array[":stamp"] = $mysqldate;
+                $this->query_summary("date de création " . $ct[$qt['datecreationcrit1']] . " ". $qt['datecreation1']);
+                
+                
+                if (trim($qt['datecreation2'])) {
+                
+                    $phpdate = strtotime(trim($qt['datecreation2']));
+                    $mysqldate = date( 'Y-m-d H:i:s', $phpdate );
+                    $where_string .= " AND stamp " . $ct[$qt['datecreationcrit2']] . " :stampi";
+                    $where_array[":stampi"] = $mysqldate;
+                    $this->query_summary(" et " . $ct[$qt['datecreationcrit2']] . " ". $qt['datecreation2']);
+
+                } // datecreation2
+              
+            } // datecreation1
+            
+            
+            
+            // Recherche d'après le créateur
+           if (trim($qt['signaturecreation'])) {
+                $s = trim($qt['signaturecreation']);
+                if ($where_string != "") $where_string .= " AND ";
+                $where_string = 'user_id = :sc';
+                $where_array[':sc'] =$s;
+                $this->query_summary("Signature de création = " . Utilisateur::model()->findByPk($s)->pseudo);
+           }
+           
+           // ---
+           // Préparation de la requête pour des recherche sur la modification
+            if (trim($qt['datemodif1'])) {
+                $phpdate = strtotime(trim($qt['datemodif1']));
+                $mysqldate = date( 'Y-m-d H:i:s', $phpdate );
+                if ($where_string != "") $where_string .= " AND ";
+                $where_string .= "stamp " . $ct[$qt['datemodifcrit1']] . " :stampii";
+                $where_array[":stampii"] = $mysqldate;
+                $this->query_summary("date de modification " . $ct[$qt['datemodifcrit1']] . " ". $qt['datemodif1']);
+                
+                
+                if (trim($qt['datemodif2'])) {
+                    $phpdate = strtotime(trim($qt['datemodif2']));
+                    $mysqldate = date( 'Y-m-d H:i:s', $phpdate );
+                    $where_string .= " AND stamp " . $ct[$qt['datemodifcrit2']] . " :stampiii";
+                    $where_array[":stampiii"] = $mysqldate;
+                    $this->query_summary(" et " . $ct[$qt['datemodifcrit2']] . " ". $qt['datemodif2']);
+
+                } // datemodif2
+              
+            } // datemodif1
+            
+            
+            
+            // Recherche d'après le modificateur
+           if (trim($qt['signaturemodification'])) {
+                $s = trim($qt['signaturemodification']);
+                if ($where_string != "") $where_string .= " AND ";
+                $where_string = 'user_id = :sm';
+                $where_array[':sm'] =$s;
+                $this->query_summary("Signature de modification = " . Utilisateur::model()->findByPk($s)->pseudo);
+           }
+            
+           $ids = array();
+           foreach (array('journal', 'abonnement') as $model) {
+               $where_string .= " AND action = :act AND model = :model";
+               $where_array[':act'] ='Création';
+               $where_array[':model'] = $model;
+               $cmd = Yii::app()->db->createCommand()
+                        ->selectDistinct('m.model_id')
+                        ->from('modifications m')
+                        ->where($where_string)
+                        //->where('user_id = :sc AND action = :act AND model = :mod', array(':sc' => $s, ':act' => 'Création', ':mod' => 'journal'))
+                        ->limit($limite)
+                        ->order("stamp DESC");
+              
+                $perunilids =  $cmd->queryAll(true, $where_array);
+                $ids[$model] = join("','", array_map('current', $perunilids));
+               
+           }
+           
+           $criteria->addCondition("t.perunilid IN ('{$ids['journal']}') OR abonnements.abonnement_id IN ('{$ids['abonnement']}')");
+           //$this->query_summary("modif.user_id = '$s' AND modif.action = 'Création'");
+                
+                // Recherche des journaux
+                
+               /* 
+                // Recherche des abonnements
+                $aboids = Yii::app()->db->createCommand()
+                        ->selectDistinct('m.model_id')
+                        ->from('modifications m')
+                        ->where('user_id = :sc AND action = :act AND model = :mod', array(':sc' => $s, ':act' => 'Création', ':mod' => 'abonnement'))
+                        ->limit($limite)
+                        ->order("stamp DESC")
+                        ->queryAll();
+                $str_aboids = join("','", array_map('current', $aboids));
+                $criteria->addCondition("t.perunilid IN ('$str_perunilids') OR abonnements.abonnement_id IN ('$str_aboids')");
+                
+                $this->query_summary("modif.user_id = '$s' AND modif.action = 'Création'");
+            
+            /*
+            
+            // Recherche d'après le modificateur  
+            if (trim($qt['signaturemodification'])) {
+                $s = trim($qt['signaturemodification']);
+                // Recherche des journaux
+                $perunilids = Yii::app()->db->createCommand()
+                        ->selectDistinct('m.model_id')
+                        ->from('modifications m')
+                        ->where('user_id = :sc AND action = :act AND model = :mod', array(':sc' => $s, ':act' => 'Modification', ':mod' => 'journal'))
+                        ->limit($limite)
+                        ->order("stamp DESC")
+                        ->queryAll();
+                $str_perunilids = join("','", array_map('current', $perunilids));
+                
+                // Recherche des abonnements
+                $aboids = Yii::app()->db->createCommand()
+                        ->selectDistinct('m.model_id')
+                        ->from('modifications m')
+                        ->where('user_id = :sc AND action = :act AND model = :mod', array(':sc' => $s, ':act' => 'Modification', ':mod' => 'abonnement'))
+                        ->limit($limite)
+                        ->order("stamp DESC")
+                        ->queryAll();
+                $str_aboids = join("','", array_map('current', $aboids));
+                $criteria->addCondition("t.perunilid IN ('$str_perunilids') OR abonnements.abonnement_id IN ('$str_aboids')");
+                
+                $this->query_summary("modif.user_id = '$s' AND modif.action = 'Modification'");
+            }
+            
+            // Si la date de début est inférieur à la mise en production de Pérunil 2,
+            // il faut utiliser l'ancien champ de recherche.
+            //[datecreationcrit1]	string	"equal"	
+            //[datecreation1]           string	"01.01.2013"	d.n.Y
+            //[datecreationcrit2]	string	"before"	
+            //[datecreation2]           string	"02.04.2013"	
+            //[datemodifcrit1]          string	"equal"	
+            //[datemodif1]              string	"10.04.2013"	
+            //[datemodifcrit2]      	string	"before"	
+            //[datemodif2]              string	"11.04.2013"
+            // 
+            // Format de stockage dans la base de données
+            // DEPRECARED_historique    : 2012-12-07 15:33:42 Y-n-d 
+            // modifications.stamp      : 2013-02-07 09:35:50
+            $proddate  = strtotime(Yii::app()->params['productiondate']);
+            
+
+            
+            if (trim($qt['datemodif1'])) {
+                
+                $phpdate = strtotime(trim($qt['datemodif1']));
+                $mysqldate = date( 'Y-m-d', $phpdate );
+                if ($phpdate > $proddate){
+                    $criteria->addCondition("modif.stamp " . $ct[$qt['datemodifcrit1']] . " '" . $mysqldate . "'");
+                } else{
+                    $criteria->addCondition("t.DEPRECARED_historique " . $ct[$qt['datemodifcrit1']] . " '" . $mysqldate . "'");
+                }
+                
+                if (trim($qt['datemodif2'])) {
+                
+                    $phpdate = strtotime(trim($qt['datemodif2']));
+                    $mysqldate = date( 'Y-m-d', $phpdate );
+                    if ($phpdate > $proddate){
+                        $criteria->addCondition("modif.stamp " . $ct[$qt['datemodifcrit2']] . " '" . $mysqldate . "'");
+                    } else{
+                        $criteria->addCondition("t.DEPRECARED_historique " . $ct[$qt['datemodifcrit2']] . " '" . $mysqldate . "'");
+                    }
+                } // datemodif2
+              
+            } // datemodif1*/
+           
+        } // Modifications
+
         
-        // recherche des modifications
-        // [datecreation1]	string	""	
-        // [datecreationcrit2]	string	"equal"	
-        // [datecreation2]	string	""	
-        // [datemodifcrit1]	string	"equal"	
-        // [datemodif1]	string	""	
-        // [datemodifcrit2]	string	"equal"	
-        // [datemodif2]	string	""	
-        // 1. Anciens champs
-        if (trim($qt['signaturecreation'])){
-            
-        }
-        if (trim($qt['signaturemodification'])){
-            
-        }
 
         // Recherche tous les champs
         if (trim($qt['all'])) {
@@ -515,13 +693,13 @@ class SearchComponent extends CComponent {
             't.commentaire_pub' => $qt['commentairepub'],
             't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
             't.DEPRECATED_fmid' => $qt['fmid'],
-            't.DEPRECARED_historique' => $qt['signaturecreation'],
-            't.DEPRECARED_historique' => $qt['signaturemodification'],
+            
+            't.DEPRECARED_historique' => $sm_name,
             't.DEPRECARED_historique' => $qt['historique'],
         );
         foreach ($textfield as $column => $value) {
             // Pour champs dont on fait un recherche terme à terme
-            if (is_array($value)&& count($value) > 0) {
+            if (is_array($value) && count($value) > 0) {
                 $query = new CDbCriteria();
                 foreach ($value as $term) {
                     $term = trim($term);

@@ -21,7 +21,7 @@ $this->breadcrumbs=array(
             <strong>Gérer les sujets</strong></td>
             <td>&nbsp;</td>
             <td style="text-align: center;" width="65">
-                <a target="_self" href="<?= CController::createUrl('/admin/modif')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/managemodifications.png" height="64" width="64"></a><br>
+                <a target="_self" href="<?= CController::createUrl('/admin/modifications')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/managemodifications.png" height="64" width="64"></a><br>
             <strong>Suivit des modifications</strong></td>
             <td>&nbsp;</td>
         </tr>
@@ -34,7 +34,7 @@ $this->breadcrumbs=array(
         <tr>  
             <td>&nbsp;</td>
             <td style="text-align: center;" width="65">
-                <a target="_self" href="<?= CController::createUrl('/admin/csv')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/importcsv.png" height="64" width="64"></a><br>
+                <a target="_self" href="<?= CController::createUrl('/importcsv')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/importcsv.png" height="64" width="64"></a><br>
             <strong>Importation par lot (CSV)</strong></td>
             <td>&nbsp;</td>
             <td style="text-align: center;" width="65">

@@ -75,4 +75,10 @@ foreach ($model->activeabos as $abo) {
 }
 
 $this->widget('CTabView', $tabviewparam);
+
+
+if (!Yii::app()->user->isGuest && !$model->getIsNewRecord()) {
+$this->widget( 'application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array( 'model' => $model, ) );
+}
+
 ?>

@@ -15,16 +15,16 @@
 
     </head>
     <body>
-        <div data-role=page id="mobilepage">
+        <div data-role=page data-theme="b" id="mobilepage">
 
-            <div data-role=header id="mobileheader">
+            <div data-role=header data-theme="b" id="mobileheader">
 
                 <h1>PérUnil</h1>
 
             </div>
 
 
-            <div data-role=content id="mobilecontent">
+            <div data-role=content data-theme="b" id="mobilecontent">
 
                 <?php echo $content; ?>
 

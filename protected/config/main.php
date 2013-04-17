@@ -35,6 +35,10 @@ return array(
 			'userIdColumn' => 'utilisateur_id', // the column name of the primary key for the user
 			'userNameColumn' => 'pseudo', // the column name of the primary key for the user
 		),
+            
+                'importcsv'=>array(
+                    'path'=>'upload/importCsv/', // path to folder for saving csv file and file with import params
+                 ),
 		
 	),
 
@@ -94,5 +98,6 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'wwwperun@unil.ch',
+                'productiondate' => '01.04.2013',
 	),
 );
