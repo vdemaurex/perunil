@@ -37,8 +37,10 @@ class AboUrlWidget extends CWidget {
             <p>La revue <strong><?= $this->jrn->titre ?></strong> est protégée par un mot de passe. </p>
             <?php
             // Si l'utilisateur est du CHUV ou de l'UNIL
-            if ((isset($this->abo->acces_elec_unil) && ($this->abo->acces_elec_unil && $this->isUNIL())) ||
-                    (isset($this->abo->acces_elec_chuv) && ($this->abo->acces_elec_chuv && $this->isCHUV()))) {
+            if ($this->isUNIL() || $this->isCHUV()){
+            // La différenciation CHUV UNIL n'est pas activée
+            //if ((isset($this->abo->acces_elec_unil) && ($this->abo->acces_elec_unil && $this->isUNIL())) ||
+            //        (isset($this->abo->acces_elec_chuv) && ($this->abo->acces_elec_chuv && $this->isCHUV()))) {
                 ?>
                 <p>Voici les informations nécessaires à la connexion : 
                 <ul>

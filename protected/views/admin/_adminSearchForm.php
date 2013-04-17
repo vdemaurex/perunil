@@ -314,30 +314,30 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
         <tr class="odd">
             <td><b>Date de création</b></td>
             <td><select name="datecreationcrit1">
-                    <option value="equal"  <?=r($this,'datecreationcrit1',"equal" ,'selected');?>>=</option>
+                    <option value="after"  <?=r($this,'datecreationcrit1',"after" ,'selected');?>>&gt;</option>        
                     <option value="before" <?=r($this,'datecreationcrit1',"before" ,'selected');?>>&lt;</option>
-                    <option value="after"  <?=r($this,'datecreationcrit1',"after" ,'selected');?>>&gt;</option>
+                   /<option value="equal"  <?=r($this,'datecreationcrit1',"equal" ,'selected');?>>=</option>
                 </select>&nbsp;&nbsp;
                 <input type="text" id="datepicker1" value="<?=r($this,'datecreation1');?>" size="10" name="datecreation1">
                 &nbsp;&nbsp;Et&nbsp;&nbsp;<select name="datecreationcrit2">
-                    <option value="equal"  <?=r($this,'datecreationcrit2',"equal" ,'selected');?>>=</option>
                     <option value="before" <?=r($this,'datecreationcrit2',"before" ,'selected');?>>&lt;</option>
                     <option value="after"  <?=r($this,'datecreationcrit2',"after" ,'selected');?>>&gt;</option>
+                    <option value="equal"  <?=r($this,'datecreationcrit2',"equal" ,'selected');?>>=</option>
                 </select>&nbsp;&nbsp;
                 <input type="text" id="datepicker2" value="<?=r($this,'datecreation2');?>" size="10" name="datecreation2"></td>
         </tr>
         <tr class="even">
             <td><b>Date de modification</b></td>
             <td><select name="datemodifcrit1">
-                    <option value="equal"  <?=r($this,'datemodifcrit1',"equal" ,'selected');?>>=</option>
-                    <option value="before" <?=r($this,'datemodifcrit1',"before" ,'selected');?>>&lt;</option>
                     <option value="after"  <?=r($this,'datemodifcrit1',"after" ,'selected');?>>&gt;</option>
+                    <option value="before" <?=r($this,'datemodifcrit1',"before" ,'selected');?>>&lt;</option>
+                    <option value="equal"  <?=r($this,'datemodifcrit1',"equal" ,'selected');?>>=</option>
                 </select>&nbsp;&nbsp;
                 <input type="text" id="datepicker3" value="<?=r($this,'datemodif1');?>" size="10" name="datemodif1">
                 &nbsp;&nbsp;Et&nbsp;&nbsp;<select name="datemodifcrit2">
-                    <option value="equal"  <?=r($this,'datemodifcrit2',"equal" ,'selected');?>>=</option>
                     <option value="before" <?=r($this,'datemodifcrit2',"before" ,'selected');?>>&lt;</option>
                     <option value="after"  <?=r($this,'datemodifcrit2',"after" ,'selected');?>>&gt;</option>
+                    <option value="equal"  <?=r($this,'datemodifcrit2',"equal" ,'selected');?>>=</option>
                 </select>&nbsp;&nbsp;
                 <input type="text" id="datepicker4" value="<?=r($this,'datemodif2');?>" size="10" name="datemodif2"></td>
         </tr>
