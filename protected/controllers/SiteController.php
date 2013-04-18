@@ -144,7 +144,7 @@ class SiteController extends Controller {
             if (isset($_GET['term'])) {
                 $term = $_GET['term'];
 	        $models = Journal::model()->findAll(array(
-                    'select'   => 'titre,perunilid',
+                    'select'   => 'titre',//,perunilid',
                     'condition'=> "titre LIKE '$term%'",
                     'order'    => "titre",
                     'distinct' =>  true,
@@ -153,7 +153,7 @@ class SiteController extends Controller {
                 // Si on a aucun résultat, on cherche avec le mot au milieu
                 if (!count($models)){
                     $models = Journal::model()->findAll(array(
-                    'select'   => 'titre,perunilid',
+                    'select'   => 'titre',//,perunilid',
                     'condition'=> "titre LIKE '%$term%'",
                     'order'    => "titre",
                     'distinct' =>  true,

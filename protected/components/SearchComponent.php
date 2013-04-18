@@ -93,9 +93,10 @@ class SearchComponent extends CComponent {
                     $criteria->compare('issn', trim($this->query), true, $querytab[$CN]['op']);
                     break;
                 case 'titre':
-                    $title_criteria = new CDbCriteria();
-                    $this->titleSearch($title_criteria, $use_notlike);
-                    $criteria->mergeWith($title_criteria, $querytab[$CN]['op']);
+                    //$title_criteria = new CDbCriteria();
+                   // $this->titleSearch($title_criteria, $use_notlike);
+                    $this->titleSearch($criteria, $use_notlike);
+                    //$criteria->mergeWith($title_criteria, $querytab[$CN]['op']);
                     break;
                 case 'editeur':
                     $criteria->join .= 'LEFT JOIN `editeur` `editeurs` ON (`abonnements`.`editeur`=`editeurs`.`editeur_id`)';
@@ -103,10 +104,11 @@ class SearchComponent extends CComponent {
                     break;
 
                 default: // partout
-                    $title_criteria = new CDbCriteria();
-                    $this->journalSearch($title_criteria, $use_notlike);
-
-                    $abo_criteria = new CDbCriteria();
+                    //$title_criteria = new CDbCriteria();
+                    //$this->journalSearch($title_criteria, $use_notlike);
+                    $this->journalSearch($criteria, $use_notlike);
+                    
+                    //$abo_criteria = new CDbCriteria();
                     $like = $use_notlike ? "NOT LIKE" : "LIKE";
                     foreach (explode(" ", $this->q) as $word) {
                         if ($word != "" || $word != "") {
@@ -114,12 +116,17 @@ class SearchComponent extends CComponent {
                                     "OR abonnements.etatcoll $like '%$word%' OR abonnements.cote $like '%$word%' " .
                                     "OR abonnements.editeur_code $like '%$word%' OR abonnements.editeur_sujet $like '%$word%' " .
                                     "OR abonnements.commentaire_pub $like '%$word%' ";
-                            $criteria->addCondition($abo_criteria, 'AND');
+                            //$criteria->addCondition($abo_criteria, 'AND');
+                             $criteria->addCondition($query, 'OR');
                         }
                     }
 
-                    $criteria->mergeWith($title_criteria, $querytab[$CN]['op']);
-                    $criteria->mergeWith($abo_criteria, $querytab[$CN]['op']);
+                   /* if (isset($title_criteria)){
+                        $criteria->mergeWith($title_criteria, ($querytab[$CN]['op'] == 'AND'));
+                    }
+                    if (isset($abo_criteria)){
+                        $criteria->mergeWith($abo_criteria, ($querytab[$CN]['op'] == 'AND'));
+                    }*/
 
                     break;
             }
