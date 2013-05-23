@@ -49,8 +49,8 @@ foreach ($model->activeabos as $abo) {
                     }
                 
                 } else {
-                    if (isset($abo->plateforme) && isset($abo->plateforme->plateforme))
-                        $linktitle = $abo->plateforme->plateforme;
+                    if (isset($abo->plateforme0) && isset($abo->plateforme0->plateforme))
+                        $linktitle = $abo->plateforme0->plateforme;
                     elseif (isset($abo->licence0) && isset($abo->licence0->licence))
                         $linktitle = $abo->licence0->licence;
                     

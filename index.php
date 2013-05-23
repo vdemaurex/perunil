@@ -1,4 +1,6 @@
 <?php
+ini_set("max_execution_time","120");
+ini_set("memory_limit","256M");
 
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/../lib/yii-1.1.13.e9e4a0/framework/yii.php';

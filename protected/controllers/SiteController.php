@@ -34,12 +34,20 @@ class SiteController extends Controller {
 
         $render_params['search_done'] = isset($_GET['q']) && trim($_GET['q']) != "";
 
+        // Si la recherche a été effectuée
         if ($render_params['search_done']) {
             $search = new SearchComponent();
             $search->search_type = $this->field;
             $search->support = $this->support;
 
             $render_params['dataProvider'] = $search->simplesearch($_GET['q']);
+
+            // Affichage des résulats de la requête
+
+            Yii::app()->user->setFlash('success', "Votre requête a retourné " .
+                    $render_params['dataProvider']->totalItemCount .
+                    " résultat(s).<br/>" .
+                    $search->getQuerySummary());
         }
         $this->render('publicSearch', $render_params);
     }
@@ -51,7 +59,7 @@ class SiteController extends Controller {
         $render_params = array();
 
         $this->support = isset($_GET['support']) ? $_GET['support'] : '0';
-        $this->field   = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
+        $this->field = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
 
         $render_params['search_done'] = isset($_GET['advsearch']) && trim($_GET['advsearch']) == "advsearch";
 
@@ -62,7 +70,6 @@ class SiteController extends Controller {
             $render_params['dataProvider'] = $search->multisearch($_GET);
             // On renvoie les donnée du formulaire vers l'affichage pour préremplir le formulaire
             $render_params['lastadvsearch'] = $_GET;
-
         }
         $render_params['advsearch'] = true; // affichage de la recherche avancée.
         $this->render('publicSearch', $render_params);
@@ -71,7 +78,7 @@ class SiteController extends Controller {
     public function actionSujet() {
         $this->render('sujet');
     }
-    
+
     /**
      * This is the action to handle external exceptions.
      */
@@ -138,40 +145,41 @@ class SiteController extends Controller {
             'model' => $model,
         ));
     }
-    
+
     function actionAutocomplete() {
-	    //if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
-            if (isset($_GET['term'])) {
-                $term = $_GET['term'];
-	        $models = Journal::model()->findAll(array(
-                    'select'   => 'titre',//,perunilid',
-                    'condition'=> "titre LIKE '$term%'",
-                    'order'    => "titre",
-                    'distinct' =>  true,
-                    'limit'    =>  10,
-                ));
-                // Si on a aucun résultat, on cherche avec le mot au milieu
-                if (!count($models)){
-                    $models = Journal::model()->findAll(array(
-                    'select'   => 'titre',//,perunilid',
-                    'condition'=> "titre LIKE '%$term%'",
-                    'order'    => "titre",
-                    'distinct' =>  true,
-                    'limit'    =>  10,
-                ));
-                }
-	        $result = array();
-	        foreach ($models as $m)
-	            $result[] = array(
-	                'label' => $m->titre,
-	                //'value' => $m->attribute_for_input_field,
-	                'id' => $m->perunilid,
-	                //'field' => $m->attribute_for_another_field,
-	            );
-	 
-	        echo CJSON::encode($result);
-	    }
+        //if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
+        if (isset($_GET['term'])) {
+            $term = $_GET['term'];
+            $models = Journal::model()->findAll(array(
+                'select' => 'titre', //,perunilid',
+                'condition' => "titre LIKE '$term%'",
+                'order' => "titre",
+                'distinct' => true,
+                'limit' => 10,
+                    ));
+            // Si on a aucun résultat, on cherche avec le mot au milieu
+            if (!count($models)) {
+                $models = Journal::model()->findAll(array(
+                    'select' => 'titre', //,perunilid',
+                    'condition' => "titre LIKE '%$term%'",
+                    'order' => "titre",
+                    'distinct' => true,
+                    'limit' => 10,
+                        ));
+            }
+            $result = array();
+            foreach ($models as $m)
+                $result[] = array(
+                    'label' => $m->titre,
+                    //'value' => $m->attribute_for_input_field,
+                    'id' => $m->perunilid,
+                        //'field' => $m->attribute_for_another_field,
+                );
+
+            echo CJSON::encode($result);
+        }
     }
+
     //
 // Function pour nettoyer les critères de recherche (mots vides, ponctuation...)
 //

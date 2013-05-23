@@ -17,6 +17,15 @@ public function renderItems()
                         echo CHtml::beginForm(CHtml::normalizeUrl(array('admin/fusion')));
                         echo CHtml::submitButton('Fusionner les éléments sélectionnés');
                         echo CHtml::hiddenField('REQUEST_URI',$_SERVER['REQUEST_URI']);
+                        
+                        // Exportation CSV
+                        // Sauvegarde du CDbCriteria pour un eventuel export
+                        Yii::app()->session['criteria'] = $this->dataProvider->criteria;
+                        // Affichage du bouton d'exporation
+                        echo CHtml::button('Exporter en CSV', array(
+                            'onclick' => 'js:document.location.href="'. CHtml::normalizeUrl(array('admin/csvexport')) .'"'));
+                        
+                        
 			foreach($data as $i=>$item)
 			{
                             

@@ -107,8 +107,8 @@ class Abonnement extends CActiveRecord {
             'format0' => array(self::BELONGS_TO, 'Format', 'format'),
             'support0' => array(self::BELONGS_TO, 'Support', 'support'),
             'licence0' => array(self::BELONGS_TO, 'Licence', 'licence'),
-            'perunil' => array(self::BELONGS_TO, 'Journal', 'perunilid'),
-            'plateforme' => array(self::BELONGS_TO, 'Plateforme', 'plateforme'),
+            'journal0' => array(self::BELONGS_TO, 'Journal', 'perunilid'),
+            'plateforme0' => array(self::BELONGS_TO, 'Plateforme', 'plateforme'),
         );
     }
 
@@ -218,6 +218,35 @@ class Abonnement extends CActiveRecord {
                 ));
     }
 
+    
+    
+    public function cached_relation_value ($relation_column){
+        
+        // Si la relation n'existe pas
+        if (!isset($this->$relation_column) || $this->$relation_column == ""){
+            return null;
+        }
+
+        // ID du cache : nom de la table + _ + id de l'objet
+        $cache_id = $relation_column . "_". $this->$relation_column;
+        $abo_rel = $relation_column . "0";
+        
+        $cached_val = Yii::app()->cache->get($cache_id);
+        if ($cached_val === FALSE){
+            // La valeur n'a pas été trouvée dans le cache. Elle est regénérée.
+            $obj = $this->$abo_rel;
+            $cached_val = $obj->$relation_column;
+            Yii::app()->cache->set($cache_id, $cached_val);
+        }
+        // On retourne la valeur dans le cache
+        return $cached_val;
+    }
+    
+    
+    /**
+     * Affichage de l'abonnement 
+     */
+    // TODO : dépalcer dans un composant vue
     const imgstyle = "vertical-align: top;";
 
     public function htmlImgTag() {
@@ -252,8 +281,8 @@ class Abonnement extends CActiveRecord {
         $desc = "";
         if (isset($this->licence0) && isset($this->licence0->licence))
             $desc .= "<strong>Licence</strong> : " . $this->licence0->licence . "<br /> ";
-        if (isset($this->plateforme) && isset($this->plateforme->plateforme))
-            $desc .= "<strong>Plateforme</strong> : " . $this->plateforme->plateforme . "<br /> ";
+        if (isset($this->plateforme0) && isset($this->plateforme0->plateforme))
+            $desc .= "<strong>Plateforme</strong> : " . $this->plateforme0->plateforme . "<br /> ";
         if (isset($this->editeur0) && isset($this->editeur0->editeur))
             $desc .= "<strong>Editeur</strong> : " . $this->editeur0->editeur . "<br /> ";
         if (isset($this->localisation0) && isset($this->localisation0->localisation))

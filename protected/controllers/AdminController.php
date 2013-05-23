@@ -24,6 +24,16 @@ class AdminController extends Controller {
             ),
         );
     }
+    
+    /**
+     * Listes les actions qui sont définies sous forme de classe
+     * @return array
+     */
+    public function actions() {
+        return array(
+            'csvexport' => 'application.controllers.admin.CsvexportAction'
+        );      
+    }
 
     /**
      * Page d'accueil de l'administration. 
@@ -294,7 +304,7 @@ class AdminController extends Controller {
     }
 
 
-    function actionAddSmallListEntry($type,$id) {
+    public function actionAddSmallListEntry($type,$id) {
         // Récupération de la classe de la liste
         $model=new $type();
         $colname = strtolower($type);
@@ -362,4 +372,9 @@ class AdminController extends Controller {
         $this->render('modifications');
     }
 
+    
+ 
+    
+    
+    
 }

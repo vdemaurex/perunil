@@ -6,6 +6,7 @@ if (Yii::app()->user->isGuest) {
     $abos = $data->abonnements;
 }
 
+// Tris selon le support
 if ($this->support > 0) { // Un seul support est demandé
     // Suppression des abonnement qui n'ont pas le format demandé
     foreach ($abos as $key => $abo) {
@@ -16,11 +17,13 @@ if ($this->support > 0) { // Un seul support est demandé
 else { // Classement des abonnement en fonction du support papier ou électronique
     usort($abos, array("Abonnement", "compare"));
 }
+
 // On affiche pas les titre qui ne possèdent aucun abonnement actif.
 $nbabo = count($abos);
 if ($nbabo == 0 && Yii::app()->user->isGuest) {
     return;
 }
+
 ?>
 <div class="view">
     <table class="journal">
