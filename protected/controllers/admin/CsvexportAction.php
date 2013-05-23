@@ -11,12 +11,6 @@ class CsvexportAction extends CAction{
      */
    public function run(){
        
-       
-        $dataProvider = Yii::app()->session['dataProvider'];
-        $dataProvider->setPagination(array('pageSize' => 100));
-        //$dataProvider->setPagination(false);
-        
-
         /**
          *  Récupération de la requête SQL stockée dans la varialble de 
          *  session dans {@link AdminCListView}.
