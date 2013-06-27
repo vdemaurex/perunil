@@ -44,6 +44,7 @@ or <b>=</b>) au début de votre recherche pour spécifier la façon dont la comp
 	'columns'=>array(
 		$col.'_id',
 		$col,
+                'totaluse',
 		array(
 			'class'=>'CButtonColumn',
 		),

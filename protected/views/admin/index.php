@@ -34,7 +34,7 @@ $this->breadcrumbs=array(
         <tr>  
             <td>&nbsp;</td>
             <td style="text-align: center;" width="65">
-                <a target="_self" href="<?= CController::createUrl('/importcsv')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/importcsv.png" height="64" width="64"></a><br>
+                <a target="_self" href="<?= CController::createUrl('/admin/csvimport')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/importcsv.png" height="64" width="64"></a><br>
             <strong>Importation par lot (CSV)</strong></td>
             <td>&nbsp;</td>
             <td style="text-align: center;" width="65">

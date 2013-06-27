@@ -31,7 +31,10 @@ class AdminController extends Controller {
      */
     public function actions() {
         return array(
-            'csvexport' => 'application.controllers.admin.CsvexportAction'
+            'csvexport'        => 'application.controllers.admin.CsvexportAction',
+            'csvimport'        => 'application.controllers.admin.CsvimportAction',
+            'csvimportprocess' => 'application.controllers.admin.CsvimportprocessAction',
+            'upload'           => 'application.controllers.admin.UploadAction',
         );      
     }
 
@@ -372,9 +375,55 @@ class AdminController extends Controller {
         $this->render('modifications');
     }
 
-    
- 
-    
-    
+
+    public function actionCsvimportcancel(){
+        unset(Yii::app()->session['modif']);
+        unset(Yii::app()->session['ajout']);
+        Yii::app()->user->setFlash('success', "L'imporation du fichier à été annulée");
+        $this->render('csvimport', array('model' => new CsvImportForm()));
+    }
+
+    /**
+     * 1. Upload du fichier CSV 
+     * 2. Analyse du fichier pour en vérifier la conformité
+     */
+    /*public function actionAjaxupload(){
+        
+        //
+        // Imporation du fichier
+        //
+        Yii::import("ext.EAjaxUpload.qqFileUploader");
+
+        $folder = 'upload/'; // folder for uploaded files
+        $allowedExtensions = array("csv"); //array("jpg","jpeg","gif","exe","mov" and etc...
+        $sizeLimit = 2 * 1024 * 1024; // maximum file size in bytes
+        $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
+        $result = $uploader->handleUpload($folder);
+        
+        
+        //
+        // Si le résulat est valable
+        //
+        if ($result['success']){
+            $row = 1;
+            if (($handle = fopen($folder . $result['filename'], "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    $num = count($data);
+                    echo "<p> $num champs à la ligne $row: <br /></p>\n";
+                    $row++;
+                    for ($c=0; $c < $num; $c++) {
+                        echo $data[$c] . "<br />\n";
+                    }
+                }
+                fclose($handle);
+            }
+        }
+        
+        //
+        // Renvoi des résulat
+        //
+        $result = htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+        echo $result; // it's array
+    }*/
     
 }

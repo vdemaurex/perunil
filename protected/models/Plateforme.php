@@ -10,7 +10,7 @@
  * The followings are the available model relations:
  * @property Abonnement[] $abonnements
  */
-class Plateforme extends CActiveRecord
+class Plateforme extends CSmalllistActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.

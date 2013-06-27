@@ -159,7 +159,7 @@ class Journal extends CActiveRecord {
         $corecollection_str = "";
         // Etablissement de la liste des corecollection
         foreach ($this->corecollection as $s) {
-            $corecollection_str .= $s->nom . ", ";
+            $corecollection_str .= $s->biblio . ", ";
         }
         return trim($corecollection_str, ", ");
     }

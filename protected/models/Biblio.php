@@ -7,7 +7,7 @@
  * @property integer $biblio_id
  * @property string $biblio
  */
-class Biblio extends CActiveRecord
+class Biblio extends CSmalllistActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
