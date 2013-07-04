@@ -9,7 +9,7 @@
 
                 $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
                     'name' => 'q',
-                    'value' => isset($_GET['q']) ? CHtml::encode($_GET['q']) : '',
+                    'value' => isset(Yii::app()->session['search_query']) ? CHtml::encode(Yii::app()->session['search_query']) : '',
                     'source' => $this->createUrl('site/autocomplete'),
                     'options' => array(
                         'minLength' => 2,

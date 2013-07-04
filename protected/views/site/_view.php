@@ -91,8 +91,7 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
                     if (isset($abo->localisation0))
                         echo CHtml::encode($abo->localisation0->localisation);
                 } else {
-                    // Affichage du lien
-                    $this->widget('AboUrlWidget', array('abo' => $abo, 'jrn' => $data));
+                        $this->widget('AboUrlWidget', array('abo' => $abo, 'jrn' => $data));
                 }
                 ?>
             </td>

@@ -4,7 +4,7 @@
 <?php
 if (!Yii::app()->user->isGuest){
     echo"<p>";
-    echo CHtml::link('Editer',array('admin/peredit/perunilid/'. $model->perunilid));
+    echo CHtml::link('Editer le journal',array('admin/peredit/perunilid/'. $model->perunilid));
     echo"</p>";
 }
 

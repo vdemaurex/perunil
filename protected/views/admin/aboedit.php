@@ -73,48 +73,6 @@ if($model->getIsNewRecord()){
  else {
     echo "<h2>Edition de l'abonnement n° $model->abonnement_id</h2>\n";
 }
-/*
-//
-// Création du menu de gauche
-//
-$this->beginWidget('system.web.widgets.CClipWidget', array('id'=>'sidebar'));?>
-            <h3>Edition du périodique</h3>
-            <p><?php echo "<p>". CHtml::link("<< Retour à la notice du journal", CController::createUrl('/site/detail/' . $model->perunilid))?></p>
-            <ul>
-                <li><strong>Journal</strong>
-                    <ul><li ><?= CHtml::link($jrn->titre, CController::createUrl('admin/peredit/perunilid/' . $jrn->perunilid)) ?></li></ul>
-                </li>
-                <li><strong>Abonnements</strong>
-                    <ul>
-                       <?php
-        // Si le journal contient des abonnements, on les affiche
-        if (isset($jrn->abonnements)) {
-            foreach ($jrn->abonnements as $abo) {
-                if ($abo->support == 2 && isset($abo->localisation0)) {
-                    $abotitle = $abo->localisation0->localisation;
-                } elseif ($abo->support == 1 && isset($abo->licence0) && isset($abo->licence0->licence)) {
-                    $abotitle = $abo->licence0->licence;
-                } else {
-                    $abotitle = "Abonnement n°" . $abo->abonnement_id;
-                }
-                if ($abo->abonnement_id == $model->abonnement_id){
-                    echo "<li classe=\"active\">$abotitle</li>";
-                } else {
-                    echo "<li>" . CHtml::link($abotitle, CController::createUrl('/admin/aboedit/perunilid/'.$jrn->perunilid .'/aboid/' . $abo->abonnement_id)) . "</li>";
-                }
-            }
-        }else { //aucun abonnement existant
-            echo "<li>Aucun abonnement</li>";
-        }
-        echo "<li>". CHtml::link("+ abonnement...", CController::createUrl('/admin/aboedit/perunilid/' . $jrn->perunilid)) ."</li>";
-        echo "</ul></li></ul>";
-            
-            
-
-  //      echo CHtml::Button("Ajouter un abonnement", array('id'=>"addabo", 'submit' =>CController::createUrl('/admin/pereditAddAbo/perunilid/' . $jrn->perunilid)));
-
-$this->endWidget(); // CClipWidget
-*/
 
 
 // Affichage du formulaire de création/modification du journal

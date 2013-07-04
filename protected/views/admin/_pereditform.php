@@ -10,12 +10,16 @@
             ));
     ?>
 
-    <p class="note">Fields with <span class="required">*</span> are required.</p>
+    <p class="note">Les champs marqué d'une astersisque <span class="required">*</span> sont obligatoires.</p>
 
     <?php echo $form->errorSummary($model); ?>
 
     <table class="detail-view">
         <tbody>
+            <tr class="even">
+                <th><?php echo $form->labelEx($model, 'perunilid'); ?></th>
+                <td colspan="3"><?php echo $form->textField($model, 'perunilid', array('style' => $textfieldstyle,'readonly'=>true )); ?><?php echo $form->error($model, 'soustitre'); ?></td>
+            </tr>
             <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'titre'); ?></th>
                 <td colspan="3"><?php echo $form->textField($model, 'titre', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'titre'); ?></td>

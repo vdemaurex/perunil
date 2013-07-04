@@ -43,6 +43,7 @@ $('.search-form form').submit(function(){
 		'nom_fr',
 		'stm',
 		'shs',
+                'totaluse',
 		array(
 			'class'=>'CButtonColumn',
 		),

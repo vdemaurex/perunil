@@ -16,6 +16,26 @@
  */
 class Sujet extends CActiveRecord
 {
+    
+            protected $totaluse;
+
+            protected function getTotaluse() {
+                if (!$this->sujet_id) {
+                    $this->totaluse = 0;
+                }
+                if (!isset($this->totaluse)) {           
+                    $sql = "SELECT COUNT(*) " .
+                            "FROM journal_sujet " .
+                            "WHERE sujet_id = $this->sujet_id";
+                    $command = Yii::app()->db->createCommand($sql);
+                    $this->totaluse = $command->queryScalar();
+                    if ($this->totaluse === FALSE){
+                        $this->totaluse = 0;
+                    }
+                }
+                return $this->totaluse;
+            }
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -76,6 +96,7 @@ class Sujet extends CActiveRecord
 			'nom_fr' => 'Nom Fr',
 			'stm' => 'Stm',
 			'shs' => 'Shs',
+                        'totaluse' => "Nombre d'utilisation",
 		);
 	}
 

@@ -105,9 +105,9 @@ class AdminController extends Controller {
                     }
                 }
                 // Suppression du journal
-                if (!$jrn->delete()) {
-                    throw new CException("Impossible de supprimer le journal id $jrn->perunilid.");
-                }
+                //if (!$jrn->delete()) {
+                //    throw new CException("Impossible de supprimer le journal id $jrn->perunilid.");
+                //}
             }
         } catch (Exception $exc) {
             Yii::app()->user->setFlash('error', $exc->getMessage() . "<br/>" . $exc->getTraceAsString());
@@ -230,7 +230,16 @@ class AdminController extends Controller {
 
         // Soumission du formulaire pour sauvegarde.
         if (isset($_POST['Abonnement'])) {
+
             $abo->attributes = $_POST['Abonnement'];
+            if (isset($_POST['Abonnement']['perunilid']) &&  $_POST['Abonnement']['perunilid'] != ""){
+                if(!Journal::model()->findByPk($_POST['Abonnement']['perunilid'])){
+                    Yii::app()->user->setFlash('error', 
+                            "Le perunilid ({$_POST['Abonnement']['perunilid']}) n'est pas valable. ".
+                            "L'ancienne valeur ($perunilid) a été restaurée.");
+                    $abo->perunilid = $perunilid;  
+                }
+            }
             if ($abo->validate()) {
                 // Le formulaire est valide
                 if ($abo->save()) {

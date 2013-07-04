@@ -48,7 +48,7 @@
  * @property Support $support0
  * @property Licence $licence0
  * @property Journal $perunil
- * @property Plateforme $plateforme
+ * @property Plateforme $plateforme0
  */
 class Abonnement extends CActiveRecord {
 

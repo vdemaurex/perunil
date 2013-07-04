@@ -415,9 +415,9 @@ table.simplesearch td{
 .advsearchfield{
     width: 380px;
 }
-/*
+/*****************************************************************************
  * Affichage de la liste des journaux
-*/
+ *****************************************************************************/
 
 div.view
 {
@@ -490,11 +490,15 @@ table.journal td.etacoll{
     border-right: 2px dotted powderblue;
 }
 
+table.journal td.admin{
+    text-align: right; 
+    background-color: lightgrey; 
+    width: 65px;
+}
 
-
-/*
+/*****************************************************************************
  *Affichage des formulaires
-*/
+ *****************************************************************************/
 table.detail-view .null
 {
     color: pink;

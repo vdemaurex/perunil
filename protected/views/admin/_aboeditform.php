@@ -19,6 +19,18 @@
 
     <table class="detail-view">
         <tbody>
+            <?php  if (!$model->isNewRecord): ?>
+            <tr class="even">
+                <th><?php echo $form->labelEx($model, 'perunilid *'); ?></th>
+                <td colspan="3">
+                    <?php 
+                    echo $form->textField($model, 'perunilid', array('size' => '10', 'maxlength' => '9')); 
+                    echo $form->error($model, 'perunilid');
+                    echo " [" . CHtml::link("Edition du journal n° $model->perunilid", array('admin/peredit/perunilid/' . $model->perunilid)) . "]";
+                ?>
+                </td>
+            </tr>
+            <?php endif; //!isNewRecord?>
             <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'titreexclu'); ?></th>
                 <td colspan="3"><?php echo $form->radioButtonList($model, 'titreexclu', array(true => 'Oui', false => 'Non'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?><?php echo $form->error($model, 'titreexclu'); ?></td>

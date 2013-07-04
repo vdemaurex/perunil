@@ -5,20 +5,41 @@ class AboUrlWidget extends CWidget {
     public $jrn;
     public $abo;
     private $url;
-    private $short_url;
+    private $link_text;
+    private $link_title = "Cliquez pour accéder au site hébérgeant cette publication";
 
     public function init() {
         $this->url = $this->abo->url_site;
-        $this->short_url = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+        if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
+            $this->link_text = $this->abo->plateforme0->plateforme;
+        } else {
+            $this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+        }
     }
 
     public function run() {
+        // 
+        // Traitement des jouraux papier
+        //
+        if (isset($this->abo->support0) && $this->abo->support0->support == "papier") {
+            if (isset($this->abo->localisation0)) {
+                echo CHtml::encode($this->abo->localisation0->localisation);
+            }
+            else {
+                echo CHtml::encode("Périodique papier");
+            }
+            return;
+        }
+        //
+        // Traitement des journaux électronique
+        //
         if ((isset($this->abo->acces_user) && $this->abo->acces_user != "") || (isset($this->abo->acces_pwd) && $this->abo->acces_pwd != "")) {
             $src = Yii::app()->baseUrl . "/images/login_16.png";
             echo CHtml::image($src, "Login", array('title' => "Protégé par mot de passe")) . "&nbsp;";
-            echo CHtml::link(CHtml::encode($this->short_url), $this->url, array(
+            echo CHtml::link(CHtml::encode($this->link_text), $this->url, array(
                 'target' => '_blank',
-                'onclick' => '$("#' . $this->abo->abonnement_id . '").dialog("open"); return false;',));
+                'onclick' => '$("#' . $this->abo->abonnement_id . '").dialog("open"); return false;',
+                'title' => $this->link_title));
             $this->beginWidget('zii.widgets.jui.CJuiDialog', array(
                 'id' => $this->abo->abonnement_id,
                 // additional javascript options for the dialog plugin
@@ -37,10 +58,10 @@ class AboUrlWidget extends CWidget {
             <p>La revue <strong><?= $this->jrn->titre ?></strong> est protégée par un mot de passe. </p>
             <?php
             // Si l'utilisateur est du CHUV ou de l'UNIL
-            if ($this->isUNIL() || $this->isCHUV()){
-            // La différenciation CHUV UNIL n'est pas activée
-            //if ((isset($this->abo->acces_elec_unil) && ($this->abo->acces_elec_unil && $this->isUNIL())) ||
-            //        (isset($this->abo->acces_elec_chuv) && ($this->abo->acces_elec_chuv && $this->isCHUV()))) {
+            if ($this->isUNIL() || $this->isCHUV()) {
+                // La différenciation CHUV UNIL n'est pas activée
+                //if ((isset($this->abo->acces_elec_unil) && ($this->abo->acces_elec_unil && $this->isUNIL())) ||
+                //        (isset($this->abo->acces_elec_chuv) && ($this->abo->acces_elec_chuv && $this->isCHUV()))) {
                 ?>
                 <p>Voici les informations nécessaires à la connexion : 
                 <ul>
@@ -61,7 +82,8 @@ class AboUrlWidget extends CWidget {
             $this->endWidget('zii.widgets.jui.CJuiDialog');
         } else {
             // Aucun mot de passe n'est requis
-            echo CHtml::link(CHtml::encode($this->short_url), $this->url, array('target' => '_blank'));
+            echo CHtml::link(
+                    CHtml::encode($this->link_text), $this->url, array('target' => '_blank', 'title' => $this->link_title));
         }
     }
 

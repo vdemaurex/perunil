@@ -31,6 +31,7 @@ $fields = array(
     'editeur_code',
     'editeur_sujet',
     'commentaire_pub',
+    @array('name' => 'plateforme', 'value' => $abo->plateforme0->plateforme, 'label' => 'Plateforme'),
     @array('name' => 'editeur', 'value' => $abo->editeur0->editeur, 'label' => 'Editeur'),
     @array('name' => 'statutabo', 'value' => $abo->statutabo0->statutabo, 'label' => 'Statut de l\'abonnement'),
     @array('name' => 'localisation', 'value' => $abo->localisation0->localisation, 'label' => 'Localisation'),

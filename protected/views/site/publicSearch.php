@@ -24,15 +24,18 @@ if ($search_done) {
     Yii::app()->session['last_search_url'] = $_SERVER['REQUEST_URI'];
     //echo "<p>$dataProvider->totalItemCount périodiques trouvés pour la recherche \"{$_GET['q']}\".</p>";
     
-    if(Yii::app()->user->isGuest)
+    if(Yii::app()->user->isGuest){
         $widget = 'zii.widgets.CListView';
-    else // admin
+        $view   = '_view';
+    }
+    else{ // admin
         $widget = 'AdminCListView';
-    
+        $view   = '/admin/_adminView';
+    }
     $this->widget($widget,array(//JournalListViewWidget', array(
-        'dataProvider' => $dataProvider,
-        'itemView' => '_view',
-        'ajaxUpdate' => false,
+        'dataProvider' => Yii::app()->session['search_dataprovider'],
+        'itemView' => $view,
+        'ajaxUpdate' => true,
         'template'=>"{pager}\n{items}\n{pager}",
     ));
 }

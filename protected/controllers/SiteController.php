@@ -30,25 +30,36 @@ class SiteController extends Controller {
         $render_params = array();
 
         $this->support = isset($_GET['support']) ? $_GET['support'] : '0';
-        $this->field = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
+        $this->field   = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
 
         $render_params['search_done'] = isset($_GET['q']) && trim($_GET['q']) != "";
 
         // Si la recherche a été effectuée
         if ($render_params['search_done']) {
+            // Initialisation du composant de recherche
             $search = new SearchComponent();
             $search->search_type = $this->field;
             $search->support = $this->support;
-
-            $render_params['dataProvider'] = $search->simplesearch($_GET['q']);
-
-            // Affichage des résulats de la requête
-
-            Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-                    $render_params['dataProvider']->totalItemCount .
-                    " résultat(s).<br/>" .
-                    $search->getQuerySummary());
+            
+            // Sauvegarde du DataProvider dans la session
+            Yii::app()->session['search_query']        = $_GET['q'];
+            Yii::app()->session['search_dataprovider'] = $search->simplesearch($_GET['q']);
+            Yii::app()->session['search_querySummary'] = $search->getQuerySummary();
+            
         }
+        
+        // Si une recherche a été effectuée ou a été sauvegardée
+        if (isset(Yii::app()->session['search_dataprovider'])){
+             $render_params['search_done'] = true;
+             //$render_params['dataProvider'] = Yii::app()->session['search_dataprovider'];
+            // Affichage des résulats de la requête
+            Yii::app()->user->setFlash('success', "Votre requête a retourné " .
+                    Yii::app()->session['search_dataprovider']->totalItemCount .
+                    " résultat(s).<br/>" .
+                    Yii::app()->session['search_querySummary']);
+        }
+        
+        // Affichage du formulaire de recherche et év. des résultats.
         $this->render('publicSearch', $render_params);
     }
 
@@ -70,6 +81,10 @@ class SiteController extends Controller {
             $render_params['dataProvider'] = $search->multisearch($_GET);
             // On renvoie les donnée du formulaire vers l'affichage pour préremplir le formulaire
             $render_params['lastadvsearch'] = $_GET;
+            Yii::app()->user->setFlash('success', "Votre requête a retourné " .
+                    $render_params['dataProvider']->totalItemCount .
+                    " résultat(s).<br/>" .
+                    $search->getQuerySummary());
         }
         $render_params['advsearch'] = true; // affichage de la recherche avancée.
         $this->render('publicSearch', $render_params);
