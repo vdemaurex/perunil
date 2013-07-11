@@ -1,13 +1,16 @@
 <?php $this->pageTitle = Yii::app()->name . " - " . $model->titre; ?>
-<p><?php echo CHtml::link("<< Retour aux résultats de la recherche", Yii::app()->session['last_search_url'])?></p>
-<h1><?= $model->titre ?></h1>
-<?php
-if (!Yii::app()->user->isGuest){
-    echo"<p>";
-    echo CHtml::link('Editer le journal',array('admin/peredit/perunilid/'. $model->perunilid));
-    echo"</p>";
+<p><?php
+if (!$dialogue) {
+    echo CHtml::link("<< Retour aux résultats de la recherche", Yii::app()->session['last_search_url']);
+    ?></p>
+    <h1><?= $model->titre ?></h1>
+    <?php
+    if (!Yii::app()->user->isGuest) {
+        echo"<p>";
+        echo CHtml::link('Editer le journal', array('admin/peredit/perunilid/' . $model->perunilid));
+        echo"</p>";
+    }
 }
-
 
 $fields = array(
     'perunilid',
@@ -42,10 +45,10 @@ foreach ($fields as $key => $field) {
 }
 
 // Ajout des sujets
-$fields[] = array('label'=>'Sujets', 'type'=>'raw', 'value'=>$model->sujets2str());
+$fields[] = array('label' => 'Sujets', 'type' => 'raw', 'value' => $model->sujets2str());
 // Ajout de la liste corecollection
-if ($model->corecollection2str() != ""){
-    $fields[] = array('label'=>'Core collection', 'type'=>'raw', 'value'=> $model->corecollection2str());
+if ($model->corecollection2str() != "") {
+    $fields[] = array('label' => 'Core collection', 'type' => 'raw', 'value' => $model->corecollection2str());
 }
 
 $this->widget('zii.widgets.CDetailView', array(
@@ -58,6 +61,11 @@ $tabviewparam = array();
 $i = 1;
 
 foreach ($model->activeabos as $abo) {
+    // On affiche seulement l'abonnement désiré
+    if ($activeTab) {
+        if ($activeTab != $abo->abonnement_id)
+            continue;
+    }
     if ($abo->support == 2 && isset($abo->localisation0)) {
         $tabtitle = $abo->localisation0->localisation;
     } elseif ($abo->support == 1 && isset($abo->licence0) && isset($abo->licence0->licence)) {
@@ -65,11 +73,12 @@ foreach ($model->activeabos as $abo) {
     } else {
         $tabtitle = "Abonnement n°" . $abo->abonnement_id;
     }
-    $tabviewparam['tabs']['tab' . $i] = array(
+    $tabviewparam['tabs'][$abo->abonnement_id] = array(
         'title' => $tabtitle,
         'view' => '_aboview',
         'data' => array('abo' => $abo, 'jrn' => $model),
     );
+
 
     $i++;
 }
@@ -77,8 +86,7 @@ foreach ($model->activeabos as $abo) {
 $this->widget('CTabView', $tabviewparam);
 
 
-if (!Yii::app()->user->isGuest && !$model->getIsNewRecord()) {
-$this->widget( 'application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array( 'model' => $model, ) );
+if (!Yii::app()->user->isGuest && !$model->getIsNewRecord() && !$dialogue) {
+    $this->widget('application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array('model' => $model,));
 }
-
 ?>

@@ -8,12 +8,23 @@ class AboUrlWidget extends CWidget {
     private $link_text;
     private $link_title = "Cliquez pour accéder au site hébérgeant cette publication";
 
+    /**
+     * Vrai si le pérodique est au format papier
+     * @var boolean 
+     */
+    private $papier;
+    private $papier_link = "Cliquer pour accéder à la notice du catalogue collectif vaudois RERO.";
+
     public function init() {
-        $this->url = $this->abo->url_site;
-        if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
-            $this->link_text = $this->abo->plateforme0->plateforme;
-        } else {
-            $this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+        // Initialisation des variables
+        $this->papier = (isset($this->abo->support0) && $this->abo->support0->support == "papier");
+        if (!$this->papier) {
+            $this->url = $this->abo->url_site;
+            if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
+                $this->link_text = $this->abo->plateforme0->plateforme;
+            } else {
+                $this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+            }
         }
     }
 
@@ -21,11 +32,24 @@ class AboUrlWidget extends CWidget {
         // 
         // Traitement des jouraux papier
         //
-        if (isset($this->abo->support0) && $this->abo->support0->support == "papier") {
+        if ($this->papier) {
             if (isset($this->abo->localisation0)) {
-                echo CHtml::encode($this->abo->localisation0->localisation);
-            }
-            else {
+                // Texte du lien et de la cote
+                $cote ="";
+                $texte = CHtml::encode($this->abo->localisation0->localisation);
+                if (isset($this->abo->cote) && $this->abo->cote != "" ){
+                    $cote  = " <small>[cote : {$this->abo->cote}]</small>";
+                }
+                
+                // Si le reroid existe, on ajoute un lien vers rero
+                if ($this->jrn->reroid) {
+                    $url =  "http://opac.rero.ch/get_bib_record.cgi?db=vd&rero_id=". $this->jrn->reroid;
+                    echo CHtml::link(
+                            $texte, $url, array('target' => '_blank', 'title' => $this->papier_link)) . $cote;
+                } else {
+                    echo $texte . $cote;
+                }
+            } else {
                 echo CHtml::encode("Périodique papier");
             }
             return;

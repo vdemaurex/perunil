@@ -3,7 +3,9 @@
 <h1>Recherche sur <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
 <?php
+$dataProviderName = 'search_dataprovider';
 if (isset($advsearch) && $advsearch) { // Recherche avancée
+    $dataProviderName = 'advsearch_dataprovider';
     if (isset($lastadvsearch)) {
         $advsearch_parms = array('last' => $lastadvsearch);
     } else {
@@ -32,12 +34,14 @@ if ($search_done) {
         $widget = 'AdminCListView';
         $view   = '/admin/_adminView';
     }
-    $this->widget($widget,array(//JournalListViewWidget', array(
-        'dataProvider' => Yii::app()->session['search_dataprovider'],
+
+        $this->widget($widget,array(
+        'dataProvider' => Yii::app()->session[$dataProviderName],
         'itemView' => $view,
         'ajaxUpdate' => true,
         'template'=>"{pager}\n{items}\n{pager}",
     ));
+
 }
 else{ // Si aucune recherche, on affiche les logo des plateformes
     ?>

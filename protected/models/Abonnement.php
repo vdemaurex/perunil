@@ -52,6 +52,8 @@
  */
 class Abonnement extends CActiveRecord {
 
+    public $titre;
+    
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -86,6 +88,7 @@ class Abonnement extends CActiveRecord {
             array('editeur_code', 'length', 'max' => 100),
             array('commentaire_pro, commentaire_pub', 'length', 'max' => 500),
             array('perunilid', 'length', 'max' => 20),
+            array('titre, issn','safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             array('abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
@@ -96,9 +99,9 @@ class Abonnement extends CActiveRecord {
      * @return array relational rules.
      */
     public function relations() {
-        // NOTE: you may need to adjust the relation name and the related
-        // class name for the relations automatically generated below.
+
         return array(
+            // Générées automatiquements
             'editeur0' => array(self::BELONGS_TO, 'Editeur', 'editeur'),
             'histabo0' => array(self::BELONGS_TO, 'Histabo', 'histabo'),
             'statutabo0' => array(self::BELONGS_TO, 'Statutabo', 'statutabo'),
@@ -107,8 +110,9 @@ class Abonnement extends CActiveRecord {
             'format0' => array(self::BELONGS_TO, 'Format', 'format'),
             'support0' => array(self::BELONGS_TO, 'Support', 'support'),
             'licence0' => array(self::BELONGS_TO, 'Licence', 'licence'),
-            'journal0' => array(self::BELONGS_TO, 'Journal', 'perunilid'),
             'plateforme0' => array(self::BELONGS_TO, 'Plateforme', 'plateforme'),
+            // Modifiées
+            'jrn' => array(self::BELONGS_TO, 'Journal', 'perunilid'),
         );
     }
 
@@ -123,7 +127,7 @@ class Abonnement extends CActiveRecord {
     public function attributeLabels() {
         return array(
             
-            'abonnement_id' => 'Abonnement',
+            'abonnement_id' => 'Abonnement id',
             'titreexclu' => 'Titreexclu',
             'package' => 'Nom du package',
             'no_abo' => 'Numéro d\'abonnement',
@@ -179,39 +183,46 @@ class Abonnement extends CActiveRecord {
 
         $criteria = new CDbCriteria;
 
-        $criteria->compare('abonnement_id', $this->abonnement_id, true);
-        $criteria->compare('titreexclu', $this->titreexclu);
-        $criteria->compare('package', $this->package, true);
-        $criteria->compare('no_abo', $this->no_abo, true);
-        $criteria->compare('url_site', $this->url_site, true);
-        $criteria->compare('acces_elec_gratuit', $this->acces_elec_gratuit);
-        $criteria->compare('acces_elec_unil', $this->acces_elec_unil);
-        $criteria->compare('acces_elec_chuv', $this->acces_elec_chuv);
-        $criteria->compare('embargo_mois', $this->embargo_mois);
-        $criteria->compare('acces_user', $this->acces_user, true);
-        $criteria->compare('acces_pwd', $this->acces_pwd, true);
-        $criteria->compare('etatcoll', $this->etatcoll, true);
-        $criteria->compare('etatcoll_deba', $this->etatcoll_deba);
-        $criteria->compare('etatcoll_debv', $this->etatcoll_debv);
-        $criteria->compare('etatcoll_debf', $this->etatcoll_debf);
-        $criteria->compare('etatcoll_fina', $this->etatcoll_fina);
-        $criteria->compare('etatcoll_finv', $this->etatcoll_finv);
-        $criteria->compare('etatcoll_finf', $this->etatcoll_finf);
-        $criteria->compare('cote', $this->cote, true);
-        $criteria->compare('editeur_code', $this->editeur_code, true);
-        $criteria->compare('editeur_sujet', $this->editeur_sujet, true);
-        $criteria->compare('commentaire_pro', $this->commentaire_pro, true);
-        $criteria->compare('commentaire_pub', $this->commentaire_pub, true);
-        $criteria->compare('perunilid', $this->perunilid, true);
-        $criteria->compare('plateforme', $this->plateforme);
-        $criteria->compare('editeur', $this->editeur);
-        $criteria->compare('histabo', $this->histabo);
-        $criteria->compare('statutabo', $this->statutabo);
-        $criteria->compare('localisation', $this->localisation);
-        $criteria->compare('gestion', $this->gestion);
-        $criteria->compare('format', $this->format);
-        $criteria->compare('support', $this->support);
-        $criteria->compare('licence', $this->licence);
+        
+        $criteria->compare('t.titreexclu', $this->titreexclu);
+        $criteria->compare('t.package', $this->package, true);
+        $criteria->compare('t.no_abo', $this->no_abo, true);
+        $criteria->compare('t.url_site', $this->url_site, true);
+        $criteria->compare('t.acces_elec_gratuit', $this->acces_elec_gratuit);
+        $criteria->compare('t.acces_elec_unil', $this->acces_elec_unil);
+        $criteria->compare('t.acces_elec_chuv', $this->acces_elec_chuv);
+        $criteria->compare('t.embargo_mois', $this->embargo_mois);
+        $criteria->compare('t.acces_user', $this->acces_user, true);
+        $criteria->compare('t.acces_pwd', $this->acces_pwd, true);
+        $criteria->compare('t.etatcoll', $this->etatcoll, true);
+        $criteria->compare('t.etatcoll_deba', $this->etatcoll_deba);
+        $criteria->compare('t.etatcoll_debv', $this->etatcoll_debv);
+        $criteria->compare('t.etatcoll_debf', $this->etatcoll_debf);
+        $criteria->compare('t.etatcoll_fina', $this->etatcoll_fina);
+        $criteria->compare('t.etatcoll_finv', $this->etatcoll_finv);
+        $criteria->compare('t.etatcoll_finf', $this->etatcoll_finf);
+        $criteria->compare('t.cote', $this->cote, true);
+        $criteria->compare('t.editeur_code', $this->editeur_code, true);
+        $criteria->compare('t.editeur_sujet', $this->editeur_sujet, true);
+        $criteria->compare('t.commentaire_pro', $this->commentaire_pro, true);
+        $criteria->compare('t.commentaire_pub', $this->commentaire_pub, true);
+        $criteria->compare('t.perunilid', $this->perunilid);
+        $criteria->compare('t.plateforme', $this->plateforme);
+        $criteria->compare('t.editeur', $this->editeur);
+        $criteria->compare('t.histabo', $this->histabo);
+        $criteria->compare('t.statutabo', $this->statutabo);
+        $criteria->compare('t.localisation', $this->localisation);
+        $criteria->compare('t.gestion', $this->gestion);
+        $criteria->compare('t.format', $this->format);
+        $criteria->compare('t.support', $this->support);
+        $criteria->compare('t.licence', $this->licence);
+        
+        $criteria->together = true; 
+        $criteria->compare('t.abonnement_id', $this->abonnement_id, true);
+        $criteria->with = array('jrn');
+        $criteria->compare('titre',$this->titre,true);
+        $criteria->compare('issn' ,$this->perunilid,true,"OR");
+        
 
         return new CActiveDataProvider($this, array(
                     'criteria' => $criteria,

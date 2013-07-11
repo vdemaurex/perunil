@@ -292,19 +292,38 @@ class AdminController extends Controller {
      * Recherche administrative 
      */
     public function actionSearch() {
+        // Détermine le type d'affichage : par journal ou par abonnement
+        $affichage = 'abonnement';
+        if (isset(Yii::app()->session['affichage'])){
+            if (Yii::app()->session['affichage'] == 'journal'){
+                $affichage = 'journal';
+            }
+        }
+        // Mise à jour de l'option d'affichage
+        Yii::app()->session['affichage'] = $affichage;
+        
         $this->last = null;
         $render_params = array();
         $render_params['search_done'] = count($_GET);
 
         if ($render_params['search_done']) {
+            
             $search = new SearchComponent();
-            $render_params['dataProvider'] = $search->adminSearch($_GET);
+            if ($affichage == 'journal'){
+                $render_params['dataProvider'] = $search->adminSearch($_GET);
+            } else{ 
+                // Affichage par abonnement
+                $render_params['dataProvider'] = $search->aboadminSearch($_GET);
+            }
+            
             // si la requête ne donne aucun résultat, on affiche un avertissement
             if (!isset($render_params['dataProvider'])) {
                 $render_params['search_done'] = FALSE;
                 Yii::app()->user->setFlash('notice', "Votre requête n'a retourné aucun résultat.<br/>Recherche administrateur : " .
                         $search->getQuerySummary());
             } else {
+                // Si la requête a produit un résultat, on affiche le total et
+                // un résumé de la query.
                 Yii::app()->user->setFlash('success', "Votre requête a retourné " .
                         $render_params['dataProvider']->totalItemCount .
                         " résultat(s).<br/>Recherche administrateur : " .

@@ -87,12 +87,9 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
             </td>
             <td class="localisation">
                 <?php
-                if (isset($abo->support0) && $abo->support0->support == "papier") {
-                    if (isset($abo->localisation0))
-                        echo CHtml::encode($abo->localisation0->localisation);
-                } else {
+                
                         $this->widget('AboUrlWidget', array('abo' => $abo, 'jrn' => $data));
-                }
+
                 ?>
             </td>
             <td class="etacoll">

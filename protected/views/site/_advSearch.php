@@ -116,7 +116,8 @@ echo CHtml::beginForm('', 'get');
 <table class="advsearch">
     <tr>
         <td><?=CHtml::submitButton("Chercher");?> &nbsp;
-            <?=CHtml::resetButton("Vider le formulaire");?>
+            <?=CHtml::button('Vider le formulaire', array(
+                            'onclick' => 'js:document.location.href="'. CHtml::normalizeUrl(array('site/adv')) .'"'));?>
         </td>
     </tr>
 </table>

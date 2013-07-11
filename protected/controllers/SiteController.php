@@ -78,11 +78,12 @@ class SiteController extends Controller {
             //TODO : vérification des données post
             $search = new SearchComponent();
             $search->support = $this->support;
-            $render_params['dataProvider'] = $search->multisearch($_GET);
+            Yii::app()->session['advsearch_dataprovider'] = $search->multisearch($_GET);
+            
             // On renvoie les donnée du formulaire vers l'affichage pour préremplir le formulaire
             $render_params['lastadvsearch'] = $_GET;
             Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-                    $render_params['dataProvider']->totalItemCount .
+                    Yii::app()->session['advsearch_dataprovider']->totalItemCount .
                     " résultat(s).<br/>" .
                     $search->getQuerySummary());
         }
@@ -154,11 +155,27 @@ class SiteController extends Controller {
         $this->redirect(Yii::app()->homeUrl);
     }
 
-    public function actionDetail($id) {
+    public function actionDetail($id, $activeTab = false, $dialogue =false) {
         $model = Journal::model()->findByPk($id);
-        $this->render('detail', array(
-            'model' => $model,
-        ));
+        
+        if ($dialogue){
+            // la vue en détail est appelée depuis un popup javascript
+                //$this->layout = "dialogue";
+            $this->layout=false;
+    
+            $this->render('detail', array(
+                'model' => $model,
+                'activeTab' => $activeTab,
+                'dialogue' => true,
+            ));
+        }
+        else{
+            // Affichage normal de la vue en détail
+            $this->render('detail', array(
+                'model' => $model,
+                'activeTab' => $activeTab,
+            ));
+        }
     }
 
     function actionAutocomplete() {
