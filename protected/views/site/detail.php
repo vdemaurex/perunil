@@ -1,4 +1,10 @@
-<?php $this->pageTitle = Yii::app()->name . " - " . $model->titre; ?>
+<?php $this->pageTitle = Yii::app()->name . " - " . $model->titre; 
+
+if (!isset($dialogue)){
+    $dialogue = false;
+}
+
+?>
 <p><?php
 if (!$dialogue) {
     echo CHtml::link("<< Retour aux résultats de la recherche", Yii::app()->session['last_search_url']);

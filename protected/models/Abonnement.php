@@ -52,7 +52,7 @@
  */
 class Abonnement extends CActiveRecord {
 
-    public $titre;
+    public $journal_titre;
     
     /**
      * Returns the static model of the specified AR class.
@@ -88,10 +88,10 @@ class Abonnement extends CActiveRecord {
             array('editeur_code', 'length', 'max' => 100),
             array('commentaire_pro, commentaire_pub', 'length', 'max' => 500),
             array('perunilid', 'length', 'max' => 20),
-            array('titre, issn','safe'),
+            array('titre, issn,perunilid, journal_titre','safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
-            array('abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
+            array('journal_titre, abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
         );
     }
 
@@ -217,11 +217,14 @@ class Abonnement extends CActiveRecord {
         $criteria->compare('t.support', $this->support);
         $criteria->compare('t.licence', $this->licence);
         
+        
+        
         $criteria->together = true; 
         $criteria->compare('t.abonnement_id', $this->abonnement_id, true);
         $criteria->with = array('jrn');
-        $criteria->compare('titre',$this->titre,true);
-        $criteria->compare('issn' ,$this->perunilid,true,"OR");
+        $criteria->compare( 'jrn.titre', $this->journal_titre, true );
+        //$criteria->compare('titre',$this->titre,true);
+        //$criteria->compare('issn' ,$this->perunilid,true,"OR");
         
 
         return new CActiveDataProvider($this, array(

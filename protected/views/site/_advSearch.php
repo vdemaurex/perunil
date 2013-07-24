@@ -8,6 +8,8 @@ $fields = array(
 $operators = array("AND" => "ET",
     "OR" => "OU",
     "NOT" => "MAIS PAS",);
+
+$last = Yii::app()->session['search']->adv_query_tab;
 ?>
 
 <?php
@@ -117,7 +119,7 @@ echo CHtml::beginForm('', 'get');
     <tr>
         <td><?=CHtml::submitButton("Chercher");?> &nbsp;
             <?=CHtml::button('Vider le formulaire', array(
-                            'onclick' => 'js:document.location.href="'. CHtml::normalizeUrl(array('site/adv')) .'"'));?>
+                            'onclick' => 'js:document.location.href="'. CHtml::normalizeUrl(array('site/advclean')) .'"'));?>
         </td>
     </tr>
 </table>

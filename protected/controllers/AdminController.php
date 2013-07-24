@@ -15,7 +15,7 @@ class AdminController extends Controller {
 
     /**
      * Règles d'accès : seul les utilisateurs authentifiés peuvent se connecter.
-     * @return type 
+     * @return type
      */
     public function accessRules() {
         return array(
@@ -24,7 +24,7 @@ class AdminController extends Controller {
             ),
         );
     }
-    
+
     /**
      * Listes les actions qui sont définies sous forme de classe
      * @return array
@@ -34,12 +34,12 @@ class AdminController extends Controller {
             'csvexport'        => 'application.controllers.admin.CsvexportAction',
             'csvimport'        => 'application.controllers.admin.CsvimportAction',
             'csvimportprocess' => 'application.controllers.admin.CsvimportprocessAction',
-            'upload'           => 'application.controllers.admin.UploadAction',
-        );      
+            //'upload'           => 'application.controllers.admin.UploadAction',
+        );
     }
 
     /**
-     * Page d'accueil de l'administration. 
+     * Page d'accueil de l'administration.
      */
     public function actionIndex() {
         $this->render('index');
@@ -118,8 +118,8 @@ class AdminController extends Controller {
 
     /**
      * Affiche le formulaire d'étidion du journal ainsi que les abonnement liés.
-     * @param int $perunilid id du journal à éditer. Si aucun id n'est fourni, il 
-     *                       l'édition d'un nouveau journal est proposée. 
+     * @param int $perunilid id du journal à éditer. Si aucun id n'est fourni, il
+     *                       l'édition d'un nouveau journal est proposée.
      */
     public function actionPeredit($perunilid = NULL) {
 
@@ -136,9 +136,9 @@ class AdminController extends Controller {
             $model->attributes = $_POST['Journal'];
             if ($model->validate()) {
                 // Le formulaire est valide
-                // 
+                //
                 // GESTION DES SUJETS
-                // 
+                //
                 // Ne conserver que les sujet avec un nombre
                 $nouvsujets = array_filter($_POST['Journal']['sujet']);
                 // Pour chacun des sujet du journal :
@@ -163,9 +163,9 @@ class AdminController extends Controller {
                     $js->sujet_id = $sujet_id;
                     $js->save();
                 }
-                // 
+                //
                 // GESTION DES CORE COLLECTION
-                // 
+                //
                 // Ne conserver que les corecollection avec un nombre
                 $nouvcc = array_filter($_POST['Journal']['corecollection']);
                 // Pour chacun des sujet du journal :
@@ -234,10 +234,10 @@ class AdminController extends Controller {
             $abo->attributes = $_POST['Abonnement'];
             if (isset($_POST['Abonnement']['perunilid']) &&  $_POST['Abonnement']['perunilid'] != ""){
                 if(!Journal::model()->findByPk($_POST['Abonnement']['perunilid'])){
-                    Yii::app()->user->setFlash('error', 
+                    Yii::app()->user->setFlash('error',
                             "Le perunilid ({$_POST['Abonnement']['perunilid']}) n'est pas valable. ".
                             "L'ancienne valeur ($perunilid) a été restaurée.");
-                    $abo->perunilid = $perunilid;  
+                    $abo->perunilid = $perunilid;
                 }
             }
             if ($abo->validate()) {
@@ -288,50 +288,47 @@ class AdminController extends Controller {
         }
     }
 
-    /**
-     * Recherche administrative 
-     */
-    public function actionSearch() {
-        // Détermine le type d'affichage : par journal ou par abonnement
-        $affichage = 'abonnement';
-        if (isset(Yii::app()->session['affichage'])){
-            if (Yii::app()->session['affichage'] == 'journal'){
-                $affichage = 'journal';
-            }
-        }
-        // Mise à jour de l'option d'affichage
-        Yii::app()->session['affichage'] = $affichage;
-        
+    public function actionSearch(){
+
+        $this->activate_session_search_component();
+
+
         $this->last = null;
         $render_params = array();
-        $render_params['search_done'] = count($_GET);
+        $render_params['search_done'] = (isset($_GET['perunilidcrit1'])
+                                        && isset($_GET['embargocrit'])
+                                        && count($_GET) > 3);
 
         if ($render_params['search_done']) {
-            
-            $search = new SearchComponent();
-            if ($affichage == 'journal'){
-                $render_params['dataProvider'] = $search->adminSearch($_GET);
-            } else{ 
-                // Affichage par abonnement
-                $render_params['dataProvider'] = $search->aboadminSearch($_GET);
-            }
-            
-            // si la requête ne donne aucun résultat, on affiche un avertissement
-            if (!isset($render_params['dataProvider'])) {
-                $render_params['search_done'] = FALSE;
-                Yii::app()->user->setFlash('notice', "Votre requête n'a retourné aucun résultat.<br/>Recherche administrateur : " .
-                        $search->getQuerySummary());
-            } else {
-                // Si la requête a produit un résultat, on affiche le total et
-                // un résumé de la query.
-                Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-                        $render_params['dataProvider']->totalItemCount .
-                        " résultat(s).<br/>Recherche administrateur : " .
-                        $search->getQuerySummary());
-            }
-            $this->last = $_GET;
+
+            Yii::app()->session['search']->admin_query_tab = $_GET;
         }
+
+         if (isset(Yii::app()->session['search']->admin_query_tab)){
+             $render_params['search_done'] = true;
+             $this->last = Yii::app()->session['search']->admin_query_tab;
+        }
+
+
         $this->render('search', $render_params);
+
+}
+
+
+    public function actionSetaffichage ($affichage){
+        if ($affichage == 'journal'){
+            Yii::app()->session['search']->admin_affichage = 'journal';
+        }
+        else{
+            Yii::app()->session['search']->admin_affichage = 'abonnement';
+        }
+        $this->redirect($this->createUrl('admin/search'));
+    }
+
+
+    public function actionSearchclean(){
+        unset(Yii::app()->session['search']);
+        $this->actionSearchch();
     }
 
 
@@ -342,27 +339,27 @@ class AdminController extends Controller {
         if (!$model){
             throw new CException("Impossible d'instancier un objet de la calsse $type");
         }
-        
+
         // Si le formulaire a été remplis, on procède à l'ajout.
         if (isset($_POST[$type])) {
             $newvalue = $_POST[$type][$colname];
             $model->{$colname} = $newvalue;
             $model->save();
-            
+
             $result[] = array(
 	       //         'label' => "Ca marche! ",
 	                'value' => $newvalue,
 	                'id' => $id,
 	                //'field' => $m->attribute_for_another_field,
 	            );
-	 
+
 	    echo CJSON::encode($result);
             yii::app()->end();
         }
         // Affichage du formulaire
         else{
             $this->renderPartial(
-                    "_addSmallListEntryForm", 
+                    "_addSmallListEntryForm",
                     array(
                         'model' => $model,
                         'id'    => $id,
@@ -370,16 +367,16 @@ class AdminController extends Controller {
                     );
         }
     }
-    
+
     public function actionRefreshselect($type) {
         // Récupération de la classe de la liste
         $model=new $type();
         if (!$model){
             throw new CException("Impossible d'instancier un objet de la calsse $type");
         }
-        
+
          $this->renderPartial(
-                    "_refreshselect", 
+                    "_refreshselect",
                     array(
                         'model' => $model,
                         )
@@ -396,7 +393,7 @@ class AdminController extends Controller {
     }
 
     /**
-     * Recherche et consultation des modification 
+     * Recherche et consultation des modification
      */
     public function actionModifications() {
         //TODO : Implémenter la consultation des modifications
@@ -412,11 +409,11 @@ class AdminController extends Controller {
     }
 
     /**
-     * 1. Upload du fichier CSV 
+     * 1. Upload du fichier CSV
      * 2. Analyse du fichier pour en vérifier la conformité
      */
     /*public function actionAjaxupload(){
-        
+
         //
         // Imporation du fichier
         //
@@ -427,8 +424,8 @@ class AdminController extends Controller {
         $sizeLimit = 2 * 1024 * 1024; // maximum file size in bytes
         $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
         $result = $uploader->handleUpload($folder);
-        
-        
+
+
         //
         // Si le résulat est valable
         //
@@ -446,12 +443,12 @@ class AdminController extends Controller {
                 fclose($handle);
             }
         }
-        
+
         //
         // Renvoi des résulat
         //
         $result = htmlspecialchars(json_encode($result), ENT_NOQUOTES);
         echo $result; // it's array
     }*/
-    
+
 }

@@ -11,18 +11,30 @@ class SearchComponent extends CComponent {
     const JRNALL = 'jrnall'; // Recherche dans tous les champs publiques de la table Journal
 
     /**
-     * requête administrateur
+     * Requête de la recherche avancée
      * @var array 
      */
-    private $admin_query_tab;
 
+    private $adv_query_tab;
+    private $adv_criteria;
+    private $adv_dp;
 
     /**
-     * Valeur du champ de recherche tel qu'entré par l'utilisateur.
-     * @var string 
+     * Requête de la recherche simple
+     * @var type 
      */
+    private $simple_query_str;
+    private $simple_criteria;
+    private $simple_dp;
 
-    private $query;
+    /**
+     * Requête de la recherche administrateur
+     * @var type 
+     */
+    private $admin_query_tab;
+    private $admin_criteria;
+    private $admin_affichage;
+    private $admin_dp;
 
     /**
      * $query après les traitements de base
@@ -34,7 +46,7 @@ class SearchComponent extends CComponent {
      * Option pour la recherche simple. Définie en constante de classe.
      * @var string constante. Par défaut TWORD.
      */
-    private $search_type = self::TWORDS;
+    public $search_type = self::TWORDS;
 
     /**
      * Résumé de la recherce effectuée.
@@ -61,8 +73,15 @@ class SearchComponent extends CComponent {
      */
     public $pagesize = 30;
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Recherche avancée
+    ///////////////////////////////////////////////////////////////////////////
+    // Méthodes publiques
+    //===================
+
     /**
-     * Structure du tableau utilisé par multisearch :
+     * Assigne la requête de recherche avancée
+     * @param array $query_tab 
      * [C1][search_type] :  partout, titre, editeur, issn
      * [C1][text]        : texte libre de la recherche
      * [C1][op]          : Opérateur de liaison avec le criètre suivant
@@ -77,8 +96,54 @@ class SearchComponent extends CComponent {
      * [statutabo]    : Statutabo.statutabo_id, defaut all
      * [localisation] : Localisation.localisation_id, defaut all
      */
-    public function multisearch($querytab) {
+    public function setAdv_query_tab($query_tab) {
 
+        $this->adv_query_tab = $query_tab;
+        $this->adv_criteria = $this->advancedSearch();
+        //$this->adv_criteria_id = uniqid();
+    }
+
+    public function getAdv_query_tab() {
+        if (isset($this->adv_query_tab)) {
+            return $this->adv_query_tab;
+        } else {
+            return null;
+        }
+    }
+
+    public function getAdv_dp() {
+        /* if (isset($this->adv_dp)) {
+          if ($this->adv_dp_id == $this->adv_criteria_id) {
+          return $this->adv_dp;
+          }
+          }
+          // Première recherche ou recherche périmée : nouvelle recherche
+          $this->adv_dp_id = $this->adv_criteria_id; */
+        $this->adv_dp = new CActiveDataProvider(
+                        Journal::model(),
+                        array('criteria' => $this->adv_criteria,
+                            'pagination' => array('pageSize' => $this->pagesize))
+        );
+        return $this->adv_dp;
+    }
+
+    /* public function setAdv_dp($dp) {
+      $this->adv_dp = $dp;
+      } */
+
+    // Méthode privées
+    //================
+
+    /**
+     * Crée le critère de recherche pour la recherche avancée
+     * @return \CDbCriteria
+     * @throws CException 
+     */
+    private function advancedSearch() {
+        $this->q_summary = "";
+        if (!$this->adv_query_tab && !is_array($this->adv_query_tab)) {
+            throw new CException("Recherche avancée impossible : requête n'est enregistrée.");
+        }
         // TODO vérifier la validité du querytab
         //return $this->simplesearch($querytab['C1']['text']);
         $criteria = new CDbCriteria();
@@ -89,15 +154,15 @@ class SearchComponent extends CComponent {
             if (!isset($querytab[$CN]))
                 continue;
             // nettoyage du champ
-            $this->query = $querytab[$CN]['text'];
-            $this->q = $this->clean_search($this->query);
+            $this->simple_query_str = $querytab[$CN]['text'];
+            $this->q = $this->clean_search($this->simple_query_str);
             // si le champ ne contient rien , on abandonne ici.
             if ($this->q == "")
                 continue;
             $use_notlike = $querytab[$CN]['op'] == 'NOT';
             switch ($querytab[$CN]['search_type']) {
                 case 'issn':
-                    $criteria->compare('issn', trim($this->query), true, $querytab[$CN]['op']);
+                    $criteria->compare('issn', trim($this->simple_query_str), true, $querytab[$CN]['op']);
                     break;
                 case 'titre':
                     //$title_criteria = new CDbCriteria();
@@ -128,18 +193,9 @@ class SearchComponent extends CComponent {
                         }
                     }
 
-                    /* if (isset($title_criteria)){
-                      $criteria->mergeWith($title_criteria, ($querytab[$CN]['op'] == 'AND'));
-                      }
-                      if (isset($abo_criteria)){
-                      $criteria->mergeWith($abo_criteria, ($querytab[$CN]['op'] == 'AND'));
-                      } */
-
                     break;
             }
         }
-
-
 
         // Ajout des critère généraux
         if (isset($querytab['accessunil']) && !$querytab['accessunil'])
@@ -174,27 +230,53 @@ class SearchComponent extends CComponent {
             $criteria->addCondition("loc.localisation_id ='{$querytab['localisation']}'");
         }
 
-        return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria, 'pagination' => array(
-                        'pageSize' => $this->pagesize)));
+        return $criteria;
     }
 
-    /* public function sujetsearch($querytab) {
+    ///////////////////////////////////////////////////////////////////////////
+    // Recherche simple
+    ///////////////////////////////////////////////////////////////////////////
+    // Méthodes publiques
+    //===================
 
 
-      // Ajout de la jointure avec les abonnements, nécessaire avant d'autres
-      // jointures.
-      $this->joinAbo($criteria);
+    public function setSimple_query_str($query_str) {
 
-      //Critère de gestion
-      if ($querytab['sujet'] != '') {
-      $criteria->join .= 'LEFT JOIN `journal_sujet` `js` ON (`js`.`perunilid`=`t`.`perunilid`)';
-      $criteria->join .= 'LEFT JOIN `sujet` `s` ON (`s`.`sujet_id`=`js`.`sujet_id`)';
-      $criteria->addCondition("s.sujet_id ='{$querytab['sujet']}'");
-      }
+        $this->simple_query_str = $query_str;
+        $this->simple_criteria = $this->simplesearch();
+        //$this->simple_criteria_id = uniqid();
+    }
 
+    public function getSimple_query_str() {
+        if (isset($this->simple_query_str)) {
+            return $this->simple_query_str;
+        } else {
+            return null;
+        }
+    }
 
-      return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria));
+    public function getSimple_dp() {
+        /* if (isset($this->simple_dp)) {
+          if ($this->simple_dp_id == $this->simple_criteria_id) {
+          return $this->simple_dp;
+          }
+          }
+          // Première recherche ou recherche périmée : nouvelle recherche
+          $this->simple_dp_id = $this->simple_criteria_id; */
+        $this->simple_dp = new CActiveDataProvider(
+                        Journal::model(),
+                        array('criteria' => $this->simple_criteria,
+                            'pagination' => array('pageSize' => $this->pagesize))
+        );
+        return $this->simple_dp;
+    }
+
+    /*  public function setSimple_dp($dp) {
+      $this->simple_dp = $dp;
       } */
+
+    // Méthode privées
+    //================
 
     /**
      * Effectue un recherche sur une seul critère définit par
@@ -202,9 +284,9 @@ class SearchComponent extends CComponent {
      * @param string $query
      * @return CActiveDataProvider 
      */
-    public function simplesearch($query) {
-        $this->query = $query;
-        $this->q = $this->clean_search($this->query);
+    private function simplesearch() {
+        $this->q_summary = "";
+        $this->q = $this->clean_search($this->simple_query_str);
         // Si q ne contient qu'une seule lettre, on cherche TBEGIN
         if (strlen($this->q) == 1)
             $this->search_type = self::TBEGIN;
@@ -224,8 +306,9 @@ class SearchComponent extends CComponent {
                 throw new CException("Ce type de recherche ($this->search_type) n'est pas pris en charge.");
                 break;
         }
-        return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria, 'pagination' => array(
-                        'pageSize' => $this->pagesize)));
+        return $criteria;
+//        return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria, 'pagination' => array(
+//                        'pageSize' => $this->pagesize)));
     }
 
     /**
@@ -273,7 +356,7 @@ class SearchComponent extends CComponent {
         $like = $not_like ? "NOT LIKE" : "LIKE";
         $tokens = array();
         if ($this->search_type == self::TEXACT) {
-            $tokens[] = "$this->query";
+            $tokens[] = "$this->simple_query_str";
         } elseif ($this->search_type == self::TBEGIN) {
             $tokens[] = "$this->q%";
         } else { // Recherche de chaque mot indépendamment.
@@ -394,6 +477,70 @@ class SearchComponent extends CComponent {
         return $var;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Recherche administrateur
+    ///////////////////////////////////////////////////////////////////////////
+    // Méthodes publiques
+    //===================
+
+    public function setAdmin_query_tab($query_tab) {
+        $this->admin_query_tab = $query_tab;
+        $this->refreshAdminCriteria();
+    }
+
+    public function setAdmin_affichage($affichage = 'abonnement'){
+             
+        if ( $affichage == 'journal'){
+                $this->admin_affichage = 'journal';
+            
+        } else {
+            $this->admin_affichage = 'abonnement';
+        }
+        $this->refreshAdminCriteria();
+    }
+    
+    public function getAdmin_affichage(){
+        if (isset($this->admin_affichage) && in_array($this->admin_affichage, array("journal", "abonnement"))){
+            return $this->admin_affichage;
+        }
+        else {
+            return 'abonnement';
+        }
+    }
+
+    private function refreshAdminCriteria(){
+        $this->q_summary = "";
+         if (isset($this->admin_affichage) && $this->admin_affichage == 'journal'){
+                 $this->admin_criteria = $this->adminSearch();
+        } else {
+            $this->admin_criteria = $this->aboadminSearch();
+        }
+    }
+
+    public function getAdmin_criteria(){
+        return $this->admin_criteria;
+    }
+
+    public function getAdmin_query_tab() {
+        if (isset($this->admin_query_tab)) {
+            return $this->admin_query_tab;
+        } else {
+            return null;
+        }
+    }
+
+    public function getAdmin_dp() {
+        $affichage = ucfirst($this->getAdmin_affichage());
+
+        $this->admin_dp = new CActiveDataProvider(
+                        $affichage::model(),
+                        array('criteria' => $this->admin_criteria,
+                            'pagination' => array('pageSize' => $this->pagesize))
+        );
+
+        return $this->admin_dp;
+    }
+
     /**
      * Recherche selon un ou plusieurs critère du tableau $querytab : 
      *  [perunilidcrit1]	string	"equal"	
@@ -449,7 +596,8 @@ class SearchComponent extends CComponent {
      * @return CActiveDataProvider correspondant à la requête. NULL si aucun
      *                             critère n'a été fourni.
      */
-    public function adminSearch($qt) {
+    private function adminSearch() {
+        $qt = $this->admin_query_tab;
         $limite = 100;
         $ct = array('equal' => '=', 'before' => '<', 'after' => '>');
 
@@ -668,16 +816,21 @@ class SearchComponent extends CComponent {
             $criteria->addCondition("abonnements.embargo_mois " . $ct[$qt['embargocrit']] . " '" . $qt['embargo'] . "'");
             $this->query_summary("abonnements.embargo_mois " . $ct[$qt['embargocrit']] . " " . $qt['embargo']);
         }
-        // S'il n'y auncun critère, on ne revoie rien.
-        if (!$criteria->condition) {
-            return NULL;
-        } else {
-            return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria, 'pagination' => array(
-                            'pageSize' => $this->pagesize)));
-        }
+        return $criteria;
+        /*
+          // S'il n'y auncun critère, on ne revoie rien.
+          if (!$criteria->condition) {
+          return NULL;
+          } else {
+          return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria, 'pagination' => array(
+          'pageSize' => $this->pagesize)));
+          }
+         * 
+         */
     }
 
-    public function aboadminSearch($qt) {
+    private function aboadminSearch() {
+        $qt = $this->admin_query_tab;
         $limite = 100;
         $ct = array('equal' => '=', 'before' => '<', 'after' => '>');
 
@@ -895,13 +1048,19 @@ class SearchComponent extends CComponent {
             $criteria->addCondition("t.embargo_mois " . $ct[$qt['embargocrit']] . " '" . $qt['embargo'] . "'");
             $this->query_summary("t.embargo_mois " . $ct[$qt['embargocrit']] . " " . $qt['embargo']);
         }
-        // S'il n'y auncun critère, on ne revoie rien.
-        if (!$criteria->condition) {
-            return NULL;
-        } else {
-            return new CActiveDataProvider(Abonnement::model(), array('criteria' => $criteria, 'pagination' => array(
-                            'pageSize' => $this->pagesize)));
-        }
+
+        return $criteria;
+        /*
+
+          // S'il n'y auncun critère, on ne revoie rien.
+          if (!$criteria->condition) {
+          return NULL;
+          } else {
+          return new CActiveDataProvider(Abonnement::model(), array('criteria' => $criteria, 'pagination' => array(
+          'pageSize' => $this->pagesize)));
+          }
+
+         */
     }
 
     private function query_summary($log) {

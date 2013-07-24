@@ -31,5 +31,15 @@ class Controller extends CController {
      */
     public $breadcrumbs = array();
     
+    
+    protected function activate_session_search_component(){
+        if(isset(Yii::app()->session['search']) && Yii::app()->session['search'] instanceof SearchComponent ){
+            return;
+        }
+        else{
+            Yii::app()->session['search'] = new SearchComponent();
+        }
+    }
+        
 }
 

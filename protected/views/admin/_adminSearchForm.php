@@ -58,6 +58,9 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
             <td><?=  CHtml::submitButton("Chercher");?>
                 &nbsp;&nbsp;<?=CHtml::resetButton("Vider le formulaire");?></td>
         </tr>
+        <tr class="odd" style="background-color : #E8F8EC;">
+            <td><b>Tous les champs de la table journal</b></td><td class="odd"><input type="text" value="<?=r($this,'all');?>" size="60" name="all"></td>
+        </tr>
         <tr class="even">
             <td ><b>PerunilID</b></td><td class="odd"><select name="perunilidcrit1">
                     <option value="equal" <?=r($this,'perunilidcrit1',"equal" ,'selected');?>>=</option>
@@ -72,22 +75,20 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
                 </select>&nbsp;&nbsp;
                 <input type="text" value="<?=r($this,'perunilid2');?>" size="10" name="perunilid2"></td>
         </tr>
-        <tr class="odd"">
-            <td><b>Tous les champs</b></td><td class="odd"><input type="text" value="<?=r($this,'all');?>" size="60" name="all"></td>
-        </tr>
-        <tr class="odd"">
+ 
+        <tr class="odd">
             <td><b>Titre</b></td><td class="odd"><input type="text" value="<?=r($this,'titre');?>" size="60" name="titre"></td>
         </tr>
         <tr class="even">
             <td><b>Sous titre</b></td><td><input type="text" value="<?=r($this,'soustitre');?>" size="60" name="soustitre"></td>
         </tr>
-        <tr class="odd"">
+        <tr class="odd">
             <td><b>Titre abregé</b></td><td class="odd"><input type="text" value="<?=r($this,'titreabrege');?>" size="60" name="titreabrege"></td>
         </tr>
         <tr class="even">
             <td><b>Variante de titre</b></td><td><input type="text" value="<?=r($this,'variantetitre');?>" size="60" name="variantetitre"></td>
         </tr>
-        <tr class="odd"">
+        <tr class="odd">
             <td><b>Fait suite à</b></td><td class="odd"><input type="text" value="<?=r($this,'faitsuitea');?>" size="60" name="faitsuitea"></td>
         </tr>
         <tr class="even">

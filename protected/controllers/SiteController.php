@@ -29,34 +29,19 @@ class SiteController extends Controller {
     public function actionIndex() {
         $render_params = array();
 
-        $this->support = isset($_GET['support']) ? $_GET['support'] : '0';
-        $this->field   = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
+        $this->activate_session_search_component();
 
         $render_params['search_done'] = isset($_GET['q']) && trim($_GET['q']) != "";
 
-        // Si la recherche a été effectuée
+        // Si une nouvelle recherche a été effectuée
         if ($render_params['search_done']) {
-            // Initialisation du composant de recherche
-            $search = new SearchComponent();
-            $search->search_type = $this->field;
-            $search->support = $this->support;
-            
-            // Sauvegarde du DataProvider dans la session
-            Yii::app()->session['search_query']        = $_GET['q'];
-            Yii::app()->session['search_dataprovider'] = $search->simplesearch($_GET['q']);
-            Yii::app()->session['search_querySummary'] = $search->getQuerySummary();
-            
+            Yii::app()->session['search']->support      = isset($_GET['support']) ? $_GET['support'] : '0';
+            Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
+            Yii::app()->session['search']->simple_query_str = $_GET['q'];   
         }
-        
-        // Si une recherche a été effectuée ou a été sauvegardée
-        if (isset(Yii::app()->session['search_dataprovider'])){
+        // Si une recherche a été sauvegardée
+        if (isset(Yii::app()->session['search']->simple_query_str)){
              $render_params['search_done'] = true;
-             //$render_params['dataProvider'] = Yii::app()->session['search_dataprovider'];
-            // Affichage des résulats de la requête
-            Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-                    Yii::app()->session['search_dataprovider']->totalItemCount .
-                    " résultat(s).<br/>" .
-                    Yii::app()->session['search_querySummary']);
         }
         
         // Affichage du formulaire de recherche et év. des résultats.
@@ -69,28 +54,36 @@ class SiteController extends Controller {
     public function actionAdv() {
         $render_params = array();
 
-        $this->support = isset($_GET['support']) ? $_GET['support'] : '0';
-        $this->field = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
+        $this->activate_session_search_component();
 
         $render_params['search_done'] = isset($_GET['advsearch']) && trim($_GET['advsearch']) == "advsearch";
-
+        
+        // Si une nouvelle recherche a été effectuée
         if ($render_params['search_done']) {
-            //TODO : vérification des données post
-            $search = new SearchComponent();
-            $search->support = $this->support;
-            Yii::app()->session['advsearch_dataprovider'] = $search->multisearch($_GET);
+            Yii::app()->session['search']->support = isset($_GET['support']) ? $_GET['support'] : '0';
+            Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
+            Yii::app()->session['search']->adv_query_tab = $_GET;
             
-            // On renvoie les donnée du formulaire vers l'affichage pour préremplir le formulaire
-            $render_params['lastadvsearch'] = $_GET;
-            Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-                    Yii::app()->session['advsearch_dataprovider']->totalItemCount .
-                    " résultat(s).<br/>" .
-                    $search->getQuerySummary());
+            Yii::app()->session['last_search_url'] = $_SERVER['REQUEST_URI'];
         }
-        $render_params['advsearch'] = true; // affichage de la recherche avancée.
+        
+        // Si une recherche a été sauvegardée
+        if (isset(Yii::app()->session['search']->adv_query_tab)){
+             $render_params['search_done'] = true;
+        }
+        // affichage de la recherche avancée.
+        $render_params['advsearch'] = true;  
+        
+        // Affichage du formulaire de recherche et év. des résultats.
         $this->render('publicSearch', $render_params);
     }
 
+    public function actionAdvclean(){
+        unset(Yii::app()->session['search']);
+        $this->actionAdv();
+    }
+    
+    
     public function actionSujet() {
         $this->render('sujet');
     }
