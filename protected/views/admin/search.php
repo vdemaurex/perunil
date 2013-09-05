@@ -9,16 +9,19 @@ if ($search_done) {
 
     // si la requête ne donne aucun résultat, on affiche un avertissement
     if (!isset($dataProvider)) {
+        Yii::app()->session['totalItemCount'] = 0;
         Yii::app()->user->setFlash('notice', "Votre requête n'a retourné aucun résultat.<br/>Recherche administrateur : " .
                 Yii::app()->session['search']->getQuerySummary());
         $search_done = FALSE;
     } else {
         // Si la requête a produit un résultat, on affiche le total et
         // un résumé de la query.
+        Yii::app()->session['totalItemCount'] = $dataProvider->totalItemCount;
         Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-                $dataProvider->totalItemCount .
+                Yii::app()->session['totalItemCount'] .
                 " résultat(s).<br/>Recherche administrateur : " .
                 Yii::app()->session['search']->getQuerySummary());
+                
     }
 }
 
@@ -47,19 +50,24 @@ if ($search_done) {
     </script>
     <div>
         <?php
+        // Boutons affichés dans tous les cas
         echo CHtml::button('Nouvelle recherche', array(
             'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/searchclean')) . '"'));
+                echo CHtml::button('Exporter en CSV', array(
+                'onclick' => 'js:document.location.href="' . $this->createUrl('admin/csvexport') . '"'));
+        // Boutons lorsque l'affichage se fait par journal
         if (Yii::app()->session['search']->admin_affichage == 'journal') {
             echo CHtml::button('Affichage par abonnements', array(
                 'onclick' => 'js:document.location.href="' . $this->createUrl('admin/setaffichage', array('affichage' => 'abonnement')) . '"'));
         } else {
+        // Boutons lorsque l'affichage se fait par abonnements
             echo CHtml::button('Affichage par journal', array(
                 'onclick' => 'js:document.location.href="' . $this->createUrl('admin/setaffichage', array('affichage' => 'journal')) . '"'));
-        }
-        echo CHtml::button('Exporter en CSV', array(
-                'onclick' => 'js:document.location.href="' . $this->createUrl('admin/csvexport') . '"'));
-        echo CHtml::button('Modification par lot', array(
+            echo CHtml::button('Modification par lot', array(
                 'onclick' => 'js:document.location.href="' . $this->createUrl('admin/batchprocessing') . '"'));
+        }
+
+
         ?>
     </div>
         <?php
@@ -99,8 +107,8 @@ if ($search_done) {
             //'titreexclu',
             $columns[] = 'package';
             //'no_abo',
-            if ($this->last['support'] != 2)
-                $columns[] = 'url_site';
+            //if ($this->last['support'] != 2)
+            //    $columns[] = 'url_site';
             /* array(
               'name' => 'acces_elec_gratuit',
               'type' => 'boolean',
@@ -122,7 +130,7 @@ if ($search_done) {
                 $columns[] = 'cote';
             //'editeur_code',
             //'editeur_sujet',
-            $columns[] = 'commentaire_pro';
+            //$columns[] = 'commentaire_pro';
             $columns[] = 'commentaire_pub';
             //'plateforme',
             $columns[] = array(

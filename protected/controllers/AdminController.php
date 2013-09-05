@@ -5,8 +5,31 @@ class AdminController extends Controller {
     public $support = 0;
     public $last = null; // Dernier formulaire reçu.
 
-    //public $field;
+    // Type de champs
+    public $textfields = array(
+        'package',
+        'no_abo',
+        'etatcoll',
+        'cote',
+        'editeur_sujet',
+        'acces_user',
+        'acces_pwd',
+        'url_site',
+        'editeur_code',
+        'commentaire_pro',
+        'commentaire_pub');
 
+    public $abolinks = array(
+        'plateforme',
+        'editeur',
+        'histabo',
+        'statutabo',
+        'localisation',
+        'gestion',
+        'format',
+        'support',
+        'licence');
+    
     public function filters() {
         return array(
             'accessControl',
@@ -45,15 +68,186 @@ class AdminController extends Controller {
         $this->render('index');
     }
 
+    /**
+     * Traite le formulaire de modification par lot, affiche la confirmation et applique les modifications.
+     * 
+     * @return null
+     */
+    public function actionBatchprocessing()
+    {
+        
+        $add_text = isset($_POST['add_text']) && $_POST['add_text'] == false ? false : true;
+        $stage = isset($_POST['stage']) ? $_POST['stage'] : "1-form";
 
+        switch ($stage) {
+            
+        case '1-form':
+            // Nettoyage des variables de session
+            if (isset(Yii::app()->session['updt']))unset(Yii::app()->session['updt']);
+            // Etape 1 : le formulaire n'a pas été rempli
+            break;
+        
+        
+        case '2-preview':
+            // Etape 2 : le formulaire est rempli, affichage de la confirmation
+            $a = $_POST['Abonnement'];
+            $updt = array();
+            
+            // Traitement des boolean    
+            foreach (array('titreexclu','acces_elec_unil','acces_elec_chuv', 'acces_elec_gratuit') as $boolinput) {
+                if (isset($a[$boolinput]) && ($a[$boolinput] == '1' || $a[$boolinput] == '0' )){
+                    
+                    $updt[$boolinput] = $a[$boolinput];
+                }    
+            }
+            
+            // Traitement des nombres
+            foreach (array('embargo_mois','etatcoll_deba','etatcoll_debv','etatcoll_debf','etatcoll_fina','etatcoll_finv','etatcoll_finf') as $num){
+                if (isset($a[$num]) && ctype_digit($a[$num]) ){
+                    $updt[$num] = $a[$num];
+                }
+            }
+            
+            // Vérification des liens
+            foreach ($this->abolinks as $link){
+                if (isset($a[$link]) && ctype_digit($a[$link]) ){
+                    $class = ucfirst($link);
+                    if ($class::model()->findByPk($a[$link])){
+                        $updt[$link] = $a[$link];
+                    }
+                }
+            }
+            
+            // Traitement des textes
+            $text_to_update = false;
+            foreach ($this->textfields as $txt){
+                if (isset($a[$txt]) && trim($a[$txt]) != ""){
+                    $updt[$txt] = $a[$txt];
+                    $text_to_update = true;
+                }
+            }
+            
+            // Si aucun changement
+            if (count($updt)< 1){
+                Yii::app()->user->setFlash('notice', "Il n'y a aucun changement à appliquer sur ce lot.");
+                $stage = '1-form';
+            }
+            
+            //Affichage des changements
+            Yii::app()->session['updt'] = $updt;
+            $rp['updt'] = $updt;
+            break;
+            
+            
+        case '3-done':
+            // Etape 3 : la confirmation a été validée, application des changements
+            // Etape possible seulement si Yii::app()->session['updt'] est défini. 
+            // Sinon on affiche un message d'erreur et on retourne à l'étape 1
+            if (!isset(Yii::app()->session['updt']) && !is_array(Yii::app()->session['updt'])){
+                Yii::app()->user->setFlash('error', "Impossible de traiter ce lot, merci de recommencer votre requête.");
+                $stage = '1-form';
+                break;
+            }
+            
+            // Traitement des confirmations utilisateur
+            $oldupdt = Yii::app()->session['updt'];
+            $updt = array();
+            // récupération des champs séléctionnés
+            foreach ($_POST as $key => $checked){
+                if (isset($oldupdt[$key])){
+                    // Cette entrée de post est un attibut de la table Abonnement
+                    // On ne conserve les données que si elles ont été validées par l'utilisateur.
+                    if ($checked){
+                        $updt[$key] = $oldupdt[$key];
+                    }
+                }
+            }
+            // Mise à jour des données de session
+            Yii::app()->session['updt'] = $updt;
+            
+            // Application des mise à jours
+            $update_results = array(
+                true => array(), // update réussis
+                false => array()); // update échoués
+            $nbr_rows = 0; // nombre de lignes mises à jour
+            
+            // Mise à jour de tous les éléments du lot
+            foreach (Abonnement::model()->findAll(Yii::app()->session['search']->admin_criteria) as $abo){
+                // Si le text doit être ajouter aux champs texte, il faut un traitement a part.
+                $updt_local = $updt;
+                if ($add_text){
+                    
+                    foreach ($this->textfields as $textfield) {
+                        if (isset($updt_local[$textfield])){
+                            $updt_local[$textfield] = $abo->$textfield . " " . $updt[$textfield];
+                        }
+                    }
+                }
+                // Application de la mise à jour
+                $result = Abonnement::model()->updateByPk($abo->abonnement_id,$updt_local);
+                // Collecte des statistiques
+                $update_results[$result][] =  $abo->abonnement_id;
+                $nbr_rows ++;
+                unset($updt_local);
+            }
+            if (count($update_results[false]) == 0){
+                Yii::app()->user->setFlash('success', "<strong>La modification par lot a réussi.</strong><br/>".
+                        "Modification de $nbr_rows lignes sur un total de " . Yii::app()->session['totalItemCount'] . ".");
+            }
+            else{
+                if (count($update_results[true]) == 0){
+                   Yii::app()->user->setFlash('error', "<strong>La modification par lot a échoué, aucune ligne n'a été modifiée.</strong><br/>".
+                        "Modification de $nbr_rows lignes sur un total de " . Yii::app()->session['totalItemCount'] . ".");
+                }
+                else{
+                    Yii::app()->user->setFlash('notice', "<strong>La modification par lot n'a pu être appliquée que partiellement.</strong><br/>".
+                        "Modification de $nbr_rows lignes sur un total de " . Yii::app()->session['totalItemCount'] . ".");
+                }
+            }
+             $rp['updt'] = Yii::app()->session['updt'];
+             $rp['update_results'] = $update_results;
+             // Suppression de la liste des update pour éviter une nouvelle mise à jour accidentelle
+             if (isset(Yii::app()->session['updt']))unset(Yii::app()->session['updt']);
+            break;
+        
+        default: //unknown option
+            throw new CException("L'action '$stage' n'existe pas. Impossible de procéder à la modification par lot.", 1);
+            break;
+        }
+        
+        $rp['add_text'] = $add_text;
+        $rp['stage'] = $stage;
+        $this->render('batchprocessing',$rp);
+        
+    }
+
+
+
+    /**
+     * Affichage de la liste d'abonnement destiné à la modification par lot
+     * 
+     * @return null
+     */
+    public function actionGridViewDialog()
+    {
+        if (Yii::app()->session['search']->admin_affichage != 'abonnement') {
+            Yii::app()->session['search']->admin_affichage = 'abonnement';
+        }
+        $this->layout='dialog';
+        $this->render('gridviewdialog');
+    }
+    
     /**
      * Fusionne les journaux selon les information de $_POST :
      * - Liste des perunilid des journaux à fusionner.
      * - Perunilid du journal qui sera conserver.
      * La fonction renvoie l'utilisateur à la page précdente, en affichant avec
      * le Flash le résultat de la fusion.
+     *
+     * @return null
      */
-    public function actionFusion() {
+    public function actionFusion() 
+    {
         // Définition de l'URL de retour.
         if (!isset($_POST['REQUEST_URI'])) {
             $returnUrl = Yii::app()->user->returnUrl;
@@ -65,14 +259,18 @@ class AdminController extends Controller {
         try {
             // Vérifier que la liste des ID est > 1
             if (!isset($_POST['perunilid']) || count($_POST['perunilid']) < 2) {
-                throw new Exception("La liste des journaux à fusionner comporte moins de 2 " .
-                        "éléments. Impossible de réaliser la fusion.");
+                throw new Exception(
+                    "La liste des journaux à fusionner comporte moins de 2 " .
+                    "éléments. Impossible de réaliser la fusion."
+                );
             }
             // Vérifier que le maître est dans la liste des ID
             if (!isset($_POST['maitre']) || !in_array($_POST['maitre'], $_POST['perunilid'])) {
-                throw new Exception("Pour réaliser la fusion, il est nécessaire de définir " .
-                        "le journal qui sera la notice modèle, auquel les " .
-                        "abonnements seront attachés.");
+                throw new Exception(
+                    "Pour réaliser la fusion, il est nécessaire de définir " .
+                    "le journal qui sera la notice modèle, auquel les " .
+                    "abonnements seront attachés."
+                );
             }
         } catch (Exception $exc) {
             Yii::app()->user->setFlash('error', "<h3>La fusion des journaux a échoué. </h3>" . $exc->getMessage());
@@ -118,10 +316,14 @@ class AdminController extends Controller {
 
     /**
      * Affiche le formulaire d'étidion du journal ainsi que les abonnement liés.
+     * 
      * @param int $perunilid id du journal à éditer. Si aucun id n'est fourni, il
      *                       l'édition d'un nouveau journal est proposée.
+     *                       
+     * @return null
      */
-    public function actionPeredit($perunilid = NULL) {
+    public function actionPeredit($perunilid = null) 
+    {
 
         //$this->layout = 'rightSidebar';
         if (isset($perunilid)) {
@@ -148,10 +350,9 @@ class AdminController extends Controller {
                     $key = array_search($sujet->sujet_id, $nouvsujets);
                     if ($key === false) {
                         $sujet->delete();
-                    }
-                    // Si le sujet existe dans la liste des nouveaux sujets
-                    //    Supprimer le sujet de liste des nouveaux sujets
-                    else {
+                    } else {
+                        // Si le sujet existe dans la liste des nouveaux sujets
+                        //    Supprimer le sujet de liste des nouveaux sujets
                         unset($nouvsujets[$key]);
                     }
                 }
@@ -175,10 +376,9 @@ class AdminController extends Controller {
                     $key = array_search($cc->biblio_id, $nouvcc);
                     if ($key === false) {
                         $cc->delete();
-                    }
-                    // Si le sujet existe dans la liste des nouveaux sujets
-                    //    Supprimer le sujet de liste des nouveaux sujets
-                    else {
+                    } else {
+                        // Si le sujet existe dans la liste des nouveaux sujets
+                        //    Supprimer le sujet de liste des nouveaux sujets
                         unset($nouvcc[$key]);
                     }
                 }
@@ -328,7 +528,7 @@ class AdminController extends Controller {
 
     public function actionSearchclean(){
         unset(Yii::app()->session['search']);
-        $this->actionSearchch();
+        $this->actionSearch();
     }
 
 

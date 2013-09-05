@@ -18,7 +18,7 @@ if (isset($advsearch) && $advsearch) {
 <div class="clear"><p>&nbsp;</p></div>
 
 
-<?
+<?php
 // On affiche la zone des résultats uniquement si un recherche existe. 
 if ($search_done) {
 
@@ -39,8 +39,9 @@ if ($search_done) {
 
 
     // Affichage des résulats de la recherche
+    Yii::app()->session['totalItemCount'] = Yii::app()->session['search']->$dataProviderName->totalItemCount;
     Yii::app()->user->setFlash('success', "Votre requête a retourné " .
-            Yii::app()->session['search']->$dataProviderName->totalItemCount .
+            Yii::app()->session['totalItemCount'] .
             " résultat(s).<br/>" .
             Yii::app()->session['search']->getQuerySummary());
 } 

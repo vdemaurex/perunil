@@ -715,6 +715,7 @@ class SearchComponent extends CComponent {
                 $ids[$model] = join("','", array_map('current', $perunilids));
             }
 
+            // FIXME : ne pas ajouter la condition si $ids[$model] est vide.
             $criteria->addCondition("t.perunilid IN ('{$ids['journal']}') OR abonnements.abonnement_id IN ('{$ids['abonnement']}')");
         } // Modifications
         // Recherche tous les champs
@@ -947,7 +948,7 @@ class SearchComponent extends CComponent {
             $perunilids = $cmd->queryAll(true, $where_array);
             $ids = join("','", array_map('current', $perunilids));
             // Ajout de la liste des ids concerné par la modification
-            $criteria->addCondition("t.perunilid IN ('$ids') ')");
+            $criteria->addCondition("t.perunilid IN ('$ids')");
         } // Modifications
         // Recherche tous les champs
         if (trim($qt['all'])) {
