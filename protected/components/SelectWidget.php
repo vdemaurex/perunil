@@ -38,8 +38,8 @@ class SelectWidget extends CWidget {
     }
 
     public function run() {
-        if (!$this->ajax)echo "<div style=\"display: inline;\" id=\"{$this->select_id}div\">";
-        echo '<select name="' . $this->select_name . '" id="' . $this->select_id . '">';
+        if (!$this->ajax)echo "<div style=\"display: inline-block;\" id=\"{$this->select_id}div\">";
+        echo '<select name="' . $this->select_name . '" id="' . $this->select_id . '" class="form-control input-sm form-inline" style="width: auto;">';
         echo '<option value="">' . $this->defaultlabel . '</option>';
         // La table sujet a deux sous-groupes, elle est traitée à part
         if ($this->tbl_name == 'Sujet') {
@@ -76,8 +76,11 @@ class SelectWidget extends CWidget {
          if ($this->frm_classname) {
             $divid = $this->select_id . 'Dialog';
 
-            echo CHtml::ajaxButton(
-                    "+", Yii::app()->createUrl("admin/addSmallListEntry/type/$this->tbl_name/id/$this->select_id"), array('update' => '#' . $divid), array('onclick' => '$("#' . $divid . '").dialog("open");')
+            echo " ".CHtml::ajaxButton(
+                    "+", 
+                    Yii::app()->createUrl("admin/addSmallListEntry/type/$this->tbl_name/id/$this->select_id"), 
+                    array('update' => '#' . $divid), 
+                    array('onclick' => '$("#' . $divid . '").dialog("open");', 'class' => "btn btn-default btn-sm")
             );
 
             // Affichage du dialogue

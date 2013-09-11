@@ -4,16 +4,15 @@ $this->breadcrumbs=array(
 	'Aboedit',
 );
 
-$this->widget('ext.tooltipster.tooltipster', array('options'=>array('position'=>'bottom')));
 //
 // Affichage du titre de la page
 //
 ?>
 <h1><?=$jrn->titre;?></h1>
 
-<div id="tabs">
-    <ul>
-        <li><?= CHtml::link(" Fiche journal ", CController::createUrl('admin/peredit/perunilid/' . $jrn->perunilid), array('title' => "Editer la fiche du périodique",'class' => "tooltipster")) ?></li> 
+
+    <ul class="nav nav-tabs">
+        <li><?= CHtml::link(" Fiche journal ", CController::createUrl('admin/peredit/perunilid/' . $jrn->perunilid), array('title' => "Editer le journal")) ?></li> 
         <?php
         
        // Si le journal contient des abonnements, on les affiche
@@ -35,15 +34,18 @@ $this->widget('ext.tooltipster.tooltipster', array('options'=>array('position'=>
                     $abotitle .= "Abonnement n°" . $abo->abonnement_id;
                 }
                 
-                // Affichage du lien, class selected si nécessaire
+                // Affichage du lien, définition de l'onglet active
                 if ($abo->abonnement_id == $model->abonnement_id){
-                    echo "<li>".CHtml::link($abotitle,'#',array("class"=>"selected"))."</li>";
+                    echo '<li class="active">'.CHtml::link($abotitle,'#')."</li>";
                 } else {
-                    echo "<li>" . CHtml::link(
-                            $abotitle, 
-                            CController::createUrl('/admin/aboedit/perunilid/'.$jrn->perunilid .'/aboid/' . $abo->abonnement_id),
-                            array('title' => $abo->htmlShortDescription(), 'class' => "tooltipster")
-                            ) . "</li>";
+                    $id = "abo". $abo->abonnement_id;
+                    ?><li><a href="<?= CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid . '/aboid/' . $abo->abonnement_id); ?>"
+                       data-content="<?= $abo->htmlShortDescription(); ?>" rel="popover" data-original-title=""
+                       data-toggle="popover"  data-placement="bottom" id="<?= $id ?>"><?= $abotitle ?></a></li>
+                    <script>
+                        $('#<?= $id; ?>').popover({ html : true, trigger: "hover" });
+                    </script>
+                    <?php
                 }
             }
         }
@@ -53,13 +55,13 @@ $this->widget('ext.tooltipster.tooltipster', array('options'=>array('position'=>
             if ($model->getIsNewRecord()){
                 echo CHtml::link($addabo, '#',array("class"=>"selected"));
             }else{
-                echo CHtml::link($addabo, CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid), array('title' => "Ajouter un abonnement",'class' => "tooltipster"));
+                echo CHtml::link($addabo, CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid), array('title' => "Ajouter un abonnement"));
             }
             echo "</li>";
         }
         ?>
     </ul>
-</div>
+
 <br/>
 
 <?

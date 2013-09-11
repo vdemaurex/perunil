@@ -3,12 +3,11 @@
 <h1>Recherche sur <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
 <?php
-
-if (isset($advsearch) && $advsearch) { 
+if (isset($advsearch) && $advsearch) {
     // Recherche avancée
     $dataProviderName = 'adv_dp';
     $this->renderPartial('_advSearch');
-} else { 
+} else {
     // Affichage de la recherche simple 
     $dataProviderName = 'simple_dp';
     $this->renderPartial('_simpleSearch');
@@ -22,12 +21,43 @@ if (isset($advsearch) && $advsearch) {
 // On affiche la zone des résultats uniquement si un recherche existe. 
 if ($search_done) {
 
+    // Affichage des résultat pour le publique
     if (Yii::app()->user->isGuest) {
         $widget = 'zii.widgets.CListView';
         $view = '_view';
-    } else { // admin
+    }
+    // Affichage des résultat pour les administrateurs
+    else {
         $widget = 'AdminCListView';
         $view = '/admin/_adminView';
+
+        // Boutons affichés dans tous les cas
+        echo '<div class="btn-group">';
+        echo CHtml::button('Nouvelle recherche', array(
+            'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/searchclean')) . '"',
+            'class' => "btn btn-default"));
+
+        // Boutons lorsque l'affichage se fait par journal
+        if (Yii::app()->session['search']->admin_affichage == 'journal') {
+            echo " " . CHtml::button('Affichage par abonnements', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/setaffichage', array('affichage' => 'abonnement')) . '"',
+                'class' => "btn btn-default"));
+        } else {
+            // Boutons lorsque l'affichage se fait par abonnements
+            echo " " . CHtml::button('Affichage par journal', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/setaffichage', array('affichage' => 'journal')) . '"',
+                'class' => "btn btn-default"));
+            echo " " . CHtml::button('Modification par lot', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/batchprocessing') . '"',
+                'class' => "btn btn-default"));
+        }
+        echo " " . CHtml::button('Exporter en CSV', array(
+            'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/csvexport') . '"',
+            'class' => "btn btn-default"));
+        echo " " . CHtml::submitButton(
+                'Fusionner les éléments sélectionnés', array('class' => "btn btn-default",
+            'form' => "fusionform"));
+        echo "</div>";
     }
 
     $this->widget($widget, array(
@@ -44,10 +74,7 @@ if ($search_done) {
             Yii::app()->session['totalItemCount'] .
             " résultat(s).<br/>" .
             Yii::app()->session['search']->getQuerySummary());
-} 
-
-
-else { // Si aucune recherche, on affiche les logo des plateformes
+} else { // Si aucune recherche, on affiche les logo des plateformes
     ?>
     <hr/>
     <h2>Accès direct aux principales plateformes</h2>

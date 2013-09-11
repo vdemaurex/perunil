@@ -4,7 +4,6 @@ $this->breadcrumbs = array(
     'Peredit',
 );
 
-
 //
 // Affichage du titre de la page
 //
@@ -16,9 +15,9 @@ if ($model->getIsNewRecord()) {
     echo "<h1>$model->titre</h1>\n";
 }
 ?>
-<div id="tabs">
-    <ul>
-        <li><a href="#" rel="url1" class="selected">Fiche journal</a></li> 
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#" rel="url1" >Fiche journal</a></li> 
         <?php
         if (isset($model->abonnements)) {
             foreach ($model->abonnements as $abo) {
@@ -36,9 +35,14 @@ if ($model->getIsNewRecord()) {
                 }
 
                 // Affichage du lien
-                    echo "<li>" . CHtml::link(
-                            $abotitle, CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid . '/aboid/' . $abo->abonnement_id), array('title' => $abo->htmlShortDescription(), 'class' => "tooltipster")
-                    ) . "</li>";
+                $id = "abo". $abo->abonnement_id;
+                ?><li><a href="<?= CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid . '/aboid/' . $abo->abonnement_id); ?>"
+                       data-content="<?= $abo->htmlShortDescription(); ?>" rel="popover" data-original-title=""
+                       data-toggle="popover"  data-placement="bottom" id="<?= $id ?>"><?= $abotitle ?></a></li>
+                    <script>
+                        $('#<?= $id; ?>').popover({ html : true, trigger: "hover" });
+                    </script>
+                    <?php
                 
             }
         }
@@ -46,12 +50,12 @@ if ($model->getIsNewRecord()) {
 
         if (!$model->getIsNewRecord()) {
             echo "<li>" .
-            CHtml::link(CHtml::image(Yii::app()->baseUrl . "/images/add16.png", "Ajouter"), CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid)) .
-            "</li>";
+            CHtml::link(CHtml::image(Yii::app()->baseUrl . "/images/add16.png", "Ajouter"), CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid), array('title' => "Ajouter un abonnement")) .
+                    "</li>";
         }
         ?>
     </ul>
-</div>
+
 
 
 <?

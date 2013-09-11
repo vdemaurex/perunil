@@ -48,28 +48,9 @@ if ($search_done) {
 
         });
     </script>
-    <div>
-        <?php
-        // Boutons affichés dans tous les cas
-        echo CHtml::button('Nouvelle recherche', array(
-            'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/searchclean')) . '"'));
-                echo CHtml::button('Exporter en CSV', array(
-                'onclick' => 'js:document.location.href="' . $this->createUrl('admin/csvexport') . '"'));
-        // Boutons lorsque l'affichage se fait par journal
-        if (Yii::app()->session['search']->admin_affichage == 'journal') {
-            echo CHtml::button('Affichage par abonnements', array(
-                'onclick' => 'js:document.location.href="' . $this->createUrl('admin/setaffichage', array('affichage' => 'abonnement')) . '"'));
-        } else {
-        // Boutons lorsque l'affichage se fait par abonnements
-            echo CHtml::button('Affichage par journal', array(
-                'onclick' => 'js:document.location.href="' . $this->createUrl('admin/setaffichage', array('affichage' => 'journal')) . '"'));
-            echo CHtml::button('Modification par lot', array(
-                'onclick' => 'js:document.location.href="' . $this->createUrl('admin/batchprocessing') . '"'));
-        }
+    
 
-
-        ?>
-    </div>
+    
         <?php
         // Choix du type d'affichage
         if (Yii::app()->session['search']->admin_affichage == 'journal') {

@@ -53,7 +53,7 @@
 class Abonnement extends CActiveRecord {
 
     public $journal_titre;
-    
+
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -88,7 +88,7 @@ class Abonnement extends CActiveRecord {
             array('editeur_code', 'length', 'max' => 100),
             array('commentaire_pro, commentaire_pub', 'length', 'max' => 500),
             array('perunilid', 'length', 'max' => 20),
-            array('titre, issn,perunilid, journal_titre','safe'),
+            array('titre, issn,perunilid, journal_titre', 'safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             array('journal_titre, abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
@@ -116,17 +116,15 @@ class Abonnement extends CActiveRecord {
         );
     }
 
-    public function getId() { 
+    public function getId() {
         return $this->abonnement_id;
-        
-        }
-    
+    }
+
     /**
      * @return array customized attribute labels (name=>label)
      */
     public function attributeLabels() {
         return array(
-            
             'abonnement_id' => 'Abonnement id',
             'titreexclu' => 'Titreexclu',
             'package' => 'Nom du package',
@@ -183,7 +181,7 @@ class Abonnement extends CActiveRecord {
 
         $criteria = new CDbCriteria;
 
-        
+
         $criteria->compare('t.titreexclu', $this->titreexclu);
         $criteria->compare('t.package', $this->package, true);
         $criteria->compare('t.no_abo', $this->no_abo, true);
@@ -216,37 +214,52 @@ class Abonnement extends CActiveRecord {
         $criteria->compare('t.format', $this->format);
         $criteria->compare('t.support', $this->support);
         $criteria->compare('t.licence', $this->licence);
-        
-        
-        
-        $criteria->together = true; 
+
+
+
+        $criteria->together = true;
         $criteria->compare('t.abonnement_id', $this->abonnement_id, true);
         $criteria->with = array('jrn');
-        $criteria->compare( 'jrn.titre', $this->journal_titre, true );
+        $criteria->compare('jrn.titre', $this->journal_titre, true);
         //$criteria->compare('titre',$this->titre,true);
         //$criteria->compare('issn' ,$this->perunilid,true,"OR");
-        
+
 
         return new CActiveDataProvider($this, array(
                     'criteria' => $criteria,
                 ));
     }
 
-    
-    
-    public function cached_relation_value ($relation_column){
-        
+    public function copy($perunilid = null) {
+        Yii::log("Duplication de l'abonnement " . $this->abonnement_id, 'info', 'copy' . __CLASS__);
+        $new = new Abonnement();
+        $data = $this->attributes;
+        unset($data['abonnement_id']); //Suppression de l'id, car c'est une nouvelle entrée.
+        if ($perunilid){
+            $data['perunilid'] = $perunilid;
+        }
+        $new->setAttributes($data, false);
+        $new->insert();
+        if (!$new->abonnement_id) {
+            Yii::log("La duplication de l'abonnement a échoué.", 'info', 'copy' . __CLASS__);
+            return null;
+        }
+        return $new;
+    }
+
+    public function cached_relation_value($relation_column) {
+
         // Si la relation n'existe pas
-        if (!isset($this->$relation_column) || $this->$relation_column == ""){
+        if (!isset($this->$relation_column) || $this->$relation_column == "") {
             return null;
         }
 
         // ID du cache : nom de la table + _ + id de l'objet
-        $cache_id = $relation_column . "_". $this->$relation_column;
+        $cache_id = $relation_column . "_" . $this->$relation_column;
         $abo_rel = $relation_column . "0";
-        
+
         $cached_val = Yii::app()->cache->get($cache_id);
-        if ($cached_val === FALSE){
+        if ($cached_val === FALSE) {
             // La valeur n'a pas été trouvée dans le cache. Elle est regénérée.
             $obj = $this->$abo_rel;
             $cached_val = $obj->$relation_column;
@@ -255,12 +268,12 @@ class Abonnement extends CActiveRecord {
         // On retourne la valeur dans le cache
         return $cached_val;
     }
-    
-    
+
     /**
      * Affichage de l'abonnement 
      */
     // TODO : dépalcer dans un composant vue
+
     const imgstyle = "vertical-align: top;";
 
     public function htmlImgTag() {
@@ -292,17 +305,19 @@ class Abonnement extends CActiveRecord {
     }
 
     public function htmlShortDescription() {
-        $desc = "";
+        $desc = '<small><dl>';
+
         if (isset($this->licence0) && isset($this->licence0->licence))
-            $desc .= "<strong>Licence</strong> : " . $this->licence0->licence . "<br /> ";
+            $desc .= "<dt>Licence</dt><dd>" . $this->licence0->licence . "</dd>";
         if (isset($this->plateforme0) && isset($this->plateforme0->plateforme))
-            $desc .= "<strong>Plateforme</strong> : " . $this->plateforme0->plateforme . "<br /> ";
+            $desc .= "<dt>Plateforme</dt><dd>" . $this->plateforme0->plateforme . "</dd>";
         if (isset($this->editeur0) && isset($this->editeur0->editeur))
-            $desc .= "<strong>Editeur</strong> : " . $this->editeur0->editeur . "<br /> ";
+            $desc .= "<dt>Editeur</dt><dd>" . $this->editeur0->editeur . "</dd>";
         if (isset($this->localisation0) && isset($this->localisation0->localisation))
-            $desc .= "<strong>Localisation</strong> : " . $this->localisation0->localisation . "<br /> ";
+            $desc .= "<dt>Localisation</dt><dd>" . $this->localisation0->localisation . "</dd>";
         if (isset($this->etatcoll) && $this->etatcoll != "")
-            $desc .= "<strong>Etatcoll</strong> : " . $this->etatcoll . "<br /> ";
+            $desc .= "<dt>Etatcoll</dt><dd>" . $this->etatcoll . "</dd>";
+        $desc .= "</dl></small>";
         return $desc;
     }
 

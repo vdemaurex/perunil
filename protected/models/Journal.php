@@ -66,7 +66,7 @@ class Journal extends CActiveRecord {
     public function behaviors() {
         return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
     }
-    
+
     /**
      * @return array validation rules for model attributes.
      */
@@ -143,6 +143,27 @@ class Journal extends CActiveRecord {
         );
     }
 
+    public function delete() {
+        
+        // La supression des abonnements doit se faire manuellement.
+        if (count($this->abonnements) > 0) {
+            $listabos = "Liste des abonnement liés à ce journal : ";
+            foreach ($this->abonnements as $abo) {
+                $listabos .= $abo->abonnement_id . "; ";
+            }
+            throw new CDbException("Impossible de supprimer ce journal (perunilid $this->perunilid) car des abonnements lui sont liés. \n<br/>$listabos");
+        }
+        
+        // Supression des sujets liés
+        JournalSujet::model()->deleteAll("perunilid=:perunilid", array("perunilid" => $this->perunilid));
+        
+        // Supression des corecollection liées
+        Corecollection::model()->deleteAll("perunilid=:perunilid", array("perunilid" => $this->perunilid));
+   
+        // Supression du journal
+        return parent::delete();
+    }
+
     public function sujets2str($delimiter = ",") {
         $sujet_str = "";
         foreach ($this->sujets as $s) {
@@ -200,6 +221,45 @@ class Journal extends CActiveRecord {
         return new CActiveDataProvider($this, array(
                     'criteria' => $criteria,
                 ));
+    }
+
+    public function copy() {
+        Yii::log("Duplication du journal " . $this->perunilid, 'info', 'copy' . __CLASS__);
+        $new = new Journal();
+        $data = $this->attributes;
+        $data['titre'] = $data['titre'] . " - Copie";
+        unset($data['perunilid']); //Suppression de l'id, car c'est une nouvelle entrée.
+        $new->setAttributes($data, false);
+        $new->insert();
+        if (!$new->perunilid) {
+            Yii::log("La duplication de l'abonnement a échoué.", 'info', 'copy' . __CLASS__);
+            return null;
+        } else {
+            // Traitement des abonnement
+            foreach ($this->abonnements as $abo) {
+                $abo->copy($new->perunilid);
+            }
+            // Copie de la liste des sujets
+            foreach ($this->sujets as $sujet) {
+                $newjs = new JournalSujet();
+                $newjs->perunilid = $new->perunilid;
+                $newjs->sujet_id = $sujet->sujet_id;
+                if (!$newjs->insert()) {
+                    throw new CException("Impossible de créer un nouveau sujet lors de la copie du journal $this->perunilid");
+                }
+            }
+
+            // Copie des corecollection
+            foreach ($this->corecollection as $biblio) {
+                $corecollection = new Corecollection();
+                $corecollection->perunilid = $new->perunilid;
+                $corecollection->biblio_id = $biblio->biblio_id;
+                if (!$corecollection->insert()) {
+                    throw new CException("Impossible de créer un nouveau corecollection lors de la copie du journal $this->perunilid");
+                }
+            }
+        }
+        return $new;
     }
 
 }

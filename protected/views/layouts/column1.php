@@ -1,4 +1,4 @@
-<?php $this->beginContent('//layouts/main'); ?>
+<?php $this->beginContent('//layouts/main_btp3'); ?>
 <div id="content">
     <?php
     foreach(Yii::app()->user->getFlashes() as $key => $message) {
