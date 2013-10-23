@@ -106,6 +106,23 @@ class Journal extends CActiveRecord {
                 'order' => 'support'),
             'corecollection' => array(self::MANY_MANY, 'Biblio', 'corecollection(perunilid, biblio_id)'),
             'sujets' => array(self::MANY_MANY, 'Sujet', 'journal_sujet(perunilid, sujet_id)'),
+            // Abonnements
+            'activeAllAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'condition' => 'titreexclu != 1',
+                'order'     => 'support'),
+            'activePaperAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'condition' => 'titreexclu != 1 AND support = 2',
+                'order'     => 'support'),
+            'activeElecAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'condition' => 'titreexclu != 1 AND support = 1',
+                'order'     => 'support'),
+            'AllAbos'    => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
+            'PaperAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'condition' => 'support = 2',
+                'order'     => 'support'),
+            'ElecAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'condition' => 'support = 1',
+                'order'     => 'support'),
         );
     }
 

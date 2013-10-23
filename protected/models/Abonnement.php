@@ -283,15 +283,17 @@ class Abonnement extends CActiveRecord {
             //
             // Icône
             if ($this->support0->support == "papier") {
-                $src = Yii::app()->baseUrl . "/images/paper.png";
-                return CHtml::image($src, "Papier", array('title' => "Support papier", 'style' => self::imgstyle));
+                //$src = Yii::app()->baseUrl . "/images/paper.png";
+                //return CHtml::image($src, "Papier", array('title' => "Support papier", 'style' => self::imgstyle));
+                return '<span class="glyphicon glyphicon-book"></span>&nbsp;';
             }
             //
             // Traitement des support électronique
             //
             else {
-                $src = Yii::app()->baseUrl . "/images/www.png";
-                return CHtml::image($src, "Electronique", array('title' => "Support éléctronique", 'style' => self::imgstyle));
+                //$src = Yii::app()->baseUrl . "/images/www.png";
+                //return CHtml::image($src, "Electronique", array('title' => "Support éléctronique", 'style' => self::imgstyle));
+                return '<span class="glyphicon glyphicon-link"></span>&nbsp;';
             }
         }
     }
@@ -299,8 +301,9 @@ class Abonnement extends CActiveRecord {
     public function htmlImgTitreExclu() {
         // Icône interdit si l'abonnement est un titre exclu
         if ($this->titreexclu) {
-            $src = Yii::app()->baseUrl . "/images/interdit.png";
-            return CHtml::image($src, "Titre exclu", array('title' => "Titre exclu", 'style' => self::imgstyle));
+            //$src = Yii::app()->baseUrl . "/images/interdit.png";
+            //return CHtml::image($src, "Titre exclu", array('title' => "Titre exclu", 'style' => self::imgstyle));
+            return '<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;';
         }
     }
 

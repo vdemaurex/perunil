@@ -13,38 +13,43 @@ $last = Yii::app()->session['search']->adv_query_tab;
 ?>
 
 <?php
-echo CHtml::beginForm('', 'get');
+echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('role' => "form"));
 // NB: Comme les opérateurs servent à joindre la ligne courant à la précédente, ils sont
 // décalés d'une ligne.
 ?>
 <?php echo CHtml::hiddenField("advsearch", "advsearch"); ?>
 <?php echo CHtml::hiddenField("C1[op]", "AND"); ?>
 
+
+<div class="panel panel-default" style="width: 705px; margin:auto;">
+  <div class="panel-heading">Votre recherche</div>
+  <div class="panel-body">
+
 <table class="advsearch">
     <tr>
-        <td ><?php echo CHtml::dropDownList("C1[search_type]", isset($last) && isset($last['C1'])  ? $last['C1']['search_type'] : "titre", $fields); ?></td>
+        <td ><?php echo CHtml::dropDownList("C1[search_type]", isset($last) && isset($last['C1'])  ? $last['C1']['search_type'] : "titre", $fields, array('class' => "form-control")); ?></td>
         <td ><?php echo CHtml::textField(
                 'C1[text]', 
                 isset($last) && isset($last['C1'])  ? $last['C1']['text'] : "", 
-                array('size' => 40, 'maxlength' => 150, 'class' => "advsearchfield")
+                array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
                 ); ?></td>
-        <td ><?php echo CHtml::dropDownList("C2[op]", isset($last) && isset($last['C1'])  ? $last['C2']['op'] : "AND", $operators); ?></td>
+        <td ><?php echo CHtml::dropDownList("C2[op]", isset($last) && isset($last['C1'])  ? $last['C2']['op'] : "AND", $operators, array('class' => "form-control")); ?></td>
     </tr>
     <tr>
-        <td><?php echo CHtml::dropDownList("C2[search_type]", isset($last) && isset($last['C2']) ? $last['C2']['search_type'] : "titre", $fields); ?></td>
+        <td><?php echo CHtml::dropDownList("C2[search_type]", isset($last) && isset($last['C2']) ? $last['C2']['search_type'] : "titre", $fields, array('class' => "form-control")); ?></td>
         <td><?php echo CHtml::textField(
                 'C2[text]', 
                 isset($last) && isset($last['C2']) ? $last['C2']['text'] : "", 
-                array('size' => 40, 'maxlength' => 150, 'class' => "advsearchfield")
+                array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
                 ); ?></td>
-        <td><?php echo CHtml::dropDownList("C3[op]", isset($last) && isset($last['C3']) ? $last['C3']['op'] : "AND", $operators); ?></td>
+        <td><?php echo CHtml::dropDownList("C3[op]", isset($last) && isset($last['C3']) ? $last['C3']['op'] : "AND", $operators, array('class' => "form-control")); ?></td>
     </tr>
     <tr>
-        <td><?php echo CHtml::dropDownList("C3[search_type]", isset($last) && isset($last['C3']) ? $last['C3']['search_type'] : "titre", $fields); ?></td>
+        <td><?php echo CHtml::dropDownList("C3[search_type]", isset($last) && isset($last['C3']) ? $last['C3']['search_type'] : "titre", $fields, array('class' => "form-control")); ?></td>
         <td><?php echo CHtml::textField(
                 'C3[text]', 
                 isset($last) && isset($last['C3']) ? $last['C3']['text'] : "", 
-                array('size' => 40, 'maxlength' => 150, 'class' => "advsearchfield")
+                array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
                 ); ?></td>
         <td>&nbsp;</td>
     </tr>
@@ -69,15 +74,14 @@ echo CHtml::beginForm('', 'get');
             <?php $this->widget('SelectWidget', array('model' => Sujet::model(), 'selected' => isset($last) && isset($last['sujet']) ? $last['sujet'] : 'all')); ?>
         </td>
     </tr>
-    <tr>
-        <td colspan="3">
-            <a id="gestion"><img id="gestimg" src="<?= Yii::app()->baseUrl; ?>/images/collapsed.gif"/>Afficher les champs de gestion</a>
-        </td>
-    </tr>
 </table>
-
-
-<table class="advsearch" id="champsdegestion" style="display: none;">
+  </div>
+</div>
+<br/>
+<div class="panel panel-default" style="width: 705px; margin:auto;">
+  <div class="panel-heading">Limiter la recherche à</div>
+  <div class="panel-body">
+<table class="advsearch">
     <tr>
         <td><strong>Plateforme</strong></td>
         <td><?php $this->widget(
@@ -114,30 +118,19 @@ echo CHtml::beginForm('', 'get');
         </td>
     </tr>
 </table>
-
-<table class="advsearch">
-    <tr>
-        <td><?=CHtml::submitButton("Chercher");?> &nbsp;
-            <?=CHtml::button('Vider le formulaire', array(
-                            'onclick' => 'js:document.location.href="'. CHtml::normalizeUrl(array('site/advclean')) .'"'));?>
-        </td>
-    </tr>
-</table>
-
+  </div>
+</div>
+<div class="panel panel-default" style="width: 705px; margin:auto;">
+  <div class="panel-body">
+      <div style=" margin-left: 220px;">
+        <?=CHtml::submitButton("Chercher", array('class' => "btn btn-primary"));?> &nbsp;
+        <?=CHtml::button('Vider le formulaire', array(
+                            'onclick' => 'js:document.location.href="'. CHtml::normalizeUrl(array('site/advclean')) .'"',
+                            'class' => "btn btn-default"));?>
+      </div>
+  </div>
+</div>
 <?php echo CHtml::endForm(); ?>
 
 
-<script>
-
-    var flip = 0;
-    $("#gestion").click(function () {
-        $("#champsdegestion").toggle( flip++ % 2 == 0 );
-        var image = $("#gestimg");
-        if ($(image).attr("src") == "<?= Yii::app()->baseUrl; ?>/images/expanded.gif")
-        $(image).attr("src", "<?= Yii::app()->baseUrl; ?>/images/collapsed.gif");
-        else
-            $(image).attr("src", "<?= Yii::app()->baseUrl; ?>/images/expanded.gif");
-
-    });
-</script>
 

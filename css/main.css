@@ -15,11 +15,11 @@ body
     border: 2px solid #D6D6D6;
 }
 
+
 #header
 {
     margin: 0;
     padding: 0;
-    border-top: 1px solid #CECECE;
     background-image: url("../images/bandeau_unil_smush.jpg");
     background-position: right center;
     background-repeat: no-repeat;
@@ -402,6 +402,9 @@ table.simplesearch td{
     padding-top: 0px;
     padding-bottom: 0px;
 }
+.centpp{
+    width: 100%;
+}
 
 /*
  * Recherche avancée
@@ -413,7 +416,7 @@ table.simplesearch td{
 }
 
 .advsearchfield{
-    width: 380px;
+    width: 415px;
 }
 /*****************************************************************************
  * Affichage de la liste des journaux

@@ -59,7 +59,6 @@ if ($abo->support == 1) {
         array('name' => 'acces_elec_unil', 'label' => 'Accès depuis l\'UNIL', 'type' => 'boolean'),
         array('name' => 'acces_elec_chuv', 'label' => 'Accès depuis le CHUV', 'type' => 'boolean'),
         'embargo_mois',
-        @array('name' => 'plateforme', 'value' => $abo->plateforme0->plateforme, 'label' => 'Plateforme'),
             ));
 }
 

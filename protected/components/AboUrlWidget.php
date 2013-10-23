@@ -21,9 +21,10 @@ class AboUrlWidget extends CWidget {
         if (!$this->papier) {
             $this->url = $this->abo->url_site;
             if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
-                $this->link_text = $this->abo->plateforme0->plateforme;
+                $this->link_text = "({$this->abo->plateforme0->plateforme})";
             } else {
-                $this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+                //$this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+                $this->link_text = "";
             }
         }
     }
@@ -58,9 +59,11 @@ class AboUrlWidget extends CWidget {
         // Traitement des journaux électronique
         //
         if ((isset($this->abo->acces_user) && $this->abo->acces_user != "") || (isset($this->abo->acces_pwd) && $this->abo->acces_pwd != "")) {
-            $src = Yii::app()->baseUrl . "/images/login_16.png";
-            echo CHtml::image($src, "Login", array('title' => "Protégé par mot de passe")) . "&nbsp;";
-            echo CHtml::link(CHtml::encode($this->link_text), $this->url, array(
+            //$src = Yii::app()->baseUrl . "/images/login_16.png";
+            //echo CHtml::image($src, "Login", array('title' => "Protégé par mot de passe")) . "&nbsp;";
+            echo '<span class="glyphicon glyphicon-lock"></span>&nbsp;';
+            //echo CHtml::link(CHtml::encode($this->link_text), $this->url, array(
+            echo CHtml::link(CHtml::encode("Lire en ligne $this->link_text"), $this->url, array(
                 'target' => '_blank',
                 'onclick' => '$("#' . $this->abo->abonnement_id . '").dialog("open"); return false;',
                 'title' => $this->link_title));
@@ -96,7 +99,7 @@ class AboUrlWidget extends CWidget {
             } else { // L'utilisateur n'a pas les droits 
                 ?>
 
-                <p>Nous ne fournissons ces informations qu'aux utilisateurs des réseau CHUV ou UNIL.
+                <p>Nous ne fournissons ces informations qu'aux utilisateurs des réseaux CHUV ou UNIL.
                 <ul>
                     <li>Pour accéder au réseau UNIL par VPN : <a href="https://crypto.unil.ch">Crypto</a></li>
                     <li>Pour accéder au réseau CHUV par VPN : <a href="https://jupiter.chuv.ch">Jupiter</a></li>
@@ -107,7 +110,9 @@ class AboUrlWidget extends CWidget {
         } else {
             // Aucun mot de passe n'est requis
             echo CHtml::link(
-                    CHtml::encode($this->link_text), $this->url, array('target' => '_blank', 'title' => $this->link_title));
+                    //CHtml::encode($this->link_text), 
+                    CHtml::encode("Lire en ligne $this->link_text"), 
+                    $this->url, array('target' => '_blank', 'title' => $this->link_title));
         }
     }
 
