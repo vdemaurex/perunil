@@ -17,6 +17,7 @@ class SearchComponent extends CComponent {
 
     private $adv_query_tab;
     private $adv_criteria;
+    private $adv_sql_command;
     private $adv_dp;
 
     /**
@@ -73,7 +74,6 @@ class SearchComponent extends CComponent {
      * @var int 
      */
     public $pagesize = 30;
-    
     public $maxresults = -1;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -102,8 +102,9 @@ class SearchComponent extends CComponent {
     public function setAdv_query_tab($query_tab) {
 
         $this->adv_query_tab = $query_tab;
-        $this->adv_criteria = $this->advancedSearch();
-//$this->adv_criteria_id = uniqid();
+        //$this->adv_criteria = $this->advancedSearch();
+        $this->advancedSearch(); // => $this->adv_sql_command
+
     }
 
     public function getAdv_query_tab() {
@@ -115,18 +116,19 @@ class SearchComponent extends CComponent {
     }
 
     public function getAdv_dp() {
-        /* if (isset($this->adv_dp)) {
-          if ($this->adv_dp_id == $this->adv_criteria_id) {
-          return $this->adv_dp;
-          }
-          }
-          // Première recherche ou recherche périmée : nouvelle recherche
-          $this->adv_dp_id = $this->adv_criteria_id; */
-        $this->adv_dp = new CActiveDataProvider(
-                        Journal::model(),
-                        array('criteria' => $this->adv_criteria,
-                            'pagination' => array('pageSize' => $this->pagesize))
-        );
+        if (isset($this->adv_sql_command)) {
+            $rawData = $this->adv_sql_command->queryAll();
+            $this->adv_dp = new CArrayDataProvider($rawData, array(
+                        'keyField' => 'perunilid',
+                        'pagination' => array(
+                            'pageSize' => $this->pagesize,
+                        ),
+                    ));
+        }
+        else {
+            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche avancée.");
+        }
+        
         return $this->adv_dp;
     }
 
@@ -144,14 +146,186 @@ class SearchComponent extends CComponent {
      */
     private function advancedSearch() {
         $this->q_summary = "";
+
+        // Vérification de l'existance et de la conformité de la requête.
         if (!$this->adv_query_tab && !is_array($this->adv_query_tab)) {
             throw new CException("Recherche avancée impossible : requête n'est enregistrée.");
         }
-// TODO vérifier la validité du querytab
-//return $this->simplesearch($querytab['C1']['text']);
+
+        $c = Yii::app()->db->createCommand();
+
+        $c->selectDistinct('j.perunilid, j.titre');
+        $c->from('journal j');
+
+        // Jointure des abonnements
+        // Si public, seulement les journaux qui ont un abonnement
+        if (Yii::app()->user->isGuest) {
+            $c->join('abonnement a', 'j.perunilid = a.perunilid');
+        }
+        // Si admin, tous les journaux, même sans abonnement
+        else {
+            $c->leftJoin('abonnement a', 'j.perunilid = a.perunilid');
+        }
+
+
+        // 1. Jointure en fonction des limitations demandées
+        // 1.1 Plateforme
+
+        if (isset($this->adv_query_tab['plateforme']) && $this->adv_query_tab['plateforme'] != '') {
+            $c->join(
+                    'plateforme pl', "a.plateforme = pl.plateforme_id AND pl.plateforme_id = :idpl", array(':idpl' => $this->adv_query_tab['plateforme'])
+            );
+        }
+
+        if (isset($this->adv_query_tab['licence']) && $this->adv_query_tab['licence'] != '') {
+            $c->join(
+                    'licence li', "a.licence = li.licence_id AND li.licence_id = :idli", array(':idli' => $this->adv_query_tab['licence'])
+            );
+        }
+
+        if (isset($this->adv_query_tab['statutabo']) && $this->adv_query_tab['statutabo'] != '') {
+            $c->join(
+                    'statutabo st', "a.statutabo = st.statutabo_id AND st.statutabo_id = :idst", array(':idst' => $this->adv_query_tab['statutabo'])
+            );
+        }
+
+        if (isset($this->adv_query_tab['localisation']) && $this->adv_query_tab['localisation'] != '') {
+            $c->join(
+                    'localisation lo', "a.localisation = lo.localisation_id AND lo.localisation_id = :idlo", array(':idst' => $this->adv_query_tab['localisation'])
+            );
+        }
+
+
+        // Jointure avec la table sujet
+        if (isset($this->adv_query_tab['sujet']) && $this->adv_query_tab['sujet'] != '') {
+            $c->join(
+                    "journal_sujet js", "js.perunilid = j.perunilid");
+            $c->join(
+                    "sujet s", "s.sujet_id = js.sujet_id AND s.sujet_id = :sid", array(":sid" => $this->adv_query_tab['sujet'])
+            );
+        }
+
+        // Pour les critère d'accès, unil-chuv et openaccès, on ne traite que si c'est décoché
+        if (!isset($this->adv_query_tab['accessunil']) || !$this->adv_query_tab['accessunil'])
+            $c->andWhere("a.acces_elec_unil !=1 && a.acces_elec_chuv !=1");
+        if (!isset($this->adv_query_tab['openaccess']) || !$this->adv_query_tab['openaccess'])
+            $c->andWhere("a.acces_elec_gratuit !=1 && j.openaccess !=1");
+
+
+
+        $Cwhere = "";
+        foreach (array('C1', 'C2', 'C3') as $CN) {
+            if (!isset($this->adv_query_tab[$CN]))
+                continue;
+            // nettoyage du champ
+            $this->simple_query_str = $this->adv_query_tab[$CN]['text'];
+            $this->q = $this->clean_search($this->simple_query_str);
+            // si le champ ne contient rien , on abandonne ici.
+            if ($this->q == "")
+                continue;
+            else { // Traitement du champ CN
+                $like = ' LIKE ';
+                switch ($this->adv_query_tab[$CN]['op']) {
+                    case 'OR':
+                        $Cwhere .= " OR ";
+                        break;
+                    case 'NOT': // AND ... NOT LIKE...
+                        $like = " NOT LIKE ";
+                    case 'AND':
+                        $Cwhere .= " AND ";
+                        break;
+                    default:
+                        throw new CException("L'opperateur {$this->adv_query_tab[$CN]['op']} n'existe pas dans les option proposées");
+                        break;
+                }
+
+                switch ($this->adv_query_tab[$CN]['search_type']) {
+
+                    case 'issn':
+                        $issn = trim($this->simple_query_str);
+                        $Cwhere .= "j.issn $like %$issn%";
+                        $this->query_summary("issn = $this->simple_query_str {$this->adv_query_tab[$CN]['op']}");
+                        break;
+
+                    case 'titre':
+                        $Twhere = "";
+                        $tokens = array();
+
+                        foreach (explode(" ", $this->q) as $word) {
+                            if ($word != "" || $word != "") {
+                                $tokens[] = Yii::app()->db->quoteValue("%$word%");
+                            }
+                        }
+
+                        $cols = array('j.titre', 'j.titre_abrege', 'j.titre_variante', 'j.soustitre', 'j.faitsuitea', 'j.devient');
+                        // Boucle sur toutes les colonnes
+                        foreach ($cols as $col) {
+                            $Twhere .= " (";
+                            // Boucle sur touts les mots de la recherche
+                            foreach ($tokens as $word) {
+                                $Twhere .= "$col $like $word AND ";
+                            }
+                            // Suppression d'un OR surnuméraire
+                            $Twhere = trim($Twhere, "AND ");
+                            $Twhere .= " ) OR ";
+                        }
+
+                        // Suppression d'un AND surnuméraire
+                        $Twhere = trim($Twhere, " OR ");
+                        // Ajout de la requête des titres à la requête générale
+                        
+                        $Cwhere .= " ( $Twhere ) ";
+                        break;
+
+                    case 'editeur':
+                        $c->join(
+                                'editeur ed', "a.editeur = ed.editeur_id AND ed.editeur LIKE %:edit%", array(':edit' => $this->q)
+                        );
+                        break;
+
+                    default:
+                        throw new CException("Le critère {$this->adv_query_tab[$CN]['search_type']} n'existe pas pour la recherche avancée");
+                        break;
+                }
+            }
+        }
+        
+        // Si une requête à été générée pour les CN, il faut enlever les conjonction surnuméraires
+        if($Cwhere != ""){
+            $Cwhere = trim($Cwhere, "OR "); 
+            $Cwhere = trim($Cwhere, "AND "); 
+            // Ajour de Cwhere à la requête générale
+            $c->andWhere($Cwhere);
+        }
+
+        $c->order("j.titre");
+
+        $sql = $c->text;
+
+        $this->adv_sql_command = $c;
+
+        //return $criteria;
+        // Gérération d'une requête count
+        //$c->select = "SELECT DISTINCT COUNT(*) ";
+    }
+
+    /**
+     * Crée le critère de recherche pour la recherche avancée
+     * @return \CDbCriteria
+     * @throws CException 
+     */
+    private function advancedSearchCriteria() {
+        $this->q_summary = "";
+
+        // Vérification de l'existance et de la conformité de la requête.
+        if (!$this->adv_query_tab && !is_array($this->adv_query_tab)) {
+            throw new CException("Recherche avancée impossible : requête n'est enregistrée.");
+        }
+
+        // TODO vérifier la validité du querytab
         $criteria = new CDbCriteria();
-// Ajout de la jointure avec les abonnements, nécessaire avant d'autres
-// jointures.
+        // Ajout de la jointure avec les abonnements, nécessaire avant d'autres
+        // jointures.
         $this->joinAbo($criteria);
         foreach (array('C1', 'C2', 'C3') as $CN) {
             if (!isset($querytab[$CN]))
@@ -261,17 +435,17 @@ class SearchComponent extends CComponent {
 
     public function getSimple_dp() {
 // Recherche basée sur les active records
-        /*if (isset($this->simple_criteria)) {
+        /* if (isset($this->simple_criteria)) {
 
-            $this->simple_dp = new CActiveDataProvider(
-                            Journal::model(),
-                            array('criteria' => $this->simple_criteria,
-                                'pagination' => array('pageSize' => $this->pagesize))
-            );
-// Recherche basée sur une requête sql
-        } else*/
-          if (isset($this->simple_sql_query)) {
-            $rawData=Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
+          $this->simple_dp = new CActiveDataProvider(
+          Journal::model(),
+          array('criteria' => $this->simple_criteria,
+          'pagination' => array('pageSize' => $this->pagesize))
+          );
+          // Recherche basée sur une requête sql
+          } else */
+        if (isset($this->simple_sql_query)) {
+            $rawData = Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
             $this->simple_dp = new CArrayDataProvider($rawData, array(
                         'keyField' => 'perunilid',
                         //'sort' => array(
@@ -324,7 +498,6 @@ class SearchComponent extends CComponent {
 // Suppression des anciennes requêtes
         //$this->simple_criteria = null;
         //$this->simple_sql_query = null;
-
 // Création des requêtes.
         switch ($this->search_type) {
             case self::TBEGIN:
@@ -392,28 +565,28 @@ class SearchComponent extends CComponent {
      *                          avec des "NOT LIKE". 
      */
     private function simpletitleSearch() {
-        
+
         $select = "SELECT DISTINCT j.perunilid, titre ";
         $count = "SELECT DISTINCT COUNT(*) ";
         $q = "FROM  journal AS j ";
-        
-        // Jointure de l'abonnement pour la sélection du support
-        if ($this->support > 0){
-            if (Yii::app()->user->isGuest) {
-                 $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-             }
-             // Si admin, tous les journaux, même sans abonnement
-             else {
-                 $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-             }
 
-             // Limitation au support
+        // Jointure de l'abonnement pour la sélection du support
+        if ($this->support > 0) {
+            if (Yii::app()->user->isGuest) {
+                $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
+            }
+            // Si admin, tous les journaux, même sans abonnement
+            else {
+                $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
+            }
+
+            // Limitation au support
             $q .= "AND a.support = $this->support ";
             $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
         }
-        
+
         $q .= "WHERE ";
-        
+
         //$like = $use_not_like ? "NOT LIKE" : "LIKE";
         //$like = "LIKE";
         $tokens = array();
@@ -428,43 +601,41 @@ class SearchComponent extends CComponent {
                 }
             }
         }
-        
+
         $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
         // Boucle sur toutes les colonnes
-        foreach ($tokens as $word) {
+        foreach ($cols as $col){
             if ($word != "") {
                 $q .= " (";
                 // Boucle sur touts les mots de la recherche
-                foreach ($cols as $col) {
-                    $q .= "$col LIKE ".Yii::app()->db->quoteValue($word)." OR ";
+                 foreach ($tokens as $word) {
+                    $q .= "$col LIKE " . Yii::app()->db->quoteValue($word) . " AND ";
                 }
             }
-             // Suppression d'un OR surnuméraire
-            $q = trim($q, "OR ");
-            $q .= " ) AND ";
+            // Suppression d'un OR surnuméraire
+            $q = trim($q, "AND ");
+            $q .= " ) OR ";
         }
         // Suppression d'un AND surnuméraire
-        $q = trim($q, "AND ");
+        $q = trim($q, "OR ");
 
         $q .= " ORDER BY titre ";
 
         // Nombre maximum de résultats
-        if ($this->maxresults > 0){
-            $q .= " LIMIT ".$this->maxresults;
+        if ($this->maxresults > 0) {
+            $q .= " LIMIT " . $this->maxresults;
         }
-        
+
         // Fin de la requête
         $q .= ";";
 
         $this->simple_sql_query_count = $count . $q;
         $this->simple_sql_query = $select . $q;
-        
-       
     }
-    
+
     private function titleSearch($criteria, $not_like = false) {
         $like = $not_like ? "NOT LIKE" : "LIKE";
-        
+
         $tokens = array();
         if ($this->search_type == self::TEXACT) {
             $tokens[] = "$this->simple_query_str";
@@ -477,7 +648,7 @@ class SearchComponent extends CComponent {
                 }
             }
         }
-        
+
         $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
         // Boucle sur toutes les colonnes
         foreach ($tokens as $word) {
@@ -485,15 +656,13 @@ class SearchComponent extends CComponent {
             if ($word != "") {
                 // Boucle sur touts les mots de la recherche
                 foreach ($cols as $col) {
-                    $q .= "$col $like ".Yii::app()->db->quoteValue($word)." OR ";
+                    $q .= "$col $like " . Yii::app()->db->quoteValue($word) . " OR ";
                 }
             }
             $criteria->addCondition($q, 'AND');
         }
-  
-        
-        
     }
+
     /**
      * Recherche de chaque mot indépendamment dans tous les champs public 
      * de la table journal.
@@ -659,7 +828,7 @@ class SearchComponent extends CComponent {
         }
 
         // Limitation au support
-        if ($this->support > 0){
+        if ($this->support > 0) {
             $q .= "AND a.support = $this->support ";
             $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
         }
@@ -739,30 +908,29 @@ class SearchComponent extends CComponent {
                 $q .= " (";
                 // Boucle sur touts les mots de la recherche
                 foreach ($cols as $col) {
-                    $q .= "$col LIKE ".Yii::app()->db->quoteValue("%$word%")." OR ";
+                    $q .= "$col LIKE " . Yii::app()->db->quoteValue("%$word%") . " OR ";
                 }
             }
-             // Suppression d'un OR surnuméraire
+            // Suppression d'un OR surnuméraire
             $q = trim($q, "OR ");
             $q .= " ) AND ";
         }
-        
+
         // Suppression d'un AND surnuméraire
         $q = trim($q, "AND ");
-        
+
         $q .= " ORDER BY j.titre ";
-        
+
         // Nombre maximum de résultats
-        if ($this->maxresults > 0){
-            $q .= " LIMIT ".$this->maxresults;
+        if ($this->maxresults > 0) {
+            $q .= " LIMIT " . $this->maxresults;
         }
-        
+
         // Fin de la requête
         $q .= ";";
 
         $this->simple_sql_query_count = $count . $q;
         $this->simple_sql_query = $select . $q;
-        
     }
 
     /* private function aboSearch($criteria, $not_like = false) {

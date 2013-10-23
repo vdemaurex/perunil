@@ -1,7 +1,6 @@
 <?php
 $fields = array(
     "titre" => "Titre",
-    "partout" => "Partout",
     "editeur" => "Editeur",
     "issn" => "ISSN",);
 
