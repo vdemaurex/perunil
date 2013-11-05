@@ -72,10 +72,11 @@ class SmalllistController extends Controller {
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
-        if (isset($_POST[$type])) {
-            $model->attributes = $_POST[$type];
+        if (isset($_GET[$type])) {
+            $model->attributes = $_GET[$type];
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->$col_id));
+                Yii::app()->user->setFlash('success', "Une nouvelle entrée $type à été crée.");
         }
 
         $this->render('create', array(
@@ -94,10 +95,11 @@ class SmalllistController extends Controller {
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
-        if (isset($_POST[Yii::app()->session['smalllist']])) {
-            $model->attributes = $_POST[Yii::app()->session['smalllist']];
+        if (isset($_GET[Yii::app()->session['smalllist']])) {
+            $model->attributes = $_GET[Yii::app()->session['smalllist']];
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->$col_id));
+                Yii::app()->user->setFlash('success', "Une entrée $type à été modifiée.");
         }
 
         $this->render('update', array(
