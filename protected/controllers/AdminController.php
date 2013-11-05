@@ -537,7 +537,8 @@ class AdminController extends Controller {
         } else {
             Yii::app()->session['search']->admin_affichage = 'abonnement';
         }
-        $this->redirect($this->createUrl('admin/search'));
+        //$this->redirect($this->createUrl('admin/search'));
+        $this->redirect(Yii::app()->request->urlReferrer);
     }
 
     public function actionSearchclean() {

@@ -18,6 +18,7 @@ class SearchComponent extends CComponent {
     private $adv_query_tab;
     private $adv_criteria;
     private $adv_sql_command;
+    private $adv_sql_query_count;
     private $adv_dp;
 
     /**
@@ -118,6 +119,7 @@ class SearchComponent extends CComponent {
     public function getAdv_dp() {
         if (isset($this->adv_sql_command)) {
             $rawData = $this->adv_sql_command->queryAll();
+            $this->adv_sql_query_count = count($rawData);
             $this->adv_dp = new CArrayDataProvider($rawData, array(
                         'keyField' => 'perunilid',
                         'pagination' => array(
@@ -131,7 +133,35 @@ class SearchComponent extends CComponent {
         
         return $this->adv_dp;
     }
+    
+    public function getAdv_adp() {
 
+        if (isset($this->adv_sql_command)) {
+            $rawData = $this->adv_sql_command->queryAll();
+            $this->adv_sql_query_count = count($rawData);
+            $idlist = array_map('current', $rawData);
+            
+            $criteria=new CDbCriteria(); 
+            $criteria->addInCondition('perunilid',$idlist); 
+            
+            
+            $adp = new CActiveDataProvider('Abonnement', array(
+                'criteria'=> $criteria,
+                'pagination'=>array(
+                    'pageSize'=>$this->pagesize,
+                ),
+            ));
+            
+
+        } else {
+            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
+        }
+        return $adp;
+    }
+    
+    public function getAdv_sql_query_count(){
+        return $this->simple_sql_query_count;
+    }
     /* public function setAdv_dp($dp) {
       $this->adv_dp = $dp;
       } */
@@ -154,7 +184,7 @@ class SearchComponent extends CComponent {
 
         $c = Yii::app()->db->createCommand();
 
-        $c->selectDistinct('j.perunilid, j.titre');
+        $c->selectDistinct('j.perunilid');
         $c->from('journal j');
 
         // Jointure des abonnements
@@ -375,6 +405,32 @@ class SearchComponent extends CComponent {
         }
         return $this->simple_dp;
     }
+    
+        public function getSimple_adp() {
+
+        if (isset($this->simple_sql_query)) {
+            $rawData = Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
+            $this->simple_sql_query_count = count($rawData);
+            
+            $idlist = array_map('current', $rawData);
+            
+            $criteria=new CDbCriteria(); 
+            $criteria->addInCondition('perunilid',$idlist); 
+            
+            
+            $adp = new CActiveDataProvider('Abonnement', array(
+                'criteria'=> $criteria,
+                'pagination'=>array(
+                    'pageSize'=>$this->pagesize,
+                ),
+            ));
+            
+
+        } else {
+            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
+        }
+        return $adp;
+    }
 
     public function getSimple_sql_query_count(){
         return $this->simple_sql_query_count;
@@ -472,7 +528,7 @@ class SearchComponent extends CComponent {
      */
     private function simpletitleSearch() {
 
-        $select = "SELECT DISTINCT j.perunilid, titre ";
+        $select = "SELECT DISTINCT j.perunilid ";
         //$count = "SELECT DISTINCT COUNT(*) ";
         $q = "FROM  journal AS j ";
 
@@ -597,119 +653,7 @@ class SearchComponent extends CComponent {
         $this->query_summary("'$this->q' dans tous les champs de la table journal.");
     }
 
-    /*
-      private function allSearch() {
-      $c = new CDbCriteria();
-      //
-      // Jointure de tous les tables liées au journal
-      $c->select = "j.perunilid ";
-      $c->distinct = true;
-      $c->alias = "j";
-
-      // Jointure des abonnements
-      // Si public, seulement les journaux qui ont un abonnement
-      $aborel = 'abonnements';
-      if (Yii::app()->user->isGuest) {
-      $aborel = 'activeabos';
-      //$c->with['activeabos'] =  array('alias' => 'a') ;
-      //$q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-      }
-      // Si admin, tous les journaux, même sans abonnement
-      //else {
-      //$c->with['abonnements'] =  array('alias' => 'a');
-      //$q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-      //}
-      $c->with[$aborel] =  array('alias' => 'a');
-      // Jointure des tables liées à abonnement
-      $c->with["$aborel.plateforme0"] =  array('alias' => 'pl');
-      $c->with["$aborel.editeur0"]    =  array('alias' => 'ed');
-      $q .="LEFT JOIN plateforme   AS pl ON a.plateforme   = pl.plateforme_id ";
-      $q .="LEFT JOIN editeur      AS ed ON a.editeur      = ed.editeur_id ";
-      $q .="LEFT JOIN histabo      AS ha ON a.histabo      = ha.histabo_id ";
-      $q .="LEFT JOIN statutabo    AS st ON a.statutabo    = st.statutabo_id ";
-      $q .="LEFT JOIN localisation AS lo ON a.localisation = lo.localisation_id ";
-      $q .="LEFT JOIN gestion      AS ge ON a.gestion      = ge.gestion_id ";
-      $q .="LEFT JOIN format       AS fo ON a.format       = fo.format_id ";
-      $q .="LEFT JOIN licence      AS li ON a.licence      = li.licence_id ";
-
-
-      //
-      // Critère de recherche
-      //
-      $q .="WHERE "; //j.perunilid = 53857 OR  j.perunilid = 54895; ";
-      // Colonnes de recherche
-      $cols = array(
-      // Journal
-      "j.perunilid",
-      "j.titre",
-      "j.soustitre",
-      "j.titre_abrege",
-      "j.titre_variante",
-      "j.faitsuitea",
-      "j.devient",
-      "j.issn",
-      "j.issnl",
-      "j.nlmid",
-      "j.reroid",
-      "j.doi",
-      "j.coden",
-      "j.urn",
-      "j.url_rss",
-      "j.commentaire_pub",
-      // Abonnement
-      "a.package",
-      "a.no_abo",
-      "a.url_site",
-      "a.embargo_mois",
-      "a.acces_user",
-      "a.acces_pwd",
-      "a.etatcoll",
-      "a.cote",
-      "a.editeur_code",
-      "a.editeur_sujet",
-      "a.commentaire_pub",
-      //Tables associées à Abonnement
-      "pl.plateforme",
-      "ed.editeur",
-      "ha.histabo",
-      "st.statutabo",
-      "lo.localisation",
-      "ge.gestion",
-      "fo.format",
-      "li.licence",
-      //Sujet
-      //"sj.nom_fr",
-      // Biblio
-      //"bib.biblio"
-      );
-
-      // Si admin on ajoute quelques champs
-      if (!Yii::app()->user->isGuest) {
-      $cols[] = "j.DEPRECATED_sujetsfm";
-      $cols[] = "j.DEPRECATED_fmid";
-      $cols[] = "j.DEPRECATED_histroique";
-      $cols[] = "a.commentaire_pro";
-      }
-
-      // Boucle sur toutes les colonnes
-      foreach (explode(" ", $this->q) as $word) {
-      if ($word != "") {
-      $q .= " (";
-      // Boucle sur touts les mots de la recherche
-      foreach ($cols as $col) {
-      $q .= "$col LIKE '%$word%' OR ";
-      }
-      }
-      $q = trim($q, "OR ");
-      $q .= " ) AND ";
-      }
-
-      $q = trim($q, "AND ");
-      $q .= " LIMIT 50;";
-
-      $this->simple_sql_query_count = $count . $q;
-      $this->simple_sql_query = $select . $q;
-      } */
+ 
 
     private function allSearch() {
 

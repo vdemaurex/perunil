@@ -40,6 +40,8 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
 <div class="panel panel-default">
     <div class="panel-heading">
         <!-- Titre du journal !-->
+        <div class="row">
+            <div class="col-md-6">
         <strong>
             <?php
             echo ucfirst($data->titre);
@@ -50,8 +52,33 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
             );
             ?>
         </strong>
+            </div>
+        <?php
+        if (!Yii::app()->user->isGuest) {
+            echo '<div class="col-md-3 pull-right">';
+            echo CHtml::link("Editer", array('admin/peredit/perunilid/' . $data->perunilid));
+
+            echo " | ";
+
+            // Fusion
+            echo CHTml::checkBox("perunilid[$data->perunilid]", false, array('value' => $data->perunilid));
+            echo "<small>" . CHtml::label("Fusion", $data->perunilid) . "</small>";
+            
+            echo " | ";
+
+            // Modèle pour la fusion
+            echo CHtml::radioButton('maitre', false, array('value' => $data->perunilid));
+            echo "<small>" . CHtml::label("Modèle", 'fusion' . $data->perunilid) . "</small>";
+            echo '</div>';
+        }
+        ?>   
+            
+        </div>
+        <?php if ($data->soustitre != "" || $data->titre_abrege != "" || $data->titre_variante != ""): ?>
+       <div class="row">
+           <div class="col-md-6">
         <!-- Sous-titre et autres alternatives -->
-        <small><br />
+        <small>
             <?php
             $hb = "";
             if ($data->soustitre != ""){
@@ -66,6 +93,9 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
                 echo $hb . CHtml::encode($data->titre_variante);
             ?>
         </small>
+           </div>
+       </div>
+        <?php endif; ?>
     </div>
 
     <!-- Table -->
@@ -91,26 +121,8 @@ foreach ($abos as $i => $abo) {
                 // Etat de la collection
                 echo CHtml::encode($abo->etatcoll);
                 ?>
-</div>
+                </div>
 
-
-                <?php
-                if (!Yii::app()->user->isGuest) {
-                      
-                    echo CHtml::link("Editer", array('admin/peredit/perunilid/' . $data->perunilid));
-
-                    echo "<br />\n";
-
-                    // Fusion
-                    echo "<small>" . CHtml::label("Fusion", $data->perunilid) . "</small>";
-                    echo CHTml::checkBox("perunilid[$data->perunilid]", false, array('value' => $data->perunilid));
-
-
-                    // Modèle pour la fusion
-                    echo "<br /><small>" . CHtml::label("Modèle", 'fusion' . $data->perunilid) . "</small>";
-                    echo CHtml::radioButton('maitre', false, array('value' => $data->perunilid));
-                }
-                ?>
 
                     </td>
             </tr>

@@ -1,9 +1,22 @@
-<?php $this->pageTitle = Yii::app()->name; ?>
-
-<h2>Résultats de la recherche avancée</h2>
+<?php $this->pageTitle = Yii::app()->name; 
+if (isset($isadvsearch) && $isadvsearch){
+    $dp = 'adv_dp';
+    $adp = 'adv_adp';
+    $count = 'adv_sql_query_count';
+}else{
+    $dp = 'simple_dp';
+    $adp = 'simple_adp';
+    $count = 'simple_sql_query_count';
+}
+?>
+<h2>Résultats de la recherche</h2>
 <?php
 echo  CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour au formulaire de recherche', array(
-                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('site/advSearch') . '"',
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('site/index') . '"',
+                        'class'   => "btn btn-default  btn-xs")); 
+echo " ";
+echo  CHtml::htmlButton('Nouvelle recherche', array(
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('site/simpleclean') . '"',
                         'class'   => "btn btn-default  btn-xs")); 
 ?>
 <br/>
@@ -13,29 +26,41 @@ echo  CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Ret
 if ($search_done) {
 
     // Affichage des résultat pour le publique
-    if (Yii::app()->user->isGuest) {
-        $widget = 'zii.widgets.CListView';
-        $view = '_view';
+    if (Yii::app()->user->isGuest) {     
+        $this->widget('zii.widgets.CListView', array(
+            'dataProvider' => Yii::app()->session['search']->$dp,
+            'itemView' => '_view',
+            'ajaxUpdate' => false,
+            'template' => "{pager}\n{items}\n{pager}",
+        ));
     }
     // Affichage des résultat pour les administrateurs
     else {
-        $widget = 'AdminCListView';
-        $view = '/admin/_adminView';
-
         $this->renderPartial('/admin/_adminSearchButton');
+        
+        if (Yii::app()->session['search']->admin_affichage == 'journal') {
+            // affichage par journaux
+            $this->widget('AdminCListView', array(
+                'dataProvider' => Yii::app()->session['search']->$dp,
+                'itemView' => '/site/_view',
+                'ajaxUpdate' => false,
+                'template' => "{pager}\n{items}\n{pager}",
+            ));
+        } else {
+            // Affichage par abonnement
+            $this->renderPartial('/admin/_aboSearchResults', array('dataProvider' => Yii::app()->session['search']->$adp));
+        }
     }
 
-    $this->widget($widget, array(
-        'dataProvider' => Yii::app()->session['search']->adv_dp,
-        'itemView' => $view,
-        'ajaxUpdate' => true,
-        'template' => "{pager}\n{items}\n{pager}",
-    ));
 
 
     // Affichage des résulats de la recherche
-    Yii::app()->session['totalItemCount'] = Yii::app()->session['search']->adv_dp->totalItemCount;
-    Yii::app()->user->setFlash('success', "Votre requête a retourné " .
+    Yii::app()->session['totalItemCount'] = Yii::app()->session['search']->$count;
+    $msg = "";
+    if(Yii::app()->session['search']->maxresults > 0){ // Il y a une limitation du nombre de résultats
+        $msg = ", limitée à " . Yii::app()->session['search']->maxresults. " résultats,";
+    }
+    Yii::app()->user->setFlash('success', "Votre requête$msg a retourné " .
             Yii::app()->session['totalItemCount'] .
             " résultat(s).<br/>" .
             Yii::app()->session['search']->getQuerySummary());

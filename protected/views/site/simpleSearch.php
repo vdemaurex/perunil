@@ -1,5 +1,4 @@
-<?php $this->pageTitle = Yii::app()->name; 
-$isadv = isset($advsearch) && $advsearch; ?>
+<?php $this->pageTitle = Yii::app()->name; ?>
 
 <h2>Recherche sur <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h2>
 <br/>

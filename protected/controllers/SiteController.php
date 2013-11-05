@@ -51,7 +51,7 @@ class SiteController extends Controller {
         }
         
         // Affichage du formulaire de recherche et év. des résultats.
-        $this->render('simpleSearchResults', array('search_done' => $search_done));
+        $this->render('searchResults', array('search_done' => $search_done, 'isadvsearch' => false));
     }
     
      public function actionSimpleclean(){
@@ -86,7 +86,7 @@ class SiteController extends Controller {
         //$render_params['advsearch'] = true;  
         
         // Affichage du formulaire de recherche et év. des résultats.
-        $this->render('advSearchResults', array('search_done' => $search_done));
+        $this->render('searchResults', array('search_done' => $search_done, 'isadvsearch' => true));
     }
 
     public function actionAdvSearch(){
