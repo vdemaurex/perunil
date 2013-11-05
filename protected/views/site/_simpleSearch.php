@@ -117,8 +117,8 @@
                             <td></td>
                         </tr>
                         <tr>
-                            <th colspan="2">Nombre maximum de résultats</th>
-                            <td colspan="3">
+                            <th colspan="2"  style="padding-bottom:10px;">Nombre maximum de résultats</th>
+                            <td colspan="3" style="padding-top:10px;">
                                 <select name="maxresults" id="maxresults" class="form-control input-sm form-inline" style="width: auto;">
                                     <option value="-1"  <?php if (Yii::app()->session['search']->maxresults == '-1') echo "selected"; ?> >Tous</option>
                                     <option value="50"  <?php if (Yii::app()->session['search']->maxresults == '50') echo "selected"; ?> >50</option>

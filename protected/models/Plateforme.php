@@ -10,81 +10,118 @@
  * The followings are the available model relations:
  * @property Abonnement[] $abonnements
  */
-class Plateforme extends CSmalllistActiveRecord
-{
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
-	 * @return Plateforme the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
+class Plateforme extends CSmalllistActiveRecord {
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'plateforme';
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @param string $className active record class name.
+     * @return Plateforme the static model class
+     */
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('plateforme', 'required'),
-			array('plateforme', 'length', 'max'=>200),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('plateforme_id, plateforme', 'safe', 'on'=>'search'),
-		);
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName() {
+        return 'plateforme';
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'abonnements' => array(self::HAS_MANY, 'Abonnement', 'plateforme'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    /*public function rules() {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('plateforme', 'required'),
+            array('plateforme', 'length', 'max' => 200),
+            array('slcount', 'safe'),
+            // The following rule is used by search().
+            // Please remove those attributes that should not be searched.
+            array('plateforme_id, plateforme, slcount', 'safe', 'on' => 'search'),
+        );
+    }*/
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'plateforme_id' => 'Plateforme',
-			'plateforme' => 'Plateforme',
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    /*public function relations() {
+        return array(
+            'abonnements' => array(self::HAS_MANY, 'Abonnement', 'plateforme'),
+            // Relation de calcul
+            'slcount' => array(self::STAT, 'Abonnement', 'plateforme'),
+        );
+    }*/
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    /*public function attributeLabels() {
+        return array(
+            'plateforme_id' => 'Plateforme Id',
+            'plateforme' => 'Plateforme',
+        );
+    }*/
 
-		$criteria=new CDbCriteria;
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+     */
+    /*public function search() {
+        // Warning: Please modify the following code to remove attributes that
+        // should not be searched.
 
-		$criteria->compare('plateforme_id',$this->plateforme_id);
-		$criteria->compare('plateforme',$this->plateforme,true);
+        $criteria = new CDbCriteria;
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+        $countsql = $this->getCount_sql_subquery();
+
+        // select
+        $criteria->select = array(
+            '*',
+            $countsql . " as slcount",
+        );
+
+        // where
+        $criteria->compare('plateforme_id', $this->plateforme_id);
+        $criteria->compare('plateforme', $this->plateforme, true);
+        $criteria->compare($countsql, $this->slcount);
+
+        
+        
+        $sort = new CSort;
+        $sort->defaultOrder = 'plateforme ASC';
+        $sort->attributes = array(
+            'plateforme' => 'plateforme',
+            'plateforme_id' => 'plateforme_id',
+            'slcount' => array(
+               'asc' => 'slcount ASC',
+               'desc' => 'slcount DESC',
+            )
+        );
+
+        $sort->applyOrder($criteria);
+
+        
+        
+        
+        return new CActiveDataProvider(get_class($this), array(
+            'criteria' => $criteria,
+            'sort' => $sort,
+            'pagination' => array(
+                'pageSize' => 20,
+            ),
+        ));
+
+
+
+
+
+
+        //return new CActiveDataProvider($this, array(
+        //            'criteria' => $criteria,
+        //        ));
+    }*/
+
 }

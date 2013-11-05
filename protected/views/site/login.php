@@ -5,11 +5,13 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h1>Accès à l'administration de PérUnil</h1>
 
-<p>Merci de compléter le formulaire suivant pour vous connecter.</p>
 
-<div class="form">
+<div class="panel panel-default" style="width: 705px; margin:auto;">
+  <div class="panel-heading">
+      <h3>Accès à l'administration de PérUnil</h3>
+  </div>
+    <div class="panel-body">
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'login-form',
 	'enableClientValidation'=>true,
@@ -19,28 +21,30 @@ $this->breadcrumbs=array(
 )); ?>
 
 	<p class="note">Les champs marqués d'un astérisque <span class="required">*</span> sont obligatoires.</p>
-
-	<div class="row">
+        
+	<p>
 		<?php echo $form->labelEx($model,'username'); ?>
-		<?php echo $form->textField($model,'username'); ?>
+		<?php echo $form->textField($model,'username',array('class'=>"form-control", 'style'=>"width : 80%;")); ?>
 		<?php echo $form->error($model,'username'); ?>
-	</div>
+	</p>
 
-	<div class="row">
+	<p>
 		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password'); ?>
+		<?php echo $form->passwordField($model,'password',array('class'=>"form-control", 'style'=>"width : 80%;")); ?>
 		<?php echo $form->error($model,'password'); ?>
-	</div>
+	</p>
 
-	<div class="row rememberMe">
+	<p>
 		<?php echo $form->checkBox($model,'rememberMe'); ?>
 		<?php echo $form->label($model,'rememberMe'); ?>
 		<?php echo $form->error($model,'rememberMe'); ?>
-	</div>
+	</p>
 
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Connexion'); ?>
-	</div>
+	<p>
+		<?php echo CHtml::submitButton('Connexion',array('class'=>"btn btn-primary")); ?>
+	</p>
 
 <?php $this->endWidget(); ?>
-</div><!-- form -->
+        
+    </div>
+</div>

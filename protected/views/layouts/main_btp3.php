@@ -10,11 +10,15 @@
             <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
                 <? /* <link href="<?php echo Yii::app()->request->baseUrl; ?>/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"> */ ?>
 
+
+                
                 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
                 <!--[if lt IE 9]>
                   <script src="<?php echo Yii::app()->request->baseUrl; ?>/bootstrap/assets/js/html5shiv.js"></script>
                   <script src="<?php echo Yii::app()->request->baseUrl; ?>/bootstrap/assets/js/respond.min.js"></script>
                 <![endif]-->
+
+
 
                 <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
                 <!--link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" /-->
@@ -33,6 +37,8 @@
                   <!--[if IE]>
                   <!--<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/ie.css" media="screen, projection" />
                   <![endif]--> */ ?>
+                
+
 
                 <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
@@ -54,6 +60,10 @@
 
                 <? /* <script src="<?php echo Yii::app()->request->baseUrl; ?>/bootstrap/js/bootstrap.js" type="text/javascript"></script> */ ?>
                 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+                
+                <!--[if lt IE 8]>
+                    <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/bootstrap-ie7.css" rel="stylesheet">
+                <![endif]-->
                 </head>
 
                 <body>
@@ -108,7 +118,7 @@
                                         array('label' => 'Recherche avancée', 'url' => array('/site/advSearch')),
                                         array('label' => 'Recherche administrative', 'url' => array('/admin/search'), 'visible' => !Yii::app()->user->isGuest),
                                         array('label' => 'Sujets', 'url' => array('/site/sujet')),
-                                        array('label' => 'Contact', 'url' => array('/site/contact')),
+                                       // array('label' => 'Contact', 'url' => array('/site/contact')),
                                         array('label' => '?', 'url' => array('/site/page', 'view' => 'aide')),
                                     ),
                                     'lastItemCssClass' => 'navbar-right',

@@ -34,6 +34,7 @@ $nbabo = count($abos);
 if ($nbabo == 0 && Yii::app()->user->isGuest) {
     return;
 }
+
 ?>
 
 <div class="panel panel-default">

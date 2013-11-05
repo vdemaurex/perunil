@@ -30,6 +30,9 @@ return array(
             'userIdColumn' => 'utilisateur_id', // the column name of the primary key for the user
             'userNameColumn' => 'pseudo', // the column name of the primary key for the user
         ),
+    /* 'importcsv'=>array(
+      'path'=>'upload/importCsv/', // path to folder for saving csv file and file with import params
+      ), */
     ),
     // application components
     'components' => array(
@@ -53,14 +56,13 @@ return array(
           ),
           // uncomment the following to use a MySQL database
          */
-        'db' => array(
-            'connectionString' => 'mysql:host=localhost;dbname=perunil_journals-v2',
-            'emulatePrepare' => true,
-            'username' => 'root',
-            'password' => 'jvbcdb',
-            'charset' => 'utf8',
-            'schemaCachingDuration' => 3600,
-        ),
+	'db'=>array(
+		'connectionString' => 'mysql:host=localhost;dbname=perunil_journals-v2',
+		'emulatePrepare'   => true,
+		'username'         => 'wwwperun',
+		'password'         => 'admin4perunil',
+		'charset'          => 'utf8',
+	),
         'errorHandler' => array(
             // use 'site/error' action to display errors
             'errorAction' => 'site/error',

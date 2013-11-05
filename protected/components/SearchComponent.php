@@ -309,107 +309,7 @@ class SearchComponent extends CComponent {
         //$c->select = "SELECT DISTINCT COUNT(*) ";
     }
 
-    /**
-     * Crée le critère de recherche pour la recherche avancée
-     * @return \CDbCriteria
-     * @throws CException 
-     */
-    private function advancedSearchCriteria() {
-        $this->q_summary = "";
-
-        // Vérification de l'existance et de la conformité de la requête.
-        if (!$this->adv_query_tab && !is_array($this->adv_query_tab)) {
-            throw new CException("Recherche avancée impossible : requête n'est enregistrée.");
-        }
-
-        // TODO vérifier la validité du querytab
-        $criteria = new CDbCriteria();
-        // Ajout de la jointure avec les abonnements, nécessaire avant d'autres
-        // jointures.
-        $this->joinAbo($criteria);
-        foreach (array('C1', 'C2', 'C3') as $CN) {
-            if (!isset($querytab[$CN]))
-                continue;
-// nettoyage du champ
-            $this->simple_query_str = $querytab[$CN]['text'];
-            $this->q = $this->clean_search($this->simple_query_str);
-// si le champ ne contient rien , on abandonne ici.
-            if ($this->q == "")
-                continue;
-            $use_notlike = $querytab[$CN]['op'] == 'NOT';
-            switch ($querytab[$CN]['search_type']) {
-                case 'issn':
-                    $criteria->compare('issn', trim($this->simple_query_str), true, $querytab[$CN]['op']);
-                    $this->query_summary("issn = $this->simple_query_str {$querytab[$CN]['op']}");
-                    break;
-                case 'titre':
-//$title_criteria = new CDbCriteria();
-// $this->titleSearch($title_criteria, $use_notlike);
-                    $this->titleSearch($criteria, $use_notlike);
-//$criteria->mergeWith($title_criteria, $querytab[$CN]['op']);
-                    break;
-                case 'editeur':
-                    $criteria->join .= 'LEFT JOIN `editeur` `editeurs` ON (`abonnements`.`editeur`=`editeurs`.`editeur_id`)';
-                    $criteria->addCondition("editeurs.editeur LIKE '%$this->q%'");
-                    break;
-
-                default: // partout
-//$title_criteria = new CDbCriteria();
-//$this->journalSearch($title_criteria, $use_notlike);
-                    $this->journalSearch($criteria, $use_notlike);
-
-//$abo_criteria = new CDbCriteria();
-                    $like = $use_notlike ? "NOT LIKE" : "LIKE";
-                    foreach (explode(" ", $this->q) as $word) {
-                        if ($word != "" || $word != "") {
-                            $query = "abonnements.package $like '%$word%' OR abonnements.url_site $like '%$word%' " .
-                                    "OR abonnements.etatcoll $like '%$word%' OR abonnements.cote $like '%$word%' " .
-                                    "OR abonnements.editeur_code $like '%$word%' OR abonnements.editeur_sujet $like '%$word%' " .
-                                    "OR abonnements.commentaire_pub $like '%$word%' ";
-//$criteria->addCondition($abo_criteria, 'AND');
-                            $criteria->addCondition($query, 'OR');
-                        }
-                    }
-
-                    break;
-            }
-        }
-
-// Ajout des critère généraux
-        if (isset($querytab['accessunil']) && !$querytab['accessunil'])
-            $criteria->addCondition("abonnements.acces_elec_unil !=1 && abonnements.acces_elec_chuv !=1");
-        if (isset($querytab['openaccess']) && !$querytab['openaccess'])
-            $criteria->addCondition("abonnements.acces_elec_gratuit !=1 && openaccess !=1");
-
-//Critère de gestion
-        if (isset($querytab['sujet']) && $querytab['sujet'] != '') {
-            $criteria->join .= 'LEFT JOIN `journal_sujet` `js` ON (`js`.`perunilid`=`t`.`perunilid`)';
-            $criteria->join .= 'LEFT JOIN `sujet` `s` ON (`s`.`sujet_id`=`js`.`sujet_id`)';
-            $criteria->addCondition("s.sujet_id ='{$querytab['sujet']}'");
-        }
-
-        if (isset($querytab['plateforme']) && $querytab['plateforme'] != '') {
-            $criteria->join .= 'LEFT JOIN `plateforme` `p` ON (`p`.`plateforme_id`=`abonnements`.`plateforme`)';
-            $criteria->addCondition("p.plateforme_id ='{$querytab['plateforme']}'");
-        }
-
-        if (isset($querytab['licence']) && $querytab['licence'] != '') {
-            $criteria->join .= 'LEFT JOIN `licence` `l` ON (`l`.`licence_id`=`abonnements`.`licence`)';
-            $criteria->addCondition("l.licence_id ='{$querytab['licence']}'");
-        }
-
-        if (isset($querytab['statutabo']) && $querytab['statutabo'] != '') {
-            $criteria->join .= 'LEFT JOIN `statutabo` `sa` ON (`sa`.`statutabo_id`=`abonnements`.`statutabo`)';
-            $criteria->addCondition("sa.statutabo_id ='{$querytab['statutabo']}'");
-        }
-
-        if (isset($querytab['localisation']) && $querytab['localisation'] != '') {
-            $criteria->join .= 'LEFT JOIN `localisation` `loc` ON (`loc`.`localisation_id`=`abonnements`.`localisation`)';
-            $criteria->addCondition("loc.localisation_id ='{$querytab['localisation']}'");
-        }
-
-        return $criteria;
-    }
+ 
 
 ///////////////////////////////////////////////////////////////////////////
 // Recherche simple
@@ -446,6 +346,7 @@ class SearchComponent extends CComponent {
           } else */
         if (isset($this->simple_sql_query)) {
             $rawData = Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
+            $this->simple_sql_query_count = count($rawData);
             $this->simple_dp = new CArrayDataProvider($rawData, array(
                         'keyField' => 'perunilid',
                         //'sort' => array(
@@ -474,6 +375,11 @@ class SearchComponent extends CComponent {
         }
         return $this->simple_dp;
     }
+
+    public function getSimple_sql_query_count(){
+        return $this->simple_sql_query_count;
+    }
+
 
     /*  public function setSimple_dp($dp) {
       $this->simple_dp = $dp;
@@ -567,7 +473,7 @@ class SearchComponent extends CComponent {
     private function simpletitleSearch() {
 
         $select = "SELECT DISTINCT j.perunilid, titre ";
-        $count = "SELECT DISTINCT COUNT(*) ";
+        //$count = "SELECT DISTINCT COUNT(*) ";
         $q = "FROM  journal AS j ";
 
         // Jointure de l'abonnement pour la sélection du support
@@ -603,18 +509,21 @@ class SearchComponent extends CComponent {
         }
 
         $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
+
         // Boucle sur toutes les colonnes
         foreach ($cols as $col){
-            if ($word != "") {
-                $q .= " (";
+             $wq = "";
                 // Boucle sur touts les mots de la recherche
                  foreach ($tokens as $word) {
-                    $q .= "$col LIKE " . Yii::app()->db->quoteValue($word) . " AND ";
+                     if ($word != "") {
+                    $wq .= "$col LIKE " . Yii::app()->db->quoteValue($word) . " AND ";
                 }
             }
             // Suppression d'un OR surnuméraire
-            $q = trim($q, "AND ");
-            $q .= " ) OR ";
+            $wq = trim($wq, "AND ");
+            if ($wq != ""){
+                $q .= " ( $wq ) OR ";
+            }
         }
         // Suppression d'un AND surnuméraire
         $q = trim($q, "OR ");
@@ -629,7 +538,7 @@ class SearchComponent extends CComponent {
         // Fin de la requête
         $q .= ";";
 
-        $this->simple_sql_query_count = $count . $q;
+        //$this->simple_sql_query_count = $count . $q;
         $this->simple_sql_query = $select . $q;
     }
 
@@ -808,7 +717,7 @@ class SearchComponent extends CComponent {
         // Jointure de tous les tables liées au journal
         //
         $select = "SELECT DISTINCT j.perunilid ";
-        $count = "SELECT DISTINCT COUNT(*) ";
+        //$count = "SELECT DISTINCT COUNT(*) ";
         $q = "FROM  journal AS j ";
 
         // Jointure pour corecollection
@@ -929,7 +838,7 @@ class SearchComponent extends CComponent {
         // Fin de la requête
         $q .= ";";
 
-        $this->simple_sql_query_count = $count . $q;
+        //$this->simple_sql_query_count = $count . $q;
         $this->simple_sql_query = $select . $q;
     }
 

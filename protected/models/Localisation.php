@@ -32,7 +32,7 @@ class Localisation extends CSmalllistActiveRecord
 
 	/**
 	 * @return array validation rules for model attributes.
-	 */
+	 *
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -48,7 +48,7 @@ class Localisation extends CSmalllistActiveRecord
 
 	/**
 	 * @return array relational rules.
-	 */
+	 *
 	public function relations()
 	{
 		// NOTE: you may need to adjust the relation name and the related
@@ -60,7 +60,7 @@ class Localisation extends CSmalllistActiveRecord
 
 	/**
 	 * @return array customized attribute labels (name=>label)
-	 */
+	 *
 	public function attributeLabels()
 	{
 		return array(
@@ -72,7 +72,7 @@ class Localisation extends CSmalllistActiveRecord
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
+	 *
 	public function search()
 	{
 		// Warning: Please modify the following code to remove attributes that
@@ -86,5 +86,5 @@ class Localisation extends CSmalllistActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
+	}*/
 }

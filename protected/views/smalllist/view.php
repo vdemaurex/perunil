@@ -15,8 +15,8 @@ $this->menu=array(
 );
 ?>
 
-<h1>Détail de <?php echo 'Gérer ' . Yii::app()->session['smalllist'] . " #". $model->$col_id; ?></h1>
-
+<h3>Détail de <?php echo Yii::app()->session['smalllist'] . " #". $model->$col_id; ?></h3>
+<div class="panel panel-default" style="width: 95%; margin:auto;">
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
@@ -24,3 +24,4 @@ $this->menu=array(
 		$col,
 	),
 )); ?>
+</div>

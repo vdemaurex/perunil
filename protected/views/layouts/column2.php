@@ -1,4 +1,4 @@
-<?php $this->beginContent('//layouts/main'); ?>
+<?php $this->beginContent('//layouts/main_btp3'); ?>
 
 
 
@@ -9,41 +9,28 @@
             echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
         }
         ?>
+        <p>
         <b>Sélection du type de liste à modifier :</b>
-        <div id="smalllistmenu">
-            <?php
-            $types = array('Plateforme', 'Editeur', 'Histabo', 'Statutabo', 'Localisation', 'Gestion', 'Format', 'Support', 'Licence');
-            $items = array();
-
-            foreach ($types as $t) {
-                $items[] = array(
-                    'label' => $t,
-                    'url' => array('/smalllist/changetype/type/' . $t),
-                    'active' => Yii::app()->session['smalllist'] == $t);
-            }
-
-            $this->widget('zii.widgets.CMenu', array(
-                'items' => $items
-            ));
-            ?> 
-        </div>
-        <hr />
-
-        <?php echo $content; ?>
-    </div><!-- content -->
-</div>
-<div class="span-5 last">
-    <div id="sidebar">
+        </p>
         <?php
-        $this->beginWidget('zii.widgets.CPortlet', array(
-            'title' => 'Operations',
-        ));
+        $types = array('Plateforme', 'Editeur', 'Histabo', 'Statutabo', 'Localisation', 'Gestion', 'Format', 'Support', 'Licence');
+        $items = array();
+
+        foreach ($types as $t) {
+            $items[] = array(
+                'label' => $t,
+                'url' => array('/smalllist/changetype/type/' . $t),
+                'active' => Yii::app()->session['smalllist'] == $t);
+        }
+
         $this->widget('zii.widgets.CMenu', array(
-            'items' => $this->menu,
-            'htmlOptions' => array('class' => 'operations'),
+            'items' => $items,
+            'htmlOptions' => array('class' => 'nav nav-tabs'),
         ));
-        $this->endWidget();
+
+        echo $content;
+
         ?>
-    </div><!-- sidebar -->
+    </div><!-- content -->
 </div>
 <?php $this->endContent(); ?>

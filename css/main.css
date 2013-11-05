@@ -82,7 +82,7 @@ body
     background-color: #CAD353;
     bottom: 0;
     height: 16px;
-    left: 200px;
+    left: 25%;/*200px;*/
     position: absolute;
     text-align: center;
     width: 580px;

@@ -15,6 +15,12 @@ $this->menu=array(
 );
 ?>
 
-<h1>Modifier <?php echo Yii::app()->session['smalllist'] . " " . $model->$col_id; ?></h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<div class="panel panel-default" style="width: 95%; margin-right:auto; margin-left:auto; margin-top: 10px;">
+    <div class="panel-heading">
+        <strong>Modifier</strong>
+    </div>
+    <div  style="padding: 20px;">
+    <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+    </div>
+</div>

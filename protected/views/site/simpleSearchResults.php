@@ -38,7 +38,7 @@ if ($search_done) {
 
 
     // Affichage des résulats de la recherche
-    Yii::app()->session['totalItemCount'] = Yii::app()->session['search']->simple_dp->totalItemCount;
+    Yii::app()->session['totalItemCount'] = Yii::app()->session['search']->simple_sql_query_count;//Yii::app()->session['search']->simple_dp->totalItemCount;
     $msg = "";
     if(Yii::app()->session['search']->maxresults > 0){ // Il y a une limitation du nombre de résultats
         $msg = ", limitée à " . Yii::app()->session['search']->maxresults. " résultats,";

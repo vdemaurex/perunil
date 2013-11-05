@@ -32,7 +32,7 @@ class Histabo extends CSmalllistActiveRecord
 
 	/**
 	 * @return array validation rules for model attributes.
-	 */
+	 *
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -47,7 +47,7 @@ class Histabo extends CSmalllistActiveRecord
 
 	/**
 	 * @return array relational rules.
-	 */
+	 *
 	public function relations()
 	{
 		// NOTE: you may need to adjust the relation name and the related
@@ -63,7 +63,7 @@ class Histabo extends CSmalllistActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'histabo_id' => 'ID',
+			'histabo_id' => 'Histabo Id',
 			'histabo' => 'Historique de l\'abonnement',
 		);
 	}
@@ -71,7 +71,7 @@ class Histabo extends CSmalllistActiveRecord
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
+	 *
 	public function search()
 	{
 		// Warning: Please modify the following code to remove attributes that
@@ -85,5 +85,5 @@ class Histabo extends CSmalllistActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
+	}*/
 }

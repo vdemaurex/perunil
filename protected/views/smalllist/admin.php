@@ -1,5 +1,7 @@
 <?php
-$col = strtolower(Yii::app()->session['smalllist']);
+
+$table = Yii::app()->session['smalllist'];
+$col = strtolower($table);
 $this->breadcrumbs=array(
 	Yii::app()->session['smalllist']=>array('index'),
 	'Gestion',
@@ -23,30 +25,42 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1><?=Yii::app()->session['smalllist']?></h1>
+<?php
 
 
-Vous pouvez utiliser un opérateur de comparaison (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) au début de votre recherche pour spécifier la façon dont la comparaison doit être faite.
-
-
-<?php /*echo CHtml::link('Recherche avancée','#',array('class'=>'search-button')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
-*/?>
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+$this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>$col.'-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		$col.'_id',
-		$col,
-                'totaluse',
+                array(
+                    'name'=>$col.'_id',
+                    //'value'=>"'{$col}_id'",
+                    'htmlOptions'=>array('width'=>'100'),
+                ),
+                array(
+                    'name'=>"$col",
+                    //'value'=>"'$col'",
+                    //'htmlOptions'=>array('width'=>'40'),
+                ),
+		array(
+                    'name'=>"slcount",
+                    'header'=>'Nbr utilisations',
+                    //'value'=>$col.'->totaluse',
+                    //'value'=>"'totaluse'",
+                    'htmlOptions'=>array('width'=>'100'),
+                    'filter'=>"",
+                ),
 		array(
 			'class'=>'CButtonColumn',
+                    'htmlOptions'=>array('width'=>'75'),
 		),
 	),
-)); ?>
+)); 
+
+
+        echo CHtml::button('Ajouter un nouvel élément', array(
+            'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('smalllist/create')) . '"',
+            'class' => "btn btn-default"));
+
+?>
