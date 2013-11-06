@@ -21,7 +21,7 @@ $this->breadcrumbs = array(
   );
  * 
  */
-echo "<h1>Fichier CSV, réustats de l'importation</h1>\n";
+echo "<h1>Fichier CSV, résultats de l'importation</h1>\n";
 echo "<ul>";
 foreach ($msg as $message) {
     echo "<li>$message</li>";

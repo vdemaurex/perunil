@@ -1,22 +1,42 @@
 <?php $this->pageTitle = Yii::app()->name; 
-if (isset($isadvsearch) && $isadvsearch){
-    $dp = 'adv_dp';
-    $adp = 'adv_adp';
-    $count = 'adv_sql_query_count';
-}else{
-    $dp = 'simple_dp';
-    $adp = 'simple_adp';
-    $count = 'simple_sql_query_count';
+ switch ($searchtype) {
+    case 'adv':
+        $titre = "avancée";
+        $dp = 'adv_dp';
+        $adp = 'adv_adp';
+        $count = 'adv_sql_query_count';
+        $search_url = 'site/advSearch';
+        $clean_url  = 'site/advclean';
+         break;
+
+     case 'admin':
+        $titre = "administrateur";
+        $dp = 'admin_dp';
+        $adp = 'admin_dp';
+        $count = 'admin_count';
+        $search_url = 'admin/search';
+        $clean_url  = 'admin/searchclean';
+         break;
+
+    default: // simple
+        $titre = "simple";
+        $dp = 'simple_dp';
+        $adp = 'simple_adp';
+        $count = 'simple_sql_query_count';
+        $search_url = 'site/index';
+        $clean_url  = 'site/simpleclean';
+        break;
 }
+
 ?>
-<h2>Résultats de la recherche</h2>
+<h2>Résultats de la recherche <?php echo $titre; ?></h2>
 <?php
 echo  CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour au formulaire de recherche', array(
-                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('site/index') . '"',
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($search_url) . '"',
                         'class'   => "btn btn-default  btn-xs")); 
 echo " ";
 echo  CHtml::htmlButton('Nouvelle recherche', array(
-                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('site/simpleclean') . '"',
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($clean_url) . '"',
                         'class'   => "btn btn-default  btn-xs")); 
 ?>
 <br/>

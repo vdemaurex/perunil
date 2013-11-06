@@ -55,14 +55,17 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
 </style>
 
 <h1>Recherche administrateur</h1>
-<?php echo CHtml::beginForm($this->createUrl('admin/search'), 'get', array("id" => "adminsearchform"));?>
+<?php echo CHtml::beginForm($this->createUrl('admin/searchResults'), 'get', array("id" => "adminsearchform"));?>
 <div class="panel panel-default" style="width: 95%; margin:auto;">
 <table class="table table-striped">
     <tbody>
         <tr>
             <td></td>
-            <td><?=  CHtml::submitButton("Chercher", array('class' => "btn btn-primary"));?>
-                &nbsp;&nbsp;<?=CHtml::resetButton("Vider le formulaire", array('class' => "btn btn-default"));?></td>
+            <td><?=  CHtml::submitButton("Chercher", array('class' => "btn btn-primary btn-ms"));?>
+                &nbsp;&nbsp;
+                <?php echo  CHtml::htmlButton('Nouvelle recherche', array(
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/searchclean') . '"',
+                        'class'   => "btn btn-default  btn-ms")); ?></td>
         </tr>
         <tr style="background-color : #E8F8EC;">
             <td><b>Tous les champs de la table journal</b></td><td ><input type="text" value="<?=r($this,'all');?>" size="60" name="all" class="form-control"></td>
@@ -356,7 +359,9 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
         
         <tr >
             <td></td><td><?=  CHtml::submitButton("Chercher", array('class' => "btn btn-primary"));?>
-                &nbsp;&nbsp;<?=CHtml::resetButton("Vider le formulaire", array('class' => "btn btn-default"));?></td>
+                &nbsp;&nbsp;<?php echo  CHtml::htmlButton('Nouvelle recherche', array(
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/searchclean') . '"',
+                        'class'   => "btn btn-default  btn-ms")); ?></td>
         </tr>
     </tbody>
 </table>

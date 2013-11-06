@@ -507,28 +507,38 @@ class AdminController extends Controller {
     }
 
     public function actionSearch() {
+        
+        $this->activate_session_search_component();
+        
 
+        if (isset(Yii::app()->session['search']->admin_query_tab)) {
+            $this->last = Yii::app()->session['search']->admin_query_tab;
+        }
+        
+        $this->render('search');
+        
+    }
+    
+    public function actionSearchResults(){
+        
+        Yii::app()->session['searchtype'] = 'admin';
         $this->activate_session_search_component();
 
-
-        $this->last = null;
-        $render_params = array();
-        $render_params['search_done'] = (isset($_GET['perunilidcrit1'])
+        $search_done = (isset($_GET['perunilidcrit1'])
                 && isset($_GET['embargocrit'])
                 && count($_GET) > 3);
 
-        if ($render_params['search_done']) {
-
+        if ($search_done) {
             Yii::app()->session['search']->admin_query_tab = $_GET;
         }
 
         if (isset(Yii::app()->session['search']->admin_query_tab)) {
-            $render_params['search_done'] = true;
-            $this->last = Yii::app()->session['search']->admin_query_tab;
+            $search_done = true;
         }
 
+        $this->render('/site/searchResults', array('search_done' => $search_done, 'searchtype' => 'admin'));
 
-        $this->render('search', $render_params);
+       // $this->render('search', $render_params);        
     }
 
     public function actionSetaffichage($affichage) {

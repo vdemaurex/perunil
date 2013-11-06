@@ -546,3 +546,8 @@ table.detail-view tr.odd th
 table.detail-view tr.even th
 {
 }
+
+
+.width80px{
+    width: 80px;
+}

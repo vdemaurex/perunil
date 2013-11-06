@@ -34,6 +34,7 @@ class SiteController extends Controller {
     }
 
     public function actionSimpleSearchResults(){
+        Yii::app()->session['searchtype'] = 'simple';
         $this->activate_session_search_component();
 
         $search_done = isset($_GET['q']) && trim($_GET['q']) != "";
@@ -50,8 +51,8 @@ class SiteController extends Controller {
              $search_done = true;
         }
         
-        // Affichage du formulaire de recherche et év. des résultats.
-        $this->render('searchResults', array('search_done' => $search_done, 'isadvsearch' => false));
+        // Affichage des résultats.
+        $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
     }
     
      public function actionSimpleclean(){
@@ -63,8 +64,8 @@ class SiteController extends Controller {
      * Recherche avancée 
      */
     public function actionAdvSearchResults() {
-        //$render_params = array();
 
+        Yii::app()->session['searchtype'] = 'adv';
         $this->activate_session_search_component();
 
         $search_done = isset($_GET['advsearch']) && trim($_GET['advsearch']) == "advsearch";
@@ -85,8 +86,8 @@ class SiteController extends Controller {
         // affichage de la recherche avancée.
         //$render_params['advsearch'] = true;  
         
-        // Affichage du formulaire de recherche et év. des résultats.
-        $this->render('searchResults', array('search_done' => $search_done, 'isadvsearch' => true));
+        // Affichage des résultats.
+        $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'adv'));
     }
 
     public function actionAdvSearch(){

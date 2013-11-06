@@ -7,7 +7,8 @@
     $url = $this->createUrl("/admin/gridviewdialog");
     echo CHtml::button(
             'Afficher le contenu du lot', array(
-        'onclick' => '$("#gridViewDialog").attr("src","' . $url . '"); $("#cru-dialog").dialog("open");  return false;')
+            'onclick' => '$("#gridViewDialog").attr("src","' . $url . '"); $("#cru-dialog").dialog("open");  return false;',
+            'class' => "btn btn-primary btn-sm")
     );
 
 
@@ -54,58 +55,58 @@ if ($stage == "1-form") :
         echo $form->errorSummary($model);
         echo CHtml::hiddenField("stage", "2-preview");
         ?>
-
-        <table class="detail-view">
+        <div class="panel panel-default" style="width: 95%; margin:auto;">
+        <table class="table table-striped">
             <tbody>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'titreexclu'); ?></th>
                     <td colspan="3"><?php echo CHtml::radioButtonList("Abonnement[titreexclu]", "PasDeChangement", array("PasDeChangement" => 'Pas de changement', true => 'Oui', false => 'Non'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?><?php echo $form->error($model, 'titreexclu'); ?></td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'acces_elec_unil'); ?></th>
                     <td colspan="3"><?php echo CHtml::radioButtonList("Abonnement[acces_elec_unil]", "PasDeChangement", array("PasDeChangement" => 'Pas de changement', true => 'Oui', false => 'Non'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?><?php echo $form->error($model, 'acces_elec_unil'); ?></td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'acces_elec_chuv'); ?></th>
                     <td colspan="3"><?php echo CHtml::radioButtonList("Abonnement[acces_elec_chuv]", "PasDeChangement", array("PasDeChangement" => 'Pas de changement', true => 'Oui', false => 'Non'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?><?php echo $form->error($model, 'acces_elec_chuv'); ?></td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'acces_elec_gratuit'); ?></th>
                     <td colspan="3"><?php echo CHtml::radioButtonList("Abonnement[acces_elec_gratuit]", "PasDeChangement", array("PasDeChangement" => 'Pas de changement', true => 'Oui', false => 'Non'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?><?php echo $form->error($model, 'acces_elec_gratuit'); ?></td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'package'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'package', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'package'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'package', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'package'); ?></td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'no_abo'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'no_abo', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'no_abo'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'no_abo', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'no_abo'); ?></td>
                 </tr> 
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'etatcoll'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'etatcoll', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'etatcoll'); ?></td>               
+                    <td colspan="3"><?php echo $form->textField($model, 'etatcoll', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'etatcoll'); ?></td>               
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'embargo_mois'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'embargo_mois', array('size' => '4', 'maxlength' => '4')); ?>(nombres de mois)<?php echo $form->error($model, 'embargo_mois'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'embargo_mois', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control")); ?>(nombres de mois)<?php echo $form->error($model, 'embargo_mois'); ?></td>
                 </tr>
-                <tr class="odd">
+                <tr >
                     <th>Début de la collection</th>
-                    <td colspan="3">
-                        Année <?php echo $form->textField($model, 'etatcoll_deba', array('size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_deba'); ?> | 
-                        Volume <?php echo $form->textField($model, 'etatcoll_debv', array('size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_debv'); ?> | 
-                        Numéro <?php echo $form->textField($model, 'etatcoll_debf', array('size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_debf'); ?>
+                    <td colspan="3" class="form-inline">
+                        Année <?php echo $form->textField($model, 'etatcoll_deba', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_deba'); ?> | 
+                        Volume <?php echo $form->textField($model, 'etatcoll_debv', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_debv'); ?> | 
+                        Numéro <?php echo $form->textField($model, 'etatcoll_debf', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_debf'); ?>
                     </td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th>Fin de la collection</th>
-                    <td colspan="3">
-                        Année <?php echo $form->textField($model, 'etatcoll_fina', array('size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_fina'); ?> | 
-                        Volume <?php echo $form->textField($model, 'etatcoll_finv', array('size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_finv'); ?> | 
-                        Numéro <?php echo $form->textField($model, 'etatcoll_finf', array('size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_finf'); ?>
+                    <td colspan="3" class="form-inline">
+                        Année <?php echo $form->textField($model, 'etatcoll_fina', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_fina'); ?> | 
+                        Volume <?php echo $form->textField($model, 'etatcoll_finv', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_finv'); ?> | 
+                        Numéro <?php echo $form->textField($model, 'etatcoll_finf', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_finf'); ?>
                     </td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'plateforme'); ?></th>
                     <td colspan="3">
     <?php
@@ -115,7 +116,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'editeur'); ?></th>
                     <td colspan="3">
     <?php
@@ -125,7 +126,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'histabo'); ?></th>
                     <td colspan="3">
     <?php
@@ -135,7 +136,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>  
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'statutabo'); ?></th>
                     <td colspan="3">
     <?php
@@ -145,7 +146,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'localisation'); ?></th>
                     <td colspan="3">
     <?php
@@ -155,7 +156,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr> 
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'gestion'); ?></th>
                     <td colspan="3">
     <?php
@@ -165,7 +166,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'format'); ?></th>
                     <td colspan="3">
     <?php
@@ -175,7 +176,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>   
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'support'); ?></th>
                     <td colspan="3">
     <?php
@@ -185,7 +186,7 @@ if ($stage == "1-form") :
     ?>
                     </td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'licence'); ?></th>
                     <td colspan="3">
     <?php
@@ -196,52 +197,53 @@ if ($stage == "1-form") :
                     </td>
                 </tr>  
 
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'cote'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'cote', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'cote'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'cote', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'cote'); ?></td>
                 </tr> 
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'editeur_sujet'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'editeur_sujet', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'editeur_sujet'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'editeur_sujet', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'editeur_sujet'); ?></td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'acces_user'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'acces_user', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'acces_user'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'acces_user', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'acces_user'); ?></td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'acces_pwd'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'acces_pwd', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'acces_pwd'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'acces_pwd', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'acces_pwd'); ?></td>
                 </tr>
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'url_site'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'url_site', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'url_site'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'url_site', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'url_site'); ?></td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'editeur_code'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'editeur_code', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'editeur_code'); ?></td>
+                    <td colspan="3"><?php echo $form->textField($model, 'editeur_code', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'editeur_code'); ?></td>
                 </tr>  
-                <tr class="even">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'commentaire_pro'); ?></th>
-                    <td colspan="3"><?php echo $form->textArea($model, 'commentaire_pro', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'commentaire_pro'); ?></td>
+                    <td colspan="3"><?php echo $form->textArea($model, 'commentaire_pro', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'commentaire_pro'); ?></td>
                 </tr>
-                <tr class="odd">
+                <tr>
                     <th><?php echo $form->labelEx($model, 'commentaire_pub'); ?></th>
-                    <td colspan="3"><?php echo $form->textArea($model, 'commentaire_pub', array('style' => $textfieldstyle)); ?><?php echo $form->error($model, 'commentaire_pub'); ?></td>
+                    <td colspan="3"><?php echo $form->textArea($model, 'commentaire_pub', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'commentaire_pub'); ?></td>
                 </tr> 
-                <tr class="odd" style="background-color : #E8F8EC;">
+                <tr style="background-color : #E8F8EC;">
                     <th><?php echo CHtml::label("Action sur les champs textes (*) :", "add_text"); ?></th>
                     <td colspan="3">
     <?php echo CHtml::radioButtonList("add_text", true, array(true => 'Ajouter le texte à la suite des données existantes.', false => 'Remplacer le contenu par le nouveau texte.'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?>
                     </td>
                 </tr> 
 
-                <tr class="even">
+                <tr>
                     <th colspan="4" style="vertical-align: middle; text-align: center;">
-    <?php echo CHtml::submitButton('Suivant > '); ?>
+    <?php echo CHtml::submitButton('Suivant > ', array('class' => "btn btn-primary")); ?>
                     </th>
 
                 </tr>
         </table>
+        </div>
     <?php $this->endWidget(); ?>
 
     </div><!-- form -->
@@ -279,7 +281,7 @@ if ($stage == "1-form") :
         echo "</ul>";
 
 
-        echo "<p>" . CHtml::submitButton('Appliquer les modifications') . "</p>";
+        echo "<p>" . CHtml::submitButton('Appliquer les modifications', array('class' => "btn btn-default btn-sm")) . "</p>";
         echo CHtml::endForm(); 
         
         

@@ -80,32 +80,39 @@ if (isset($showresults) && $showresults) {
 
 
     echo CHtml::button('Appliquer les modifications', array(
-        'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/csvimportprocess')) . '"'));
-
+        'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/csvimportprocess')) . '"',
+        'class' => "btn btn-primary btn-sm"));
+    echo " ";
 
     echo CHtml::button('Annuler les modifications', array(
-        'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/csvimportcancel')) . '"'));
+        'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('admin/csvimportcancel')) . '"',
+        'class' => "btn btn-default btn-sm"));
 } 
 
 
 else { // Pas de résultats à afficher
     ?>
-    <p>Sélectionnez le fichier à importer puis cliquez sur "Téléverser le fichier".</p>
+
+    <div class="panel panel-default" style="width: 705px; margin:auto;">
+    <div class="panel-heading">Sélectionnez le fichier à importer puis cliquez sur "Téléverser le fichier".</div>
+    <div class="panel-body">
     <div class="form">
     <?php echo CHtml::beginForm("", 'post', array('enctype' => 'multipart/form-data')); ?>
 
     <?php echo CHtml::errorSummary($model); ?>
 
-        <div class="row">
+        <div class="form-group">
         <?php echo CHtml::activeLabel($model, 'fichier'); ?>
         <?php echo CHtml::activeFileField($model, 'fichier'); ?>
         </div>
-
-        <div class="row submit">
-            <?php echo CHtml::submitButton("Téléverser le fichier"); ?>
+        <br/>
+        <div class="form-group">
+            <?php echo CHtml::submitButton("Téléverser le fichier", array('class' => "btn btn-primary")); ?>
         </div>
 
             <?php echo CHtml::endForm(); ?>
+    </div>
+    </div>
     </div>
 
 

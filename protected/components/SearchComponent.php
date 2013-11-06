@@ -37,6 +37,7 @@ class SearchComponent extends CComponent {
     private $admin_query_tab;
     private $admin_criteria;
     private $admin_affichage;
+    private $admin_count;
     private $admin_dp;
 
     /**
@@ -924,8 +925,14 @@ class SearchComponent extends CComponent {
                             'pagination' => array('pageSize' => $this->pagesize))
         );
 
+        $this->admin_count = $this->admin_dp->totalItemCount;
         return $this->admin_dp;
     }
+    
+    public function getAdmin_count(){
+        return $this->admin_count;
+    }
+    
 
     /**
      * Recherche selon un ou plusieurs critère du tableau $querytab : 
