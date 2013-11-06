@@ -29,9 +29,11 @@
                 'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/csvexport') . '"',
                 'class' => "btn btn-default btn-sm"));
         }
+        if (Yii::app()->session['search']->admin_affichage == 'journal') {
         echo " " . CHtml::submitButton(
                 'Fusionner les éléments sélectionnés', array('class' => "btn btn-default btn-sm",
             'form' => "fusionform"));
+        }
         echo "</div>";
     
 ?>

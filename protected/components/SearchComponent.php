@@ -16,9 +16,8 @@ class SearchComponent extends CComponent {
      */
 
     private $adv_query_tab;
-    private $adv_criteria;
     private $adv_sql_command;
-    private $adv_sql_query_count;
+    private $adv_count;
     private $adv_dp;
 
     /**
@@ -120,7 +119,7 @@ class SearchComponent extends CComponent {
     public function getAdv_dp() {
         if (isset($this->adv_sql_command)) {
             $rawData = $this->adv_sql_command->queryAll();
-            $this->adv_sql_query_count = count($rawData);
+            $this->adv_count = count($rawData);
             $this->adv_dp = new CArrayDataProvider($rawData, array(
                         'keyField' => 'perunilid',
                         'pagination' => array(
@@ -139,7 +138,7 @@ class SearchComponent extends CComponent {
 
         if (isset($this->adv_sql_command)) {
             $rawData = $this->adv_sql_command->queryAll();
-            $this->adv_sql_query_count = count($rawData);
+            $this->adv_count = count($rawData);
             $idlist = array_map('current', $rawData);
             
             $criteria=new CDbCriteria(); 
@@ -160,8 +159,8 @@ class SearchComponent extends CComponent {
         return $adp;
     }
     
-    public function getAdv_sql_query_count(){
-        return $this->simple_sql_query_count;
+    public function getAdv_count(){
+        return $this->adv_count;
     }
     /* public function setAdv_dp($dp) {
       $this->adv_dp = $dp;

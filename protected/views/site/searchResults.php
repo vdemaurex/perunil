@@ -4,7 +4,7 @@
         $titre = "avancée";
         $dp = 'adv_dp';
         $adp = 'adv_adp';
-        $count = 'adv_sql_query_count';
+        $count = 'adv_count';
         $search_url = 'site/advSearch';
         $clean_url  = 'site/advclean';
          break;
