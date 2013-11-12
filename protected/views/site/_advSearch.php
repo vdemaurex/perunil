@@ -35,7 +35,7 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
         <td ><?php echo CHtml::dropDownList("C2[op]", isset($last) && isset($last['C1'])  ? $last['C2']['op'] : "AND", $operators, array('class' => "form-control")); ?></td>
     </tr>
     <tr>
-        <td><?php echo CHtml::dropDownList("C2[search_type]", isset($last) && isset($last['C2']) ? $last['C2']['search_type'] : "titre", $fields, array('class' => "form-control")); ?></td>
+        <td><?php echo CHtml::dropDownList("C2[search_type]", isset($last) && isset($last['C2']) ? $last['C2']['search_type'] : "editeur", $fields, array('class' => "form-control")); ?></td>
         <td><?php echo CHtml::textField(
                 'C2[text]', 
                 isset($last) && isset($last['C2']) ? $last['C2']['text'] : "", 
@@ -44,7 +44,7 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
         <td><?php echo CHtml::dropDownList("C3[op]", isset($last) && isset($last['C3']) ? $last['C3']['op'] : "AND", $operators, array('class' => "form-control")); ?></td>
     </tr>
     <tr>
-        <td><?php echo CHtml::dropDownList("C3[search_type]", isset($last) && isset($last['C3']) ? $last['C3']['search_type'] : "titre", $fields, array('class' => "form-control")); ?></td>
+        <td><?php echo CHtml::dropDownList("C3[search_type]", isset($last) && isset($last['C3']) ? $last['C3']['search_type'] : "issn", $fields, array('class' => "form-control")); ?></td>
         <td><?php echo CHtml::textField(
                 'C3[text]', 
                 isset($last) && isset($last['C3']) ? $last['C3']['text'] : "", 

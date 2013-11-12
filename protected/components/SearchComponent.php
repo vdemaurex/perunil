@@ -205,24 +205,28 @@ class SearchComponent extends CComponent {
             $c->join(
                     'plateforme pl', "a.plateforme = pl.plateforme_id AND pl.plateforme_id = :idpl", array(':idpl' => $this->adv_query_tab['plateforme'])
             );
+            $this->query_summary("Plateforme = « " . Plateforme::model()->findByPk($this->adv_query_tab['plateforme'])->plateforme ." »");
         }
 
         if (isset($this->adv_query_tab['licence']) && $this->adv_query_tab['licence'] != '') {
             $c->join(
                     'licence li', "a.licence = li.licence_id AND li.licence_id = :idli", array(':idli' => $this->adv_query_tab['licence'])
             );
+            $this->query_summary("Licence = « " . Licence::model()->findByPk($this->adv_query_tab['licence'])->licence ." »");
         }
 
         if (isset($this->adv_query_tab['statutabo']) && $this->adv_query_tab['statutabo'] != '') {
             $c->join(
                     'statutabo st', "a.statutabo = st.statutabo_id AND st.statutabo_id = :idst", array(':idst' => $this->adv_query_tab['statutabo'])
             );
+            $this->query_summary("Abonnement = « " . Statutabo::model()->findByPk($this->adv_query_tab['statutabo'])->statutabo ." »");
         }
 
         if (isset($this->adv_query_tab['localisation']) && $this->adv_query_tab['localisation'] != '') {
             $c->join(
-                    'localisation lo', "a.localisation = lo.localisation_id AND lo.localisation_id = :idlo", array(':idst' => $this->adv_query_tab['localisation'])
+                    'localisation lo', "a.localisation = lo.localisation_id AND lo.localisation_id = :idlo", array(':idlo' => $this->adv_query_tab['localisation'])
             );
+            $this->query_summary("Localisation = « " . Localisation::model()->findByPk($this->adv_query_tab['localisation'])->localisation ." »");
         }
 
 
@@ -233,13 +237,18 @@ class SearchComponent extends CComponent {
             $c->join(
                     "sujet s", "s.sujet_id = js.sujet_id AND s.sujet_id = :sid", array(":sid" => $this->adv_query_tab['sujet'])
             );
+            $this->query_summary("Sujet = « " . Sujet::model()->findByPk($this->adv_query_tab['sujet'])->nom_fr ." »");
         }
 
         // Pour les critère d'accès, unil-chuv et openaccès, on ne traite que si c'est décoché
-        if (!isset($this->adv_query_tab['accessunil']) || !$this->adv_query_tab['accessunil'])
+        if (!isset($this->adv_query_tab['accessunil']) || !$this->adv_query_tab['accessunil']){
             $c->andWhere("a.acces_elec_unil !=1 && a.acces_elec_chuv !=1");
-        if (!isset($this->adv_query_tab['openaccess']) || !$this->adv_query_tab['openaccess'])
+            $this->query_summary("sans les abonnements UNIL et CHUV.");
+        }
+        if (!isset($this->adv_query_tab['openaccess']) || !$this->adv_query_tab['openaccess']){
             $c->andWhere("a.acces_elec_gratuit !=1 && j.openaccess !=1");
+            $this->query_summary("sans les jouraux Openaccess.");
+            }
 
 
 
@@ -273,8 +282,8 @@ class SearchComponent extends CComponent {
 
                     case 'issn':
                         $issn = trim($this->simple_query_str);
-                        $Cwhere .= "j.issn $like %$issn%";
-                        $this->query_summary("issn = $this->simple_query_str {$this->adv_query_tab[$CN]['op']}");
+                        $Cwhere .= " j.issn $like '%$issn%' ";
+                        $this->query_summary("issn = $this->simple_query_str");
                         break;
 
                     case 'titre':
@@ -309,8 +318,9 @@ class SearchComponent extends CComponent {
 
                     case 'editeur':
                         $c->join(
-                                'editeur ed', "a.editeur = ed.editeur_id AND ed.editeur LIKE %:edit%", array(':edit' => $this->q)
+                                'editeur ed', "a.editeur = ed.editeur_id AND ed.editeur LIKE :editeur", array(':editeur' => "%$this->q%")
                         );
+                        $this->query_summary("éditeur contenant l'expression : « " . $this->q ." »");
                         break;
 
                     default:
@@ -551,11 +561,14 @@ class SearchComponent extends CComponent {
 
         //$like = $use_not_like ? "NOT LIKE" : "LIKE";
         //$like = "LIKE";
+        $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
+        
         $tokens = array();
         if ($this->search_type == self::TEXACT) {
             $tokens[] = "$this->simple_query_str";
         } elseif ($this->search_type == self::TBEGIN) {
             $tokens[] = "$this->q%";
+            $cols = array('titre');
         } else { // Recherche de chaque mot indépendamment.
             foreach (explode(" ", $this->q) as $word) {
                 if ($word != "" || $word != "") {
@@ -563,8 +576,6 @@ class SearchComponent extends CComponent {
                 }
             }
         }
-
-        $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
 
         // Boucle sur toutes les colonnes
         foreach ($cols as $col){
@@ -873,7 +884,7 @@ class SearchComponent extends CComponent {
 
     public function setAdmin_query_tab($query_tab) {
         $this->admin_query_tab = $query_tab;
-        $this->refreshAdminCriteria();
+       // $this->refreshAdminCriteria();
     }
 
     public function setAdmin_affichage($affichage = 'abonnement') {
@@ -883,14 +894,14 @@ class SearchComponent extends CComponent {
         } else {
             $this->admin_affichage = 'abonnement';
         }
-        $this->refreshAdminCriteria();
+       // $this->refreshAdminCriteria();
     }
 
     public function getAdmin_affichage() {
         if (isset($this->admin_affichage) && in_array($this->admin_affichage, array("journal", "abonnement"))) {
             return $this->admin_affichage;
         } else {
-            return 'abonnement';
+            return 'journal';
         }
     }
 
@@ -918,6 +929,14 @@ class SearchComponent extends CComponent {
     public function getAdmin_dp() {
         $affichage = ucfirst($this->getAdmin_affichage());
 
+        $this->q_summary = "";
+        if ($affichage == 'Journal') {
+            $this->admin_criteria = $this->adminSearch();
+        } else {
+            $this->admin_criteria = $this->aboadminSearch();
+        }
+        
+        
         $this->admin_dp = new CActiveDataProvider(
                         $affichage::model(),
                         array('criteria' => $this->admin_criteria,
@@ -927,6 +946,7 @@ class SearchComponent extends CComponent {
         $this->admin_count = $this->admin_dp->totalItemCount;
         return $this->admin_dp;
     }
+    
     
     public function getAdmin_count(){
         return $this->admin_count;
@@ -1019,6 +1039,15 @@ class SearchComponent extends CComponent {
                 $this->query_summary("perunilid " . $ct[$qt['perunilidcrit2']] . " " . $qt['perunilid2']);
             }
         }
+        
+        if (isset($qt['corecollection']) && trim($qt['corecollection']) == '1'){
+            // FIXME : id biblio en dur !
+            $criteria->join .= 'INNER JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id = 6';
+
+        }
+                    // Jointure pour corecollection
+        // $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
+        // $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
 
 // Modifications : Si un champ concernant le modifications est rempli
 // 1. Création d'une requête pour la table modification
@@ -1252,6 +1281,12 @@ class SearchComponent extends CComponent {
                 $criteria->addCondition("t.perunilid " . $ct[$qt['perunilidcrit2']] . " '" . $qt['perunilid2'] . "'");
                 $this->query_summary("perunilid " . $ct[$qt['perunilidcrit2']] . " " . $qt['perunilid2']);
             }
+        }
+        
+         if (isset($qt['corecollection']) && trim($qt['corecollection']) == '1'){
+            // FIXME : id biblio en dur !
+            $criteria->join .= 'INNER JOIN corecollection AS cc ON j.perunilid = cc.perunilid AND cc.biblio_id = 6';
+
         }
 
 // Modifications : Si un champ concernant le modifications est rempli

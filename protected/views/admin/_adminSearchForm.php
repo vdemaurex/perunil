@@ -52,12 +52,17 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
     .form-control {
         width: auto;
     }
+    
+    #adminformtable  > tbody > tr > td{
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
 </style>
 
 <h1>Recherche administrateur</h1>
 <?php echo CHtml::beginForm($this->createUrl('admin/searchResults'), 'get', array("id" => "adminsearchform"));?>
 <div class="panel panel-default" style="width: 95%; margin:auto;">
-<table class="table table-striped">
+<table id="adminformtable" class="table table-striped">
     <tbody>
         <tr>
             <td></td>

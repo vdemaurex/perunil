@@ -56,7 +56,10 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
         <?php
         if (!Yii::app()->user->isGuest) {
             echo '<div class="col-md-3 pull-right">';
-            echo CHtml::link("Editer", array('admin/peredit/perunilid/' . $data->perunilid));
+            echo " " . CHtml::button('Editer', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/peredit/', array('perunilid' => $data->perunilid)) . '"',
+                'class' => "btn btn-primary btn-xs"));
+           // echo CHtml::link("Editer", array('admin/peredit/perunilid/' . $data->perunilid));
 
             echo " | ";
 
@@ -69,6 +72,12 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
             // Modèle pour la fusion
             echo CHtml::radioButton('maitre', false, array('value' => $data->perunilid));
             echo "<small>" . CHtml::label("Modèle", 'fusion' . $data->perunilid) . "</small>";
+            
+            echo " | ";
+            
+            echo " " . CHtml::submitButton(
+                'Fusion !', array('class' => "btn btn-default btn-xs",
+            'form' => "fusionform"));
             echo '</div>';
         }
         ?>   

@@ -56,9 +56,13 @@ if ($search_done) {
     }
     // Affichage des résultat pour les administrateurs
     else {
+       // echo CHtml::beginForm(CHtml::normalizeUrl(array('admin/fusion')),'post', array('id' =>'fusionform'));
         $this->renderPartial('/admin/_adminSearchButton');
         
-        if (Yii::app()->session['search']->admin_affichage == 'journal') {
+        if (Yii::app()->session['search']->admin_affichage == 'abonnement') {
+            // Affichage par abonnement
+            $this->renderPartial('/admin/_aboSearchResults', array('dataProvider' => Yii::app()->session['search']->$adp));
+        }else{
             // affichage par journaux
             $this->widget('AdminCListView', array(
                 'dataProvider' => Yii::app()->session['search']->$dp,
@@ -66,10 +70,8 @@ if ($search_done) {
                 'ajaxUpdate' => false,
                 'template' => "{pager}\n{items}\n{pager}",
             ));
-        } else {
-            // Affichage par abonnement
-            $this->renderPartial('/admin/_aboSearchResults', array('dataProvider' => Yii::app()->session['search']->$adp));
         }
+        //echo CHtml::endForm();
     }
 
 
@@ -77,7 +79,7 @@ if ($search_done) {
     // Affichage des résulats de la recherche
     Yii::app()->session['totalItemCount'] = Yii::app()->session['search']->$count;
     $msg = "";
-    if(Yii::app()->session['search']->maxresults > 0){ // Il y a une limitation du nombre de résultats
+    if(Yii::app()->session['search']->maxresults > 0 && $searchtype == "simple"){ // Il y a une limitation du nombre de résultats
         $msg = ", limitée à " . Yii::app()->session['search']->maxresults. " résultats,";
     }
     Yii::app()->user->setFlash('success', "Votre requête$msg a retourné " .

@@ -230,28 +230,26 @@ class AdminController extends Controller {
     }
 
     public function actionAboduplicate($perunilid, $aboid) {
-        
+
         $originalAbo = Abonnement::model()->findByPk($aboid);
         $copiedAbo = $originalAbo->copy();
-        if (!$copiedAbo){ // echec
+        if (!$copiedAbo) { // echec
             Yii::app()->user->setFlash('error', "La duplication de l'abonnement $aboid a échoué.");
-            $url = Yii::app()->createUrl('/admin/aboedit/perunilid/' . $perunilid . '/aboid/' . $aboid); 
-        }
-        else{ //succès
+            $url = Yii::app()->createUrl('/admin/aboedit/perunilid/' . $perunilid . '/aboid/' . $aboid);
+        } else { //succès
             Yii::app()->user->setFlash('success', "La duplication de l'abonnement $aboid a réussi. Un nouvel abonnement (numéro $copiedAbo->abonnement_id) à été créé.");
             $url = Yii::app()->createUrl('/admin/aboedit/perunilid/' . $perunilid . '/aboid/' . $copiedAbo->abonnement_id);
         }
         $this->redirect($url);
     }
-    
-    public function actionJrnduplicate ($perunilid){
+
+    public function actionJrnduplicate($perunilid) {
         $originalJrn = Journal::model()->findByPk($perunilid);
         $copiedJrn = $originalJrn->copy();
-        if (!$copiedJrn){ // echec
+        if (!$copiedJrn) { // echec
             Yii::app()->user->setFlash('error', "La duplication du journal $perunilid a échoué.");
-            $url = Yii::app()->createUrl('/admin/peredit/perunilid/' . $perunilid); 
-        }
-        else{ //succès
+            $url = Yii::app()->createUrl('/admin/peredit/perunilid/' . $perunilid);
+        } else { //succès
             Yii::app()->user->setFlash('success', "La duplication du journal $perunilid a réussi. Un nouveau journal (numéro $copiedJrn->perunilid) à été créé.");
             $url = Yii::app()->createUrl('/admin/peredit/perunilid/' . $copiedJrn->perunilid);
         }
@@ -332,6 +330,28 @@ class AdminController extends Controller {
         }
         Yii::app()->user->setFlash('success', "Les journaux ont bien été fusionnés.");
         $this->redirect($returnUrl);
+    }
+
+    public function actionMesmodifications() {
+        
+        $userid = Yii::app()->user->getState('id');
+        $today = date('Y-m-d H:i:s');
+        $yesterday = date('Y-m-d H:i:s', time() - 60 * 60 * 24);
+        
+        $criteria = new CDbCriteria();
+        $criteria->addCondition("stamp < '$today'");
+        $criteria->addCondition("stamp > '$yesterday'");
+        $criteria->addCondition("user_id = $userid");
+        $criteria->order = 'stamp DESC';
+        
+        $dataProvider = new CActiveDataProvider('Modifications', array(
+                    'criteria' => $criteria,
+                    'pagination' => array(
+                        'pageSize' => 20,
+                    ),
+                ));
+        
+        $this->render('mesmodifications', array('dataProvider' => $dataProvider));
     }
 
     /**
@@ -507,20 +527,19 @@ class AdminController extends Controller {
     }
 
     public function actionSearch() {
-        
+
         $this->activate_session_search_component();
-        
+
 
         if (isset(Yii::app()->session['search']->admin_query_tab)) {
             $this->last = Yii::app()->session['search']->admin_query_tab;
         }
-        
+
         $this->render('search');
-        
     }
-    
-    public function actionSearchResults(){
-        
+
+    public function actionSearchResults() {
+
         Yii::app()->session['searchtype'] = 'admin';
         $this->activate_session_search_component();
 
@@ -538,7 +557,7 @@ class AdminController extends Controller {
 
         $this->render('/site/searchResults', array('search_done' => $search_done, 'searchtype' => 'admin'));
 
-       // $this->render('search', $render_params);        
+        // $this->render('search', $render_params);        
     }
 
     public function actionSetaffichage($affichage) {

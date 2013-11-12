@@ -14,3 +14,4 @@ Centre Hospitalier Universitaire Vaudois - BH 08<br />
 Rue du Bugnon 46 - CH-1011 Lausanne</p>
 
 <p>Tél. ++41 (0)21 314 50 82</p>
+<a href="mailto:wwwperun@unil.ch">Envoyer un e-mail</a>

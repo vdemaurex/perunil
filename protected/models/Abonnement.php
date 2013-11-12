@@ -54,6 +54,7 @@ class Abonnement extends CActiveRecord {
 
     public $journal_titre;
 
+    private $modif_tmp;
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -73,7 +74,7 @@ class Abonnement extends CActiveRecord {
     public function behaviors() {
         return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
     }
-
+   
     /**
      * @return array validation rules for model attributes.
      */
