@@ -87,7 +87,7 @@
                     $this->widget('zii.widgets.CMenu', array(
                         'items' => array(
                             array('label' => 'Recherche simple', 'url' => array('/site/index')),
-                            array('label' => 'Recherche avancée', 'url' => array('/site/advSearch')),
+                            array('label' => 'Recherche avancée', 'url' => array('/site/advclean')),
                             array('label' => 'Recherche administrative', 'url' => array('/admin/searchclean'), 'visible' => !Yii::app()->user->isGuest),
                             array('label' => 'Sujets', 'url' => array('/site/sujet')),
                             // array('label' => 'Contact', 'url' => array('/site/contact')),
@@ -99,9 +99,9 @@
 
                     $this->widget('zii.widgets.CMenu', array(
                         'items' => array(
-                            array('label' => 'Login',
-                                'url' => array('/site/login'),
-                                'visible' => Yii::app()->user->isGuest),
+//                            array('label' => 'Login',
+//                                'url' => array('/site/login'),
+//                                'visible' => Yii::app()->user->isGuest),
                             array('label' => '<span class="glyphicon glyphicon-cog"></span>Admin',
                                 'url' => array('/admin/index'),
                                 'visible' => !Yii::app()->user->isGuest,

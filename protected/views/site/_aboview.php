@@ -15,16 +15,21 @@
  * @property Journal $perunil
  * @property Plateforme $plateforme
  */
-ob_start();
-$this->widget('AboUrlWidget', array('abo' => $abo, 'jrn' => $jrn));
-$url=ob_get_contents();
-ob_end_clean();
+//ob_start();
+//$this->widget('AboUrlWidget', array('abo' => $abo, 'jrn' => $jrn));
+//$url=ob_get_contents();
+//ob_end_clean();
 
 
 $fields = array(
     'abonnement_id',
-    array('name' => 'url_site', 'value' => $url, 'type' => 'raw', 'label' => "URL du périodique"),
+    //array('name' => 'url_site', 'value' => $url, 'type' => 'raw', 'label' => "URL du périodique"),
+    //'url_site',
     'package',
+     array(
+        'name' => 'url_site', 
+        'value' => CHtml::link($abo->url_site, $abo->url_site, array('target' => '_blank')), 'type' => 'raw', 'label' => "URL du périodique"
+     ),
     'no_abo',
     'etatcoll',
     'cote',

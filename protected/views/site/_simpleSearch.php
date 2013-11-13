@@ -117,6 +117,16 @@
                             <td></td>
                         </tr>
                         <tr>
+                            <th>Options</th>
+                            <td colspan="4">
+                                <div style="margin-top : 7px;">
+
+                                        <input type="checkbox" value="0" name="depotlegal" <?= true ? "checked"  : "" ?>> Exclure les périodiques du dépot légal
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
                             <th colspan="2"  style="padding-bottom:10px;">Nombre maximum de résultats</th>
                             <td colspan="3" style="padding-top:10px;">
                                 <select name="maxresults" id="maxresults" class="form-control input-sm form-inline" style="width: auto;">

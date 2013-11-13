@@ -76,7 +76,7 @@ class SiteController extends Controller {
             Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
             Yii::app()->session['search']->adv_query_tab = $_GET;
             
-            Yii::app()->session['last_search_url'] = $_SERVER['REQUEST_URI'];
+            
         }
         
         // Si une recherche a été sauvegardée
