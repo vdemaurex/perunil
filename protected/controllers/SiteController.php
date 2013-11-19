@@ -44,6 +44,7 @@ class SiteController extends Controller {
             Yii::app()->session['search']->support     = isset($_GET['support']) ? $_GET['support'] : '0';
             Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
             Yii::app()->session['search']->maxresults  = isset($_GET['maxresults']) ? $_GET['maxresults'] : '-1'; // infini par défaut
+            Yii::app()->session['search']->depotlegal  = isset($_GET['depotlegal']);
             Yii::app()->session['search']->simple_query_str = $_GET['q'];   
         }
         // Si une recherche a été sauvegardée
@@ -73,6 +74,7 @@ class SiteController extends Controller {
         // Si une nouvelle recherche a été effectuée
         if ($search_done) {
             Yii::app()->session['search']->support = isset($_GET['support']) ? $_GET['support'] : '0';
+            Yii::app()->session['search']->depotlegal  = isset($_GET['depotlegal']);
             Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
             Yii::app()->session['search']->adv_query_tab = $_GET;
             

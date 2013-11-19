@@ -117,11 +117,11 @@
                             <td></td>
                         </tr>
                         <tr>
-                            <th>Options</th>
+                            <th>Option</th>
                             <td colspan="4">
                                 <div style="margin-top : 7px;">
 
-                                        <input type="checkbox" value="0" name="depotlegal" <?= true ? "checked"  : "" ?>> Exclure les périodiques du dépot légal
+                                        <input type="checkbox" value="true" name="depotlegal" <?php if (Yii::app()->session['search']->depotlegal) echo "checked"; ?>> Inclure les périodiques du dépot légal BCU
 
                                 </div>
                             </td>

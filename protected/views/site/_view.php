@@ -83,23 +83,15 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
         ?>   
             
         </div>
-        <?php if ($data->soustitre != "" || $data->titre_abrege != "" || $data->titre_variante != ""): ?>
+        <?php if ($data->soustitre): ?>
        <div class="row">
            <div class="col-md-6">
         <!-- Sous-titre et autres alternatives -->
         <small>
             <?php
-            $hb = "";
             if ($data->soustitre != ""){
                 echo CHtml::encode($data->soustitre);
-                $hb = " | ";
             }
-            if ($data->titre_abrege != ""){
-                echo $hb . CHtml::encode($data->titre_abrege);
-                $hb = " | ";
-            }
-            if ($data->titre_variante != "")
-                echo $hb . CHtml::encode($data->titre_variante);
             ?>
         </small>
            </div>

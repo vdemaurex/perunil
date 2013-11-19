@@ -46,7 +46,7 @@
                 <div id="logo">
                     <a href ="<?= Yii::app()->baseUrl; ?>">
                         <img src="<?= Yii::app()->baseUrl; ?>/images/logo_perunil.png"/>
-                        <span id="slogan">Recherche de périodiques disponibles à l'UNIL et au CHUV</span>
+                        <span id="slogan">Recherche de périodiques disponibles sur le campus UNIL/CHUV</span>
                     </a>
 
                 </div>
