@@ -81,7 +81,7 @@ class CsvimportAction extends CAction {
 
                     foreach ($data as $i => $row) {
 
-// Analyse de toutes les tables
+                        // Analyse de toutes les tables
                         foreach ($this->tables as $table) {
                             $tableid = $table . "_id";
                             if ($table == 'journal') {
@@ -202,6 +202,6 @@ class CsvimportAction extends CAction {
         return $array;
     }
 
-}
+            }
 
 ?>

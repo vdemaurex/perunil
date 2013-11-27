@@ -387,6 +387,8 @@ class ECSVExport
         
         // create file pointer
         $this->_filePointer =  fopen("php://temp", 'w');
+        // UTF8 BOM pour l'ouverture immédiate dans excel
+        fwrite($this->_filePointer, "\xEF\xBB\xBF");
         $this->_writeData();        
         rewind($this->_filePointer);
         

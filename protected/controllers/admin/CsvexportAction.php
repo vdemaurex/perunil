@@ -139,6 +139,7 @@ class CsvexportAction extends CAction {
         // Extension ECSVExport : http://www.yiiframework.com/extension/csvexport
         Yii::import('ext.ECSVExport');
         $csv = new ECSVExport($command);
+        $csv->setDelimiter(";");
 
         /**
          * Génération du fichier à la volée 

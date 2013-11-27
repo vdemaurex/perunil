@@ -8,6 +8,7 @@
 class CsvImportForm extends CFormModel{
     
     public $fichier;
+    public $delimiter = ',';
     
     public function rules() {
         return array(
@@ -24,8 +25,24 @@ class CsvImportForm extends CFormModel{
     
     public function attributeLabels() {
         return array(
-            'fichier' => "Sélectionez un fichier",
+            'fichier'   => "Sélectionez un fichier",
+            'delimiter' => "Spécifiez le séparateur (un seul caractère)"
         );
+    }
+    
+    public function getDelimiter(){
+        switch ($this->delimiter) {
+            case 'tabulation':
+                return '\t';
+                break;
+            case 'pointvirgule':
+                return ';';
+                break;
+            default:
+                return ',';
+                break;
+        }
+        return ',';
     }
     
     

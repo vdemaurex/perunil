@@ -644,7 +644,8 @@ class AdminController extends Controller {
         unset(Yii::app()->session['modif']);
         unset(Yii::app()->session['ajout']);
         Yii::app()->user->setFlash('success', "L'imporation du fichier à été annulée");
-        $this->render('csvimport', array('model' => new CsvImportForm()));
+        $this->redirect("csvimport");
+        //$this->render('csvimport', array('model' => new CsvImportForm()));
     }
 
     /**

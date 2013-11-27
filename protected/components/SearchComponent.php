@@ -677,14 +677,15 @@ class SearchComponent extends CComponent {
         $like = $not_like ? "NOT LIKE" : "LIKE";
         foreach (explode(" ", $this->q) as $word) {
             if ($word != "" || $word != "") {
-                $query = "t.perunilid $like '%$word%' OR titre $like '%$word%' " .
-                        "OR titre_abrege $like '%$word%' OR titre_variante $like '%$word%' " .
-                        "OR soustitre $like '%$word%' OR issn $like '%$word%' " .
-                        "OR issnl $like '%$word%' OR nlmid $like '%$word%' " .
-                        "OR reroid $like '%$word%' OR doi $like '%$word%' " .
-                        "OR coden $like '%$word%' OR urn $like '%$word%' " .
-                        "OR faitsuitea $like '%$word%' OR devient $like '%$word%' " .
-                        "OR url_rss $like '%$word%' ";
+                $word = Yii::app()->db->quoteValue("%$word%");
+                $query = "t.perunilid $like $word OR titre $like $word " .
+                        "OR titre_abrege $like $word OR titre_variante $like $word " .
+                        "OR soustitre $like $word OR issn $like $word " .
+                        "OR issnl $like $word OR nlmid $like $word " .
+                        "OR reroid $like $word OR doi $like $word " .
+                        "OR coden $like $word OR urn $like $word " .
+                        "OR faitsuitea $like $word OR devient $like $word " .
+                        "OR url_rss $like $word ";
                 $criteria->addCondition($query, 'AND');
             }
         }

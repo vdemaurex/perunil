@@ -105,6 +105,18 @@ else { // Pas de résultats à afficher
         <?php echo CHtml::activeLabel($model, 'fichier'); ?>
         <?php echo CHtml::activeFileField($model, 'fichier'); ?>
         </div>
+        <div class="form-group">
+            <?php echo CHtml::activeLabel($model, 'delimiter'); ?>
+            <?php echo CHtml::activeDropDownList(
+                    $model,
+                    'delimiter',
+                    array(
+                        'virgule'=>"',' (Virgule)",
+                        'tabulation' => "'  ' (Tabulation)",
+                        'pointvirgule' => "';' (Point-virgule)"
+                        )
+                   ); ?>
+        </div>
         <br/>
         <div class="form-group">
             <?php echo CHtml::submitButton("Téléverser le fichier", array('class' => "btn btn-primary")); ?>
