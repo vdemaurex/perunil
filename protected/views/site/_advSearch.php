@@ -5,8 +5,7 @@ $fields = array(
     "issn" => "ISSN",);
 
 $operators = array("AND" => "ET",
-    "OR" => "OU",
-    "NOT" => "MAIS PAS",);
+    "OR" => "OU",);
 
 $last = Yii::app()->session['search']->adv_query_tab;
 ?>

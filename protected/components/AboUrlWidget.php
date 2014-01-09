@@ -20,12 +20,12 @@ class AboUrlWidget extends CWidget {
         $this->papier = (isset($this->abo->support0) && $this->abo->support0->support == "papier");
         if (!$this->papier) {
             $this->url = $this->abo->url_site;
-            if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
-                $this->link_text = "({$this->abo->plateforme0->plateforme})";
-            } else {
-                //$this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
-                $this->link_text = "";
-            }
+//            if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
+//                $this->link_text = "({$this->abo->plateforme0->plateforme})";
+//            } else {
+//                //$this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
+//                $this->link_text = "";
+//            }
         }
     }
 
@@ -33,28 +33,40 @@ class AboUrlWidget extends CWidget {
         // 
         // Traitement des jouraux papier
         //
+        
         if ($this->papier) {
-            if (isset($this->abo->localisation0)) {
-                // Texte du lien et de la cote
-                $cote ="";
-                $texte = CHtml::encode($this->abo->localisation0->localisation);
-                if (isset($this->abo->cote) && $this->abo->cote != "" ){
-                    $cote  = " <small>[cote : {$this->abo->cote}]</small>";
-                }
-                
-                // Si le reroid existe, on ajoute un lien vers rero
-                if ($this->jrn->reroid) {
-                    $url =  "http://opac.rero.ch/get_bib_record.cgi?db=vd&rero_id=". $this->jrn->reroid;
-                    echo CHtml::link(
-                            $texte, $url, array('target' => '_blank', 'title' => $this->papier_link)) . $cote;
-                } else {
-                    echo $texte . $cote;
-                }
+            $texte = "Périodique papier";
+            if (isset($this->abo->localisation0) && $this->jrn->reroid) {
+                $url = "http://opac.rero.ch/get_bib_record.cgi?db=vd&rero_id=" . $this->jrn->reroid;
+                echo CHtml::link(
+                        $texte . " (lien vers RERO)", $url, array('target' => '_blank', 'title' => $this->papier_link));
             } else {
-                echo CHtml::encode("Périodique papier");
+                echo $texte;
             }
             return;
         }
+//        if ($this->papier) {
+//            if (isset($this->abo->localisation0)) {
+//                // Texte du lien et de la cote
+//                $cote = "";
+//                $texte = CHtml::encode($this->abo->localisation0->localisation);
+//                if (isset($this->abo->cote) && $this->abo->cote != "") {
+//                    $cote = " <small>[cote : {$this->abo->cote}]</small>";
+//                }
+//
+//                // Si le reroid existe, on ajoute un lien vers rero
+//                if ($this->jrn->reroid) {
+//                    $url = "http://opac.rero.ch/get_bib_record.cgi?db=vd&rero_id=" . $this->jrn->reroid;
+//                    echo CHtml::link(
+//                            $texte, $url, array('target' => '_blank', 'title' => $this->papier_link)) . $cote;
+//                } else {
+//                    echo $texte . $cote;
+//                }
+//            } else {
+//                echo CHtml::encode("Périodique papier");
+//            }
+//            return;
+//        }
         //
         // Traitement des journaux électronique
         //
@@ -111,8 +123,7 @@ class AboUrlWidget extends CWidget {
             // Aucun mot de passe n'est requis
             echo CHtml::link(
                     //CHtml::encode($this->link_text), 
-                    CHtml::encode("Lire en ligne $this->link_text"), 
-                    $this->url, array('target' => '_blank', 'title' => $this->link_title));
+                    CHtml::encode("Lire en ligne $this->link_text"), $this->url, array('target' => '_blank', 'title' => $this->link_title));
         }
     }
 

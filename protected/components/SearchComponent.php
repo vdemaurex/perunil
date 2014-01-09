@@ -794,7 +794,7 @@ class SearchComponent extends CComponent {
         if (!Yii::app()->user->isGuest) {
             $cols[] = "j.DEPRECATED_sujetsfm";
             $cols[] = "j.DEPRECATED_fmid";
-            $cols[] = "j.DEPRECATED_histroique";
+            $cols[] = "j.DEPRECATED_historique";
             $cols[] = "a.commentaire_pro";
         }
 
@@ -1203,8 +1203,8 @@ class SearchComponent extends CComponent {
             't.commentaire_pub' => $qt['commentairepub'],
             't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
             't.DEPRECATED_fmid' => $qt['fmid'],
-            't.DEPRECARED_historique' => $sm_name,
-            't.DEPRECARED_historique' => $qt['historique'],
+            't.DEPRECATED_historique' => $sm_name,
+            't.DEPRECATED_historique' => $qt['historique'],
         );
         foreach ($textfield as $column => $value) {
 // Pour champs dont on fait un recherche terme à terme
@@ -1440,8 +1440,8 @@ class SearchComponent extends CComponent {
             't.commentaire_pub' => $qt['commentairepub'],
             't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
             't.DEPRECATED_fmid' => $qt['fmid'],
-            //'t.DEPRECARED_historique' => $sm_name,
-            't.DEPRECARED_historique' => $qt['historique'],
+            //'t.DEPRECATED_historique' => $sm_name,
+            't.DEPRECATED_historique' => $qt['historique'],
         );
         foreach ($textfield as $column => $value) {
 // Pour champs dont on fait un recherche terme à terme

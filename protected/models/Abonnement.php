@@ -120,6 +120,10 @@ class Abonnement extends CActiveRecord {
     public function getId() {
         return $this->abonnement_id;
     }
+    
+    public function getPapier () {
+        return (isset($this->support0) && $this->support0->support == "papier");
+    }
 
     /**
      * @return array customized attribute labels (name=>label)
@@ -294,7 +298,7 @@ class Abonnement extends CActiveRecord {
             else {
                 //$src = Yii::app()->baseUrl . "/images/www.png";
                 //return CHtml::image($src, "Electronique", array('title' => "Support éléctronique", 'style' => self::imgstyle));
-                return '<span class="glyphicon glyphicon-link"></span>&nbsp;';
+                return '<span class="glyphicon glyphicon-new-window"></span>&nbsp;';
             }
         }
     }

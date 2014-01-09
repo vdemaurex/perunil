@@ -25,7 +25,7 @@
  * @property integer $openaccess
  * @property string $DEPRECATED_sujetsfm
  * @property integer $DEPRECATED_fmid
- * @property string $DEPRECARED_historique
+ * @property string $DEPRECATED_historique
  *
  * The followings are the available model relations:
  * @property Abonnement[] $abonnements
@@ -86,10 +86,10 @@ class Journal extends CActiveRecord {
             array('url_rss', 'length', 'max' => 2083),
             array('commentaire_pub', 'length', 'max' => 500),
             array('DEPRECATED_sujetsfm', 'length', 'max' => 1000),
-            array('DEPRECARED_historique', 'safe'),
+            array('DEPRECATED_historique', 'safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
-            array('perunilid, titre, soustitre, titre_abrege, titre_variante, faitsuitea, devient, issn, issnl, nlmid, reroid, doi, coden, urn, publiunil, url_rss, commentaire_pub, parution_terminee, openaccess, DEPRECATED_sujetsfm, DEPRECATED_fmid, DEPRECARED_historique', 'safe', 'on' => 'search'),
+            array('perunilid, titre, soustitre, titre_abrege, titre_variante, faitsuitea, devient, issn, issnl, nlmid, reroid, doi, coden, urn, publiunil, url_rss, commentaire_pub, parution_terminee, openaccess, DEPRECATED_sujetsfm, DEPRECATED_fmid, DEPRECATED_historique', 'safe', 'on' => 'search'),
         );
     }
 
@@ -156,7 +156,7 @@ class Journal extends CActiveRecord {
             'openaccess' => 'Openaccess',
             'DEPRECATED_sujetsfm' => 'Deprecated Sujetsfm',
             'DEPRECATED_fmid' => 'Deprecated Fmid',
-            'DEPRECARED_historique' => 'Deprecared Historique',
+            'DEPRECATED_historique' => 'DEPRECATED Historique',
         );
     }
 
@@ -233,7 +233,7 @@ class Journal extends CActiveRecord {
         $criteria->compare('openaccess', $this->openaccess);
         $criteria->compare('DEPRECATED_sujetsfm', $this->DEPRECATED_sujetsfm, true);
         $criteria->compare('DEPRECATED_fmid', $this->DEPRECATED_fmid);
-        $criteria->compare('DEPRECARED_historique', $this->DEPRECARED_historique, true);
+        $criteria->compare('DEPRECATED_historique', $this->DEPRECATED_historique, true);
 
         return new CActiveDataProvider($this, array(
                     'criteria' => $criteria,

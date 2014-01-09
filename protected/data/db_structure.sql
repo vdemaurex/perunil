@@ -1,242 +1,215 @@
--- -----------------------------------------
--- Schéma de la base de donnée PerUnil 2  --
--- -------------------------------------- --
--- Auteur : vincent.demaurex@chuv.ch      --
--- Généré le: Mar 05 Mars 2013 à 09:06    --
--- Version du serveur: 5.5.25a            --
--- Version de PHP: 5.4.4                  --
---------------------------------------------
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
+-- 
+-- Structure de la base
+-- 
 --
--- Base de données: `perunil_journals-v2`
---
+-- Base de données: `perunil2`
+-- 
+-- Auteur : Vincent Demaurex
+-- Version
+-- -------
+-- 08.01.14 : Ajout des champs contenant les dernières modifications pour
+--            les tables Journal et Abonnement
 
--- --------------------------------------------------------
 
---
--- Structure de la table `abonnement`
---
 
-DROP TABLE IF EXISTS `abonnement`;
-CREATE TABLE IF NOT EXISTS `abonnement` (
-  `abonnement_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `titreexclu` tinyint(1) NOT NULL DEFAULT '0',
-  `package` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `no_abo` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `url_site` varchar(2083) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `acces_elec_gratuit` tinyint(1) DEFAULT '0',
-  `acces_elec_unil` tinyint(1) DEFAULT '0',
-  `acces_elec_chuv` tinyint(1) DEFAULT '0',
-  `embargo_mois` tinyint(4) DEFAULT NULL COMMENT 'Chiffre donné en mois',
-  `acces_user` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `acces_pwd` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `etatcoll` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `etatcoll_deba` mediumint(9) DEFAULT NULL,
-  `etatcoll_debv` mediumint(9) DEFAULT NULL,
-  `etatcoll_debf` mediumint(9) DEFAULT NULL,
-  `etatcoll_fina` mediumint(9) DEFAULT NULL,
-  `etatcoll_finv` mediumint(9) DEFAULT NULL,
-  `etatcoll_finf` mediumint(9) DEFAULT NULL,
-  `cote` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `editeur_code` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Code de la revue chez l''éditeur',
-  `editeur_sujet` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Sujet chez l''éditeur, anc. "keywords"',
-  `commentaire_pro` varchar(500) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `commentaire_pub` varchar(500) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `perunilid` bigint(20) unsigned DEFAULT NULL,
-  `plateforme` smallint(6) DEFAULT NULL,
-  `editeur` smallint(6) DEFAULT NULL,
-  `histabo` smallint(6) DEFAULT NULL,
-  `statutabo` smallint(6) NOT NULL DEFAULT '0',
-  `localisation` smallint(6) DEFAULT NULL,
-  `gestion` smallint(6) DEFAULT NULL,
-  `format` smallint(6) DEFAULT NULL,
-  `support` smallint(6) DEFAULT NULL,
-  `licence` smallint(6) DEFAULT NULL,
-  PRIMARY KEY (`abonnement_id`),
-  UNIQUE KEY `abonnement_id` (`abonnement_id`),
-  KEY `fk_editeur` (`editeur`),
-  KEY `fk_histabo` (`histabo`),
-  KEY `fk_statutabo` (`statutabo`),
-  KEY `fk_localisation` (`localisation`),
-  KEY `fk_gestion` (`gestion`),
-  KEY `fk_format` (`format`),
-  KEY `fk_licence` (`licence`),
-  KEY `fk_plateforme` (`plateforme`),
-  KEY `titreexclu` (`titreexclu`),
-  KEY `perunilid` (`perunilid`),
-  KEY `support` (`support`),
-  KEY `titreexclu_2` (`titreexclu`,`perunilid`,`support`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+-- Tables pour toutes les valeurs liste éditables
+-- ---------------------------------------------------------
 
--- --------------------------------------------------------
-
---
--- Structure de la table `biblio`
---
-
-DROP TABLE IF EXISTS `biblio`;
-CREATE TABLE IF NOT EXISTS `biblio` (
-  `biblio_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `biblio` varchar(4) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`biblio_id`),
-  UNIQUE KEY `biblio` (`biblio`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `corecollection`
---
-
-DROP TABLE IF EXISTS `corecollection`;
-CREATE TABLE IF NOT EXISTS `corecollection` (
-  `perunilid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `biblio_id` smallint(6) NOT NULL,
-  PRIMARY KEY (`perunilid`,`biblio_id`),
-  KEY `biblio_id` (`biblio_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `editeur`
---
-
-DROP TABLE IF EXISTS `editeur`;
-CREATE TABLE IF NOT EXISTS `editeur` (
-  `editeur_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `editeur` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`editeur_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `format`
---
-
-DROP TABLE IF EXISTS `format`;
-CREATE TABLE IF NOT EXISTS `format` (
-  `format_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `format` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`format_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `gestion`
---
-
-DROP TABLE IF EXISTS `gestion`;
-CREATE TABLE IF NOT EXISTS `gestion` (
-  `gestion_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `gestion` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`gestion_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `histabo`
---
-
-DROP TABLE IF EXISTS `histabo`;
 CREATE TABLE IF NOT EXISTS `histabo` (
-  `histabo_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `histabo` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`histabo_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `histabo_id` SMALLINT NOT NULL AUTO_INCREMENT,
+  `histabo`	varchar(200),
+   CONSTRAINT pk_histabo PRIMARY KEY (histabo_id)
+) ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
 
--- --------------------------------------------------------
 
---
--- Structure de la table `journal`
---
+-- ---------------------------------------------------------
 
-DROP TABLE IF EXISTS `journal`;
-CREATE TABLE IF NOT EXISTS `journal` (
-  `perunilid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `titre` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
-  `soustitre` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `titre_abrege` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `titre_variante` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `faitsuitea` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `devient` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `issn` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `issnl` varchar(9) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `nlmid` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `reroid` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `doi` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `coden` varchar(6) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `urn` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `publiunil` tinyint(1) DEFAULT '0',
-  `url_rss` varchar(2083) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `commentaire_pub` varchar(500) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `parution_terminee` tinyint(1) DEFAULT '0',
-  `openaccess` tinyint(1) DEFAULT '0',
-  `DEPRECATED_sujetsfm` varchar(1000) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
-  `DEPRECATED_fmid` int(11) DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
-  `DEPRECARED_historique` longtext COLLATE utf8_unicode_ci COMMENT 'Ne pas ajouter de données.',
-  PRIMARY KEY (`perunilid`),
-  UNIQUE KEY `perunilid` (`perunilid`),
-  KEY `titre` (`titre`),
-  KEY `soustitre` (`soustitre`),
-  KEY `titre_abrege` (`titre_abrege`),
-  KEY `titre_variante` (`titre_variante`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE IF NOT EXISTS `statutabo` (
+  `statutabo_id`      SMALLINT NOT NULL,
+  `statutabo`         varchar(200),
+   CONSTRAINT pk_statutabo PRIMARY KEY (statutabo_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
 
--- --------------------------------------------------------
 
---
--- Structure de la table `journal_sujet`
---
 
-DROP TABLE IF EXISTS `journal_sujet`;
-CREATE TABLE IF NOT EXISTS `journal_sujet` (
-  `perunilid` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `sujet_id` smallint(6) NOT NULL,
-  PRIMARY KEY (`perunilid`,`sujet_id`),
-  KEY `sujet_id` (`sujet_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+-- -------------------------------------------------------
 
--- --------------------------------------------------------
-
---
--- Structure de la table `licence`
---
-
-DROP TABLE IF EXISTS `licence`;
-CREATE TABLE IF NOT EXISTS `licence` (
-  `licence_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `licence` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`licence_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `localisation`
---
-
-DROP TABLE IF EXISTS `localisation`;
 CREATE TABLE IF NOT EXISTS `localisation` (
-  `localisation_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `localisation` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`localisation_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `localisation_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `localisation`	varchar(200) NOT NULL,
+   CONSTRAINT pk_localisation PRIMARY KEY (localisation_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+
+-- -------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `gestion` (
+  `gestion_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `gestion`	varchar(200) NOT NULL,
+   CONSTRAINT pk_gestion PRIMARY KEY (gestion_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+
+-- -------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `format` (
+  `format_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `format`	varchar(200) NOT NULL,
+   CONSTRAINT pk_format PRIMARY KEY (format_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+
+-- -------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `support` (
+  `support_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `support`	varchar(200) NOT NULL,
+   CONSTRAINT pk_support PRIMARY KEY (support_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+
+
+
+-- -------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `plateforme` (
+  `plateforme_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `plateforme`	varchar(200) NOT NULL,
+   CONSTRAINT pk_plateforme PRIMARY KEY (plateforme_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+
+-- -------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `licence` (
+  `licence_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `licence`	varchar(200) NOT NULL,
+   CONSTRAINT pk_licence PRIMARY KEY (licence_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+-- -------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `editeur` (
+  `editeur_id` 	SMALLINT NOT NULL AUTO_INCREMENT,
+  `editeur`	varchar(200) NOT NULL,
+   CONSTRAINT pk_editeur PRIMARY KEY (editeur_id)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+
+-- --------------------------------------------------------
+-- TABLE journal
+
+CREATE TABLE IF NOT EXISTS `journal` (
+  `perunilid`           SERIAL,
+  `titre`               varchar(250)  NOT NULL,
+  `soustitre`           varchar(250)  DEFAULT NULL,
+  `titre_abrege`        varchar(100)  DEFAULT NULL,
+  `titre_variante`      varchar(250)  DEFAULT NULL,
+  `faitsuitea`          varchar(250)  DEFAULT NULL,
+  `devient`             varchar(250)  DEFAULT NULL,
+  `issn`                varchar(120)  DEFAULT NULL,
+  `issnl`               varchar(9)    DEFAULT NULL,
+  `nlmid`               varchar(15)   DEFAULT NULL,
+  `reroid`              varchar(50)   DEFAULT NULL,
+  `doi`                 varchar(250)  DEFAULT NULL,
+  `coden`               varchar(6)    DEFAULT NULL,
+  `urn`                 varchar(250)  DEFAULT NULL,
+  `publiunil`           BOOLEAN       DEFAULT FALSE,
+  `url_rss`             varchar(2083) DEFAULT NULL,
+  `commentaire_pub`     varchar(500)  DEFAULT NULL,
+  `parution_terminee`   BOOLEAN       DEFAULT FALSE,
+  `openaccess`          BOOLEAN       DEFAULT FALSE,
+  `creation`            bigint(20)    DEFAULT NULL,
+  `modification`        bigint(20)    DEFAULT NULL,
+  `DEPRECATED_sujetsfm` varchar(1000) DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
+  `DEPRECATED_fmid`     INT           DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
+  `DEPRECARED_historique` LONGTEXT    DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
+  CONSTRAINT pk_perunilid     PRIMARY KEY (perunilid)
+  CONSTRAINT fk_creation      FOREIGN KEY (modifications)   REFERENCES modifications(id),
+  CONSTRAINT fk_modification  FOREIGN KEY (modifications)   REFERENCES modifications(id),
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+-- --------------------------------------------------------
+-- C
+
+CREATE TABLE IF NOT EXISTS `sujet` (
+  `sujet_id` SMALLINT    NOT NULL AUTO_INCREMENT,
+  `code`     varchar(4)  NOT NULL UNIQUE,
+  `nom_en`   varchar(50) DEFAULT NULL,
+  `nom_fr`   varchar(50) NOT NULL,
+  `stm`      BOOLEAN     DEFAULT FALSE,
+  `shs`      BOOLEAN     DEFAULT FALSE,
+  PRIMARY KEY (`sujet_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+-- --------------------------------------------------------
+-- C
+
+CREATE TABLE IF NOT EXISTS `biblio` (
+  `biblio_id`      SMALLINT    NOT NULL AUTO_INCREMENT,
+  `biblio`            varchar(4)  NOT NULL UNIQUE,
+  PRIMARY KEY (`biblio_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+CREATE TABLE IF NOT EXISTS `corecollection` (
+  `perunilid`  BIGINT unsigned,
+  `biblio_id`  SMALLINT NOT NULL,
+  FOREIGN KEY (`perunilid`) REFERENCES journal(`perunilid`),
+  FOREIGN KEY (`biblio_id`)  REFERENCES biblio(`biblio_id`),
+  PRIMARY KEY (`perunilid`, `biblio_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+-- -------------------------------------------------------
+-- CI
+CREATE TABLE IF NOT EXISTS `utilisateur` (
+  `utilisateur_id`  SMALLINT     NOT NULL AUTO_INCREMENT,
+  `nom`             varchar(255) NOT NULL,
+  `email`           varchar(255) NOT NULL UNIQUE,
+  `pseudo`          varchar(50)  NOT NULL UNIQUE, 
+  `mot_de_passe`    varchar(50)  NOT NULL,
+  `status`          ENUM("Administration", "Modification-suppression", "Modification", "Consultation") NOT NULL,
+  `creation_ip`     varchar(255) DEFAULT NULL,
+  `creation_on`     timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`utilisateur_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+-- --------------------------------------------------------
+-- 
+CREATE TABLE IF NOT EXISTS `journal_sujet` (
+  `perunilid` BIGINT unsigned,
+  `sujet_id`  SMALLINT NOT NULL,
+  FOREIGN KEY (`perunilid`) REFERENCES journal(`perunilid`),
+  FOREIGN KEY (`sujet_id`)  REFERENCES sujet(`sujet_id`),
+  PRIMARY KEY (`perunilid`, `sujet_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
+
+
+-- --------------------------------------------------------
+-- 
+CREATE TABLE IF NOT EXISTS `corecollection` (
+  `perunilid` BIGINT unsigned,
+  `biblio_id`  SMALLINT NOT NULL,
+  FOREIGN KEY (`perunilid`) REFERENCES journal(`perunilid`),
+  FOREIGN KEY (`biblio_id`)  REFERENCES biblio(`biblio_id`),
+  PRIMARY KEY (`perunilid`, `biblio_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
 
 -- --------------------------------------------------------
 
---
--- Structure de la table `modifications`
---
-
-DROP TABLE IF EXISTS `modifications`;
 CREATE TABLE IF NOT EXISTS `modifications` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `old_value` text COLLATE utf8_unicode_ci,
@@ -247,84 +220,59 @@ CREATE TABLE IF NOT EXISTS `modifications` (
   `stamp` datetime NOT NULL,
   `user_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `model_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`,`model_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
 
--- --------------------------------------------------------
 
---
--- Structure de la table `plateforme`
---
+-- ---------------------------------------------------------
 
-DROP TABLE IF EXISTS `plateforme`;
-CREATE TABLE IF NOT EXISTS `plateforme` (
-  `plateforme_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `plateforme` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`plateforme_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `statutabo`
---
-
-DROP TABLE IF EXISTS `statutabo`;
-CREATE TABLE IF NOT EXISTS `statutabo` (
-  `statutabo_id` smallint(6) NOT NULL,
-  `statutabo` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`statutabo_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `sujet`
---
-
-DROP TABLE IF EXISTS `sujet`;
-CREATE TABLE IF NOT EXISTS `sujet` (
-  `sujet_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `code` varchar(4) COLLATE utf8_unicode_ci NOT NULL,
-  `nom_en` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `nom_fr` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `stm` tinyint(1) DEFAULT '0',
-  `shs` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`sujet_id`),
-  UNIQUE KEY `code` (`code`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `support`
---
-
-DROP TABLE IF EXISTS `support`;
-CREATE TABLE IF NOT EXISTS `support` (
-  `support_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `support` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`support_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `utilisateur`
---
-
-DROP TABLE IF EXISTS `utilisateur`;
-CREATE TABLE IF NOT EXISTS `utilisateur` (
-  `utilisateur_id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `nom` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `pseudo` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `mot_de_passe` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `status` enum('Administration','Modification-suppression','Modification','Consultation') COLLATE utf8_unicode_ci NOT NULL,
-  `creation_ip` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `creation_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`utilisateur_id`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `pseudo` (`pseudo`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE IF NOT EXISTS `abonnement` (
+  `abonnement_id`      SERIAL,
+  `titreexclu`         BOOLEAN       DEFAULT FALSE NOT NULL,
+  `package`            varchar(250)  DEFAULT NULL,
+  `no_abo`             varchar(50)   DEFAULT NULL,
+  `url_site`           varchar(2083) DEFAULT NULL,
+  `acces_elec_gratuit` BOOLEAN       DEFAULT FALSE,
+  `acces_elec_unil`    BOOLEAN       DEFAULT FALSE,
+  `acces_elec_chuv`    BOOLEAN       DEFAULT FALSE,
+  `embargo_mois`       TINYINT       DEFAULT NULL COMMENT 'Chiffre donné en mois',
+  `acces_user`         varchar(50)   DEFAULT NULL,
+  `acces_pwd`          varchar(50)   DEFAULT NULL,
+  `etatcoll`           varchar(250)  DEFAULT NULL,
+  `etatcoll_deba`      MEDIUMINT     DEFAULT NULL,
+  `etatcoll_debv`      MEDIUMINT     DEFAULT NULL,
+  `etatcoll_debf`      MEDIUMINT     DEFAULT NULL,
+  `etatcoll_fina`      MEDIUMINT     DEFAULT NULL,
+  `etatcoll_finv`      MEDIUMINT     DEFAULT NULL,
+  `etatcoll_finf`      MEDIUMINT     DEFAULT NULL,
+  `cote`               varchar(250)  DEFAULT NULL,
+  `editeur_code`       varchar(100)  DEFAULT NULL COMMENT 'Code de la revue chez l\'éditeur',
+  `editeur_sujet`      varchar(250)  DEFAULT NULL COMMENT 'Sujet chez l\'éditeur, anc. "keywords"',
+  `commentaire_pro`    varchar(500)  DEFAULT NULL,
+  `commentaire_pub`    varchar(500)  DEFAULT NULL,
+  `perunilid`          BIGINT unsigned,            -- FK journal
+  `plateforme`         SMALLINT,                   -- FK plateforme
+  `editeur`            SMALLINT      DEFAULT NULL, -- FK table éditeur
+  `histabo`	           SMALLINT      DEFAULT NULL, -- FK table abo_hist
+  `statutabo`          SMALLINT      DEFAULT 0 NOT NULL , -- FK table abo_statut
+  `localisation`       SMALLINT      DEFAULT NULL, -- FK
+  `gestion`	           SMALLINT      DEFAULT NULL, -- FK
+  `format`	           SMALLINT      DEFAULT NULL, -- FK
+  `support`	           SMALLINT      DEFAULT NULL, -- FK
+  `licence`	           SMALLINT      DEFAULT NULL, -- FK
+  `creation`           bigint(20)    DEFAULT NULL,
+  `modification`       bigint(20)    DEFAULT NULL,
+  CONSTRAINT fk_creation      FOREIGN KEY (modifications)   REFERENCES modifications(id),
+  CONSTRAINT fk_modification  FOREIGN KEY (modifications)   REFERENCES modifications(id),
+  CONSTRAINT fk_editeur       FOREIGN KEY (editeur)         REFERENCES editeur(editeur_id),
+  CONSTRAINT fk_histabo       FOREIGN KEY (histabo)         REFERENCES histabo(histabo_id),
+  CONSTRAINT fk_statutabo     FOREIGN KEY (statutabo)       REFERENCES statutabo(statutabo_id),
+  CONSTRAINT`fk_localisation` FOREIGN KEY (localisation)    REFERENCES localisation(localisation_id),
+  CONSTRAINT`fk_gestion`      FOREIGN KEY (gestion)         REFERENCES gestion(gestion_id),
+  CONSTRAINT`fk_format`	      FOREIGN KEY (format)          REFERENCES format(format_id),
+  CONSTRAINT`fk_support`      FOREIGN KEY (support)         REFERENCES support(support_id),
+  CONSTRAINT`fk_licence`      FOREIGN KEY (licence)         REFERENCES licence(licence_id),
+  CONSTRAINT`fk_journal`      FOREIGN KEY (perunilid)       REFERENCES journal(perunilid),
+  CONSTRAINT`fk_plateforme`   FOREIGN KEY (plateforme)      REFERENCES plateforme(plateforme_id),
+  PRIMARY KEY (`abonnement_id`)
+)ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';

@@ -62,6 +62,10 @@ class CsvexportAction extends CAction {
                 j.commentaire_pub   AS `journal.commentaire_pub`, 
                 j.parution_terminee AS `journal.parution_terminee`, 
                 j.openaccess        AS `journal.openaccess`,
+                jc.stamp            AS `journal.datecreation`,
+                jm.stamp            AS `journal.datemodfification`,
+
+                
 
                 a.abonnement_id      AS `abonnement.abonnement_id`, 
                 a.titreexclu         AS `abonnement.titreexclu`, 
@@ -86,6 +90,9 @@ class CsvexportAction extends CAction {
                 a.editeur_sujet      AS `abonnement.editeur_sujet`, 
                 a.commentaire_pro    AS `abonnement.commentaire_pro`, 
                 a.commentaire_pub    AS `abonnement.commentaire_pub`,
+                ac.stamp             AS `abonnement.datecreation`,
+                am.stamp             AS `abonnement.datemodfification`,
+
 
                 ed.editeur_id AS `editeur.editeur_id`, 
                 ed.editeur    AS `editeur.editeur`, 
@@ -125,6 +132,12 @@ class CsvexportAction extends CAction {
                 LEFT OUTER JOIN format frm       ON a.format    = frm.format_id
                 LEFT OUTER JOIN support sprt     ON a.support   = sprt.support_id
                 LEFT OUTER JOIN licence lic      ON a.licence   = lic.licence_id
+        
+                LEFT OUTER JOIN modifications jm on j.modification = jm.id
+                LEFT OUTER JOIN modifications jc on j.creation     = jc.id
+      
+                LEFT OUTER JOIN modifications am on a.modification = am.id
+                LEFT OUTER JOIN modifications ac on a.creation     = ac.id
 
                 WHERE j.perunilid in ($perunilids_comma_separated);";
 

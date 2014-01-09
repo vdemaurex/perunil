@@ -211,7 +211,7 @@
 //si il possède des anciennes données FileMaker, on propose de les afficher.
 if ((isset($model->DEPRECATED_sujetsfm) && $model->DEPRECATED_sujetsfm != '') ||
         (isset($model->DEPRECATED_fmid) && $model->DEPRECATED_fmid != '') ||
-        (isset($model->DEPRECARED_historique) && $model->DEPRECARED_historique != '')):
+        (isset($model->DEPRECATED_historique) && $model->DEPRECATED_historique != '')):
     ?>
                 <div class="span-23 prepend-top"><a id="fm"><img id="fmimg" src="<?= Yii::app()->baseUrl; ?>/images/collapsed.gif"/>Afficher les anciennes données de la base FileMaker</a></div>
                 <div class="clear"><br/></div>
@@ -232,13 +232,13 @@ if ((isset($model->DEPRECATED_sujetsfm) && $model->DEPRECATED_sujetsfm != '') ||
                             </tr>
         <?php
     endif; //DEPRECATED_fmid
-    if (isset($model->DEPRECARED_historique) && $model->DEPRECARED_historique != '') :
+    if (isset($model->DEPRECATED_historique) && $model->DEPRECATED_historique != '') :
         ?>
                             <tr class="even">
-                                <th><?php echo $form->labelEx($model, 'DEPRECARED_historique', array('class'=> "control-label")); ?></th>
-                                <td><?php echo $form->textArea($model, 'DEPRECARED_historique', array('class' => "form-control input-sm", 'style' => $textfieldstyle, 'disabled' => 'true')); ?><?php echo $form->error($model, 'DEPRECARED_historique'); ?></td>
+                                <th><?php echo $form->labelEx($model, 'DEPRECATED_historique', array('class'=> "control-label")); ?></th>
+                                <td><?php echo $form->textArea($model, 'DEPRECATED_historique', array('class' => "form-control input-sm", 'style' => $textfieldstyle, 'disabled' => 'true')); ?><?php echo $form->error($model, 'DEPRECATED_historique'); ?></td>
                             </tr>
-    <?php endif; //DEPRECARED_historique   ?>
+    <?php endif; //DEPRECATED_historique   ?>
                     </table>
                 </div>
                 <script>
