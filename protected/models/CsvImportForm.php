@@ -8,7 +8,7 @@
 class CsvImportForm extends CFormModel{
     
     public $fichier;
-    public $delimiter = ',';
+    public $delimiter;
     
     public function rules() {
         return array(
@@ -19,7 +19,8 @@ class CsvImportForm extends CFormModel{
                 'maxSize'    => 1024*1024*1024, // 10 Mb
                 'tooLarge'    => "Ce fichier est trop gros. La taille du fichier doit être inférieur à 10 Mo.",
                 'allowEmpty' => false,
-                )
+                ),
+            array('delimiter','in','range'=>array('virgule', 'tabulation', 'pointvirgule'), 'allowEmpty'=>false),
         );
     }
     
@@ -34,15 +35,11 @@ class CsvImportForm extends CFormModel{
         switch ($this->delimiter) {
             case 'tabulation':
                 return '\t';
-                break;
             case 'pointvirgule':
                 return ';';
-                break;
             default:
                 return ',';
-                break;
         }
-        return ',';
     }
     
     

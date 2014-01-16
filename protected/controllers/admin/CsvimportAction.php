@@ -70,7 +70,7 @@ class CsvimportAction extends CAction {
 
 
                     // Créer un tableau assiciatif à partir du fichier CSV
-                    $data = $this->getAssocArray($f);
+                    $data = $this->getAssocArray($f, $model->getDelimiter());
                     $data = $this->tableColumnArray($data);
 
 
@@ -181,12 +181,12 @@ class CsvimportAction extends CAction {
         echo "\n</table></body></html>";
     }
 
-    private function getAssocArray($f) {
+    private function getAssocArray($f, $delimiter = ',') {
         // TODO vérifier la conformité des colones du fichier CSV
         $array = $fields = array();
         $i = 0;
 
-        while (($row = fgetcsv($f, 4096)) !== false) {
+        while (($row = fgetcsv($f, 4096, $delimiter)) !== false) {
             if (empty($fields)) {
                 $fields = $row;
                 continue;

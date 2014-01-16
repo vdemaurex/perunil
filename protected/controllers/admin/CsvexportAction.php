@@ -62,8 +62,8 @@ class CsvexportAction extends CAction {
                 j.commentaire_pub   AS `journal.commentaire_pub`, 
                 j.parution_terminee AS `journal.parution_terminee`, 
                 j.openaccess        AS `journal.openaccess`,
-                jc.stamp            AS `journal.datecreation`,
-                jm.stamp            AS `journal.datemodfification`,
+                jc.stamp            AS `journal.creation`,
+                jm.stamp            AS `journal.modification`,
 
                 
 
@@ -90,8 +90,8 @@ class CsvexportAction extends CAction {
                 a.editeur_sujet      AS `abonnement.editeur_sujet`, 
                 a.commentaire_pro    AS `abonnement.commentaire_pro`, 
                 a.commentaire_pub    AS `abonnement.commentaire_pub`,
-                ac.stamp             AS `abonnement.datecreation`,
-                am.stamp             AS `abonnement.datemodfification`,
+                ac.stamp             AS `abonnement.creation`,
+                am.stamp             AS `abonnement.modification`,
 
 
                 ed.editeur_id AS `editeur.editeur_id`, 

@@ -258,6 +258,8 @@ class SearchComponent extends CComponent {
 
 
         $Cwhere = "";
+        $editorAlreadyJointed = false;
+        $plateformeAlreadyJointed = false;
         foreach (array('C1', 'C2', 'C3') as $CN) {
             if (!isset($this->adv_query_tab[$CN]))
                 continue;
@@ -322,17 +324,23 @@ class SearchComponent extends CComponent {
                         break;
 
                     case 'editeur':
-                        $c->leftjoin(
-                                'editeur ed', "a.editeur = ed.editeur_id "//AND ed.editeur LIKE :editeur", array(':editeur' => "%$this->q%")
-                        );
+                        if (!$editorAlreadyJointed){
+                            $c->leftjoin(
+                                    'editeur ed', "a.editeur = ed.editeur_id "//AND ed.editeur LIKE :editeur", array(':editeur' => "%$this->q%")
+                            );
+                            $editorAlreadyJointed = true;
+                        }
                         $this->query_summary("éditeur ou plateforme contenant l'expression : « " . $this->q . " »");
 
                         // Recherche dans la plateforme
                         // Si la plateforme n'as pas encore été jointe, on l'associe.
-                        if (!(isset($this->adv_query_tab['plateforme']) && $this->adv_query_tab['plateforme'] != '')) {
-                            $c->leftjoin(
-                                    'plateforme pl', "a.plateforme = pl.plateforme_id"
-                            );
+                        if (!$plateformeAlreadyJointed){
+                            if (!(isset($this->adv_query_tab['plateforme']) && $this->adv_query_tab['plateforme'] != '')) {
+                                $c->leftjoin(
+                                        'plateforme pl', "a.plateforme = pl.plateforme_id"
+                                );
+                                $plateformeAlreadyJointed = true;
+                            }   
                         }
                         $quotedq = Yii::app()->db->quoteValue("%$this->q%");
                         $Cwhere .= " (ed.editeur LIKE $quotedq OR pl.plateforme LIKE $quotedq) ";

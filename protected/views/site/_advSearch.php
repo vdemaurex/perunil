@@ -27,10 +27,10 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
             <tr>
                 <td ><?php echo CHtml::dropDownList("C1[search_type]", isset($last) && isset($last['C1']) ? $last['C1']['search_type'] : "titre", $fields, array('class' => "form-control")); ?></td>
                 <td ><?php
-echo CHtml::textField(
-        'C1[text]', isset($last) && isset($last['C1']) ? $last['C1']['text'] : "", array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
-);
-?></td>
+                    echo CHtml::textField(
+                            'C1[text]', isset($last) && isset($last['C1']) ? $last['C1']['text'] : "", array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
+                    );
+                    ?></td>
                 <td ><?php echo CHtml::dropDownList("C2[op]", isset($last) && isset($last['C1']) ? $last['C2']['op'] : "AND", $operators, array('class' => "form-control")); ?></td>
             </tr>
             <tr>
@@ -39,7 +39,7 @@ echo CHtml::textField(
                     echo CHtml::textField(
                             'C2[text]', isset($last) && isset($last['C2']) ? $last['C2']['text'] : "", array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
                     );
-?></td>
+                    ?></td>
                 <td><?php echo CHtml::dropDownList("C3[op]", isset($last) && isset($last['C3']) ? $last['C3']['op'] : "AND", $operators, array('class' => "form-control")); ?></td>
             </tr>
             <tr>
@@ -48,7 +48,7 @@ echo CHtml::textField(
                     echo CHtml::textField(
                             'C3[text]', isset($last) && isset($last['C3']) ? $last['C3']['text'] : "", array('size' => 40, 'maxlength' => 150, 'class' => "form-control advsearchfield")
                     );
-?></td>
+                    ?></td>
                 <td>&nbsp;</td>
             </tr>
             <tr>
@@ -74,12 +74,6 @@ echo CHtml::textField(
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td><strong>Sujets</strong></td>
-                <td colspan =" 2">
-                    <?php $this->widget('SelectWidget', array('model' => Sujet::model(), 'selected' => isset($last) && isset($last['sujet']) ? $last['sujet'] : 'all')); ?>
-                </td>
-            </tr>
         </table>
     </div>
 </div>
@@ -88,6 +82,12 @@ echo CHtml::textField(
     <div class="panel-heading">Limiter la recherche à</div>
     <div class="panel-body">
         <table class="advsearch">
+            <tr>
+                <td><strong>Sujets</strong></td>
+                <td colspan =" 2">
+                    <?php $this->widget('SelectWidget', array('model' => Sujet::model(), 'selected' => isset($last) && isset($last['sujet']) ? $last['sujet'] : 'all')); ?>
+                </td>
+            </tr>
             <tr>
                 <td><strong>Plateforme</strong></td>
                 <td><?php
@@ -135,12 +135,12 @@ echo CHtml::textField(
 <div class="panel panel-default" style="width: 705px; margin:auto;">
     <div class="panel-body">
         <div style=" margin-left: 220px;">
-<?= CHtml::submitButton("Chercher", array('class' => "btn btn-primary")); ?> &nbsp;
-<?=
-CHtml::button('Vider le formulaire', array(
-    'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('site/advclean')) . '"',
-    'class' => "btn btn-default"));
-?>
+            <?= CHtml::submitButton("Chercher", array('class' => "btn btn-primary")); ?> &nbsp;
+            <?=
+            CHtml::button('Vider le formulaire', array(
+                'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('site/advclean')) . '"',
+                'class' => "btn btn-default"));
+            ?>
         </div>
     </div>
 </div>
