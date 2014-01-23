@@ -10,7 +10,7 @@
          break;
 
      case 'admin':
-        $titre = "administrateur";
+        $titre = "admin";
         $dp = 'admin_dp';
         $adp = 'admin_dp';
         $count = 'admin_count';
@@ -54,7 +54,7 @@ if ($search_done) {
             'template' => "{pager}\n{items}\n{pager}",
         ));
     }
-    // Affichage des résultat pour les administrateurs
+    // Affichage des résultat pour les admins
     else {
        // echo CHtml::beginForm(CHtml::normalizeUrl(array('admin/fusion')),'post', array('id' =>'fusionform'));
         $this->renderPartial('/admin/_adminSearchButton');

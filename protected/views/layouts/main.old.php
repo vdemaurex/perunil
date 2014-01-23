@@ -75,7 +75,7 @@
                 $this->widget('zii.widgets.CMenu', array(
                     'items' => array(
                         array('label' => 'Accueil administration',  'url' => array('/admin/index')),
-                        array('label' => 'Recherche administrative','url' => array('/admin/search')),
+                        array('label' => 'Recherche admin','url' => array('/admin/search')),
                         array('label' => 'Nouveau périodique',   'url' => array('/admin/peredit')),
                         array('label' => 'Gérer les sujets',        'url' => array('/sujet/admin')),
                         array('label' => 'Gérer les listes',        'url' => array('/smalllist')),

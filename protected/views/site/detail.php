@@ -44,6 +44,8 @@ $fields = array(
     array('name' => 'openaccess', 'label' => 'Openaccess (gratuit) ?', 'type' => 'boolean'),
     array('name' => 'commentaire_pub', 'label' => 'Remarques'),
 );
+
+// Suppression des champs qui ne contiennent aucune information
 foreach ($fields as $key => $field) {
     if (is_array($field)) {
         $name = $field['name'];

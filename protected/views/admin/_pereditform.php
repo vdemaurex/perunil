@@ -188,7 +188,7 @@
                                 } else {
                                   echo CHtml::button('Supprimer ce journal', array(
                                         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl(('/admin/jrndelete/perunilid/' . $model->perunilid)) . '"',
-                                        'confirm' => 'Êtes vous sûr de vouloir définitvement supprimer ce journal ?',
+                                        'confirm' => 'Êtes-vous sûr de vouloir définitivement supprimer ce journal ?',
                                         'class' => "btn btn-danger"));
                                 }
                                 // 

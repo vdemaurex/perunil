@@ -49,8 +49,8 @@ $fields = array(
 if(!Yii::app()->user->isGuest){
     $fields = array_merge(
             $fields, array(
-                'acces_user',
-                'acces_pwd',
+                array('name' => 'acces_user', 'label' => "Nom d'utilisateur"),
+                array('name' => 'acces_pwd', 'label' => "Mot de passe"),
                 'commentaire_pro',
                 array('name' => 'titreexclu', 'label' => 'Titre exclu', 'type' => 'boolean'),
                 ));
@@ -68,6 +68,7 @@ if ($abo->support == 1) {
 }
 
 
+// Suppression des champs qui ne contiennent aucune information
 foreach ($fields as $key => $field) {
     if (is_array($field)) {
         $name = $field['name'];

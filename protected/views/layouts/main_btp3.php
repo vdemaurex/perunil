@@ -88,7 +88,7 @@
                         'items' => array(
                             array('label' => 'Recherche simple', 'url' => array('/site/index')),
                             array('label' => 'Recherche avancée', 'url' => array('/site/advclean')),
-                            array('label' => 'Recherche administrative', 'url' => array('/admin/searchclean'), 'visible' => !Yii::app()->user->isGuest),
+                            array('label' => 'Recherche admin', 'url' => array('/admin/searchclean'), 'visible' => !Yii::app()->user->isGuest),
                             array('label' => 'Sujets', 'url' => array('/site/sujet')),
                             // array('label' => 'Contact', 'url' => array('/site/contact')),
                             array('label' => '?', 'url' => array('/site/page', 'view' => 'aide')),
@@ -113,7 +113,7 @@
                                 'itemOptions' => array('class' => 'dropdown user'),
                                 'items' => array(
                                     array('label' => 'Accueil administration', 'url' => array('/admin/index')),
-                                    array('label' => 'Recherche administrative', 'url' => array('/admin/search')),
+                                    array('label' => 'Recherche admin', 'url' => array('/admin/search')),
                                     array('label' => 'Nouveau périodique', 'url' => array('/admin/peredit')),
                                     array('label' => 'Gérer les sujets', 'url' => array('/sujet/admin')),
                                     array('label' => 'Gérer les listes', 'url' => array('/smalllist')),

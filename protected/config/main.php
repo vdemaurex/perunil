@@ -38,7 +38,6 @@ return array(
             'allowAutoLogin' => true,
         ),
         // uncomment the following to enable URLs in path-format
-
         'urlManager' => array(
             'urlFormat' => 'path',
             'rules' => array(
@@ -60,6 +59,8 @@ return array(
             'password' => 'jvbcdb',
             'charset' => 'utf8',
             'schemaCachingDuration' => 3600,
+            'enableParamLogging'=>true
+
         ),
         'errorHandler' => array(
             // use 'site/error' action to display errors
@@ -68,6 +69,12 @@ return array(
         'log' => array(
             'class' => 'CLogRouter',
             'routes' => array(
+                'web' => array(
+                    'class' => 'CWebLogRoute',
+                    'levels' => 'trace, info, error, warning, application',
+                    'categories' => 'system.db.*, application',
+                    'showInFireBug' => true //firebug only - turn off otherwise
+                ),
                 array(
                     'class' => 'CFileLogRoute',
                     'levels' => 'error, warning',
@@ -82,7 +89,7 @@ return array(
         ),
         'cache' => array(
             'class' => 'CDbCache',
-            //'connectionID' => 'db',
+        //'connectionID' => 'db',
         ),
     ),
     // application-level parameters that can be accessed

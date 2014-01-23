@@ -1,3 +1,11 @@
+<?php
+function txtbtn($form,$model,$field) {
+    echo $form->textField($model, $field, array('style' => "width : 80%", 'class'=>"form-control")); ?><?php echo $form->error($model, $field);
+    echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_' . $field .'",$(this))', 'class' => "btn btn-default btn-sm"));
+}
+?>
+
+
 <h2>Modification par lot</h2>
 <p>Le lot en mémoire contient <?php echo Yii::app()->session['totalItemCount']; ?> éléments.
     <?php
@@ -39,7 +47,7 @@ if ($stage == "1-form") :
 
     <?php
     $model = new Abonnement();
-    $textfieldstyle = "width : 90%";
+    $textfieldstyle = "width : 80%";
     $smalltextfieldstyle = "width : 90%";
     $yeartextfield = "width : 30px";
 
@@ -51,6 +59,22 @@ if ($stage == "1-form") :
             ));
     ?>
 
+        <script>
+function viderText(id,button)
+{
+if($(id).val() === "NULL"){
+    $(button).val("Vider");
+    $(id).val("");
+    $(id).removeAttr('readonly');
+}
+else{
+    $(button).val("Ne plus vider");
+    $(id).val("NULL");
+    $(id).attr('readonly','readonly');
+    }       
+}
+</script>
+        
         <?php
         echo $form->errorSummary($model);
         echo CHtml::hiddenField("stage", "2-preview");
@@ -76,34 +100,46 @@ if ($stage == "1-form") :
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'package'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'package', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'package'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'package'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'no_abo'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'no_abo', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'no_abo'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'no_abo'); ?></td>
                 </tr> 
                 <tr>
                     <th><?php echo $form->labelEx($model, 'etatcoll'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'etatcoll', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'etatcoll'); ?></td>               
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'etatcoll'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'embargo_mois'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'embargo_mois', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control")); ?>(nombres de mois)<?php echo $form->error($model, 'embargo_mois'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'embargo_mois'); ?></td>
                 </tr>
                 <tr >
                     <th>Début de la collection</th>
                     <td colspan="3" class="form-inline">
-                        Année <?php echo $form->textField($model, 'etatcoll_deba', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_deba'); ?> | 
-                        Volume <?php echo $form->textField($model, 'etatcoll_debv', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_debv'); ?> | 
-                        Numéro <?php echo $form->textField($model, 'etatcoll_debf', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_debf'); ?>
+                        Année <?php echo $form->textField($model, 'etatcoll_deba', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); 
+                        echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_etatcoll_deba",$(this))', 'class' => "btn btn-default btn-sm"));
+                        echo $form->error($model, 'etatcoll_deba'); ?> | 
+                        Volume <?php echo $form->textField($model, 'etatcoll_debv', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px"));  
+                        echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_etatcoll_debv",$(this))', 'class' => "btn btn-default btn-sm")); 
+                        echo $form->error($model, 'etatcoll_debv'); ?> | 
+                        Numéro <?php echo $form->textField($model, 'etatcoll_debf', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px"));  
+                        echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_etatcoll_debf",$(this))', 'class' => "btn btn-default btn-sm")); 
+                        echo $form->error($model, 'etatcoll_debf'); ?>
                     </td>
                 </tr>
                 <tr>
                     <th>Fin de la collection</th>
                     <td colspan="3" class="form-inline">
-                        Année <?php echo $form->textField($model, 'etatcoll_fina', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_fina'); ?> | 
-                        Volume <?php echo $form->textField($model, 'etatcoll_finv', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_finv'); ?> | 
-                        Numéro <?php echo $form->textField($model, 'etatcoll_finf', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); ?><?php echo $form->error($model, 'etatcoll_finf'); ?>
+                        Année <?php echo $form->textField($model, 'etatcoll_fina', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); 
+                        echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_etatcoll_fina",$(this))', 'class' => "btn btn-default btn-sm"));
+                        echo $form->error($model, 'etatcoll_fina'); ?> | 
+                        Volume <?php echo $form->textField($model, 'etatcoll_finv', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); 
+                        echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_etatcoll_finv",$(this))', 'class' => "btn btn-default btn-sm"));
+                        echo $form->error($model, 'etatcoll_finv'); ?> | 
+                        Numéro <?php echo $form->textField($model, 'etatcoll_finf', array('size' => '4', 'maxlength' => '4', 'class'=>"form-control width80px")); 
+                        echo '&nbsp; ' . CHtml::button('Vider', array('onclick' => 'viderText("#Abonnement_etatcoll_finf",$(this))', 'class' => "btn btn-default btn-sm"));
+                        echo $form->error($model, 'etatcoll_finf'); ?>
                     </td>
                 </tr>
                 <tr>
@@ -112,7 +148,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Plateforme::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>
@@ -122,7 +159,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Editeur::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>
@@ -132,7 +170,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Histabo::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>  
@@ -142,7 +181,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Statutabo::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>
@@ -152,7 +192,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Localisation::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr> 
@@ -162,7 +203,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Gestion::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>
@@ -172,7 +214,8 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Format::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>   
@@ -192,42 +235,43 @@ if ($stage == "1-form") :
     <?php
     $this->widget('SelectWidget', array(
         'model' => Licence::model(),
-        'frm_classname' => get_class($model)));
+        'frm_classname' => get_class($model),
+        'showNull' => true));
     ?>
                     </td>
                 </tr>  
 
                 <tr>
                     <th><?php echo $form->labelEx($model, 'cote'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'cote', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'cote'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'cote'); ?></td>
                 </tr> 
                 <tr>
                     <th><?php echo $form->labelEx($model, 'editeur_sujet'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'editeur_sujet', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'editeur_sujet'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'editeur_sujet'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'acces_user'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'acces_user', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'acces_user'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'acces_user'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'acces_pwd'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'acces_pwd', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'acces_pwd'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'acces_pwd'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'url_site'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'url_site', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'url_site'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'url_site'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'editeur_code'); ?></th>
-                    <td colspan="3"><?php echo $form->textField($model, 'editeur_code', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'editeur_code'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'editeur_code'); ?></td>
                 </tr>  
                 <tr>
                     <th><?php echo $form->labelEx($model, 'commentaire_pro'); ?></th>
-                    <td colspan="3"><?php echo $form->textArea($model, 'commentaire_pro', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'commentaire_pro'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'commentaire_pro'); ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $form->labelEx($model, 'commentaire_pub'); ?></th>
-                    <td colspan="3"><?php echo $form->textArea($model, 'commentaire_pub', array('style' => $textfieldstyle, 'class'=>"form-control")); ?><?php echo $form->error($model, 'commentaire_pub'); ?></td>
+                    <td colspan="3" class="form-inline"><?php txtbtn($form,$model,'commentaire_pub'); ?></td>
                 </tr> 
                 <tr style="background-color : #E8F8EC;">
                     <th><?php echo CHtml::label("Action sur les champs textes (*) :", "add_text"); ?></th>
@@ -265,7 +309,7 @@ if ($stage == "1-form") :
         foreach ($updt as $key => $value) {
             // S'il s'agit d'une relation, on affiche le nom
             $link = "";
-            if (in_array($key, $this->abolinks)) {
+            if (in_array($key, $this->abolinks) && $value != "NULL") {
                 $class = ucfirst($key);
                 $link = " - '" . $class::model()->findByPk($value)->$key . "'";
             }
@@ -275,7 +319,9 @@ if ($stage == "1-form") :
             } else {
                 echo " <i>(remplacement)</i>";
             }
-
+            if ($value == "NULL"){
+                $value = "Le contenu du champ sera supprimé";
+            }
             echo " : $value $link</li>";
         }
         echo "</ul>";
@@ -309,7 +355,7 @@ if ($stage == "1-form") :
         foreach ($updt as $key => $value) {
             // S'il s'agit d'une relation, on affiche le nom
             $link = "";
-            if (in_array($key, $this->abolinks)) {
+            if (in_array($key, $this->abolinks) && $value != "NULL") {
                 $class = ucfirst($key);
                 $link = " - '" . $class::model()->findByPk($value)->$key . "'";
             }
@@ -319,7 +365,9 @@ if ($stage == "1-form") :
             } else {
                 echo " <i>(remplacement)</i>";
             }
-
+            if ($value == "NULL"){
+                $value = "Le contenu du champ a été supprimé";
+            }
             echo " : $value $link</li>";
         }
         echo "</ul>"; 

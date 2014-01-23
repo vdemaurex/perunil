@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
         <div class="row">
             <div class="col-md-4 text-center">
                 <a target="_self" href="<?= CController::createUrl('/admin/search')?>" ><img src="<?= Yii::app()->baseUrl; ?>/images/adminsearch-icon.png" height="64" width="64"></a><br>
-                <strong>Recherche administrateur</strong>
+                <strong>Recherche admin</strong>
             </div>
             <div class="col-md-4 text-center">
                 <a target="_self" href="<?= CController::createUrl('/admin/peredit')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/addjournal.png" height="64" width="64"></a><br>

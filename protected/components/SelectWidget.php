@@ -5,6 +5,12 @@ class SelectWidget extends CWidget {
     public $model;
     public $selected = 'all';
     public $defaultlabel = "Tous";
+    /**
+     * Si vrai, affiche une entrée "NULL", utile pour supprimer une association.
+     * @var bool 
+     */
+    public $showNull = false;
+    
     public $ajax = false;
     public $column;      // Nom de la colonne, si non spécifié, c'est le nom de la table qui est utilisé.
     private $tbl_name;
@@ -41,6 +47,9 @@ class SelectWidget extends CWidget {
         if (!$this->ajax)echo "<div style=\"display: inline-block;\" id=\"{$this->select_id}div\">";
         echo '<select name="' . $this->select_name . '" id="' . $this->select_id . '" class="form-control input-sm form-inline" style="width: auto;">';
         echo '<option value="">' . $this->defaultlabel . '</option>';
+        if ($this->showNull){
+             echo '<option value="NULL">VIDER (NULL)</option>';
+        }
         // La table sujet a deux sous-groupes, elle est traitée à part
         if ($this->tbl_name == 'Sujet') {
             $lists = array(
@@ -71,7 +80,7 @@ class SelectWidget extends CWidget {
 
 
         //
-        // Boutons de gestion si l'utilisateur est administrateur
+        // Boutons de gestion si l'utilisateur est admin
         //
          if ($this->frm_classname) {
             $divid = $this->select_id . 'Dialog';
@@ -109,21 +118,6 @@ class SelectWidget extends CWidget {
                                     );
                             }',
                     
-                // other buttons
-                    /*'Ajouter' => 'js:function(){
-                                    $.post(
-                                        $("#'.$this->select_id.'Form").attr("action"), // the url to submit to
-                                        $("#'.$this->select_id.'Form").serialize(), // the data is serialized
-                                        $("#'.$dialogid.'").dialog("close"), // in the success the dialog is closed
-                                        jQuery.ajax({
-                                           "url":"'.Yii::app()->createUrl("admin/refreshselect/type/$this->tbl_name").'",
-                                           "cache":false,
-                                           "success":function(html){
-                                               jQuery("#'.$divid.'").html(html);
-                                               }return false;})
-                                           })
-                                    );
-                            }',*/
                 ))));
             $this->endWidget('zii.widgets.jui.CJuiDialog');
         }

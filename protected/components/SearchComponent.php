@@ -30,7 +30,7 @@ class SearchComponent extends CComponent {
     private $simple_dp;
 
     /**
-     * Requête de la recherche administrateur
+     * Requête de la recherche admin
      * @var type 
      */
     private $admin_query_tab;
@@ -917,7 +917,7 @@ class SearchComponent extends CComponent {
     }
 
 ///////////////////////////////////////////////////////////////////////////
-// Recherche administrateur
+// Recherche admin
 ///////////////////////////////////////////////////////////////////////////
 // Méthodes publiques
 //===================

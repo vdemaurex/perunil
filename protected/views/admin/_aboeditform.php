@@ -220,7 +220,7 @@
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
                         echo CHtml::button('Supprimer cet abonnement', array(
                             'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('/admin/abodelete/perunilid/' . $model->perunilid . '/aboid/' . $model->abonnement_id) . '"',
-                            'confirm' => 'Êtes vous sûr de vouloir définitvement supprimer cet abonnement ?',
+                            'confirm' => 'Êtes-vous sûr de vouloir définitivement supprimer cet abonnement ?',
                             'class' => "btn btn-danger"));
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
                         echo CHtml::button('Dupliquer cet abonnement', array(

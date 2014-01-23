@@ -1,4 +1,8 @@
 <?php
+// Ne peut fonctionner qu'avec les résultat de la recherche admin.
+if(Yii::app()->session['searchtype'] != 'admin'){
+    throw new Exception("Merci d'utiliser l'exporation CSV depuis les résultats de la recherche administrateur uniquement.");
+}
 $dataProvider = Yii::app()->session['search']->admin_dp;
 //
 // affichage par abonnements

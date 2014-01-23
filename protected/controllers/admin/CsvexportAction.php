@@ -13,7 +13,7 @@ class CsvexportAction extends CAction {
     public function run() {
 
         if(Yii::app()->session['searchtype'] != 'admin'){
-            Yii::app()->user->setFlash('error', "Merci d'utiliser l'exporation CSV depuis les résultats de la recherche administrateur uniquement.");
+            Yii::app()->user->setFlash('error', "Merci d'utiliser l'exporation CSV depuis les résultats de la recherche admin uniquement.");
             return;
         }
         

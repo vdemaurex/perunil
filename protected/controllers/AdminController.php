@@ -110,9 +110,14 @@ class AdminController extends Controller {
                 foreach ($this->abolinks as $link) {
                     if (isset($a[$link]) && ctype_digit($a[$link])) {
                         $class = ucfirst($link);
+                        // Si le lien existe, on le met à jour
                         if ($class::model()->findByPk($a[$link])) {
                             $updt[$link] = $a[$link];
                         }
+                    }
+                    // Si l'entrée est NULL, on supprime le lien
+                    if (isset($a[$link]) && trim($a[$link]) == 'NULL') {
+                        $updt[$link] = "NULL";
                     }
                 }
 
@@ -170,16 +175,21 @@ class AdminController extends Controller {
                 $nbr_rows = 0; // nombre de lignes mises à jour
                 // Mise à jour de tous les éléments du lot
                 foreach (Abonnement::model()->findAll(Yii::app()->session['search']->admin_criteria) as $abo) {
-                    // Si le text doit être ajouter aux champs texte, il faut un traitement a part.
+                    
                     $updt_local = $updt;
-                    if ($add_text) {
-
-                        foreach ($this->textfields as $textfield) {
-                            if (isset($updt_local[$textfield])) {
+                    foreach ($this->textfields as $textfield) {
+                        if (isset($updt_local[$textfield])) {
+                            // Si le texte doit être ajouter et non remplacé
+                            if ($add_text) {
                                 $updt_local[$textfield] = $abo->$textfield . " " . $updt[$textfield];
+                            }
+                            // Si le mot clé NULL est dans le champs, il doit être vidé.
+                            if ($updt[$textfield] == 'NULL'){
+                                $updt_local[$textfield] = "";
                             }
                         }
                     }
+                    // Vider les champs dont le contenu est NULL
                     // Application de la mise à jour
                     $result = Abonnement::model()->updateByPk($abo->abonnement_id, $updt_local);
                     // Collecte des statistiques
@@ -278,16 +288,16 @@ class AdminController extends Controller {
             // Vérifier que la liste des ID est > 1
             if (!isset($_POST['perunilid']) || count($_POST['perunilid']) < 2) {
                 throw new Exception(
-                        "La liste des journaux à fusionner comporte moins de 2 " .
-                        "éléments. Impossible de réaliser la fusion."
+                "La liste des journaux à fusionner comporte moins de 2 " .
+                "éléments. Impossible de réaliser la fusion."
                 );
             }
             // Vérifier que le maître est dans la liste des ID
             if (!isset($_POST['maitre']) || !in_array($_POST['maitre'], $_POST['perunilid'])) {
                 throw new Exception(
-                        "Pour réaliser la fusion, il est nécessaire de définir " .
-                        "le journal qui sera la notice modèle, auquel les " .
-                        "abonnements seront attachés."
+                "Pour réaliser la fusion, il est nécessaire de définir " .
+                "le journal qui sera la notice modèle, auquel les " .
+                "abonnements seront attachés."
                 );
             }
         } catch (Exception $exc) {
@@ -333,24 +343,24 @@ class AdminController extends Controller {
     }
 
     public function actionMesmodifications() {
-        
+
         $userid = Yii::app()->user->getState('id');
         $today = date('Y-m-d H:i:s');
         $yesterday = date('Y-m-d H:i:s', time() - 60 * 60 * 24);
-        
+
         $criteria = new CDbCriteria();
         $criteria->addCondition("stamp < '$today'");
         $criteria->addCondition("stamp > '$yesterday'");
         $criteria->addCondition("user_id = $userid");
         $criteria->order = 'stamp DESC';
-        
+
         $dataProvider = new CActiveDataProvider('Modifications', array(
-                    'criteria' => $criteria,
-                    'pagination' => array(
-                        'pageSize' => 20,
-                    ),
-                ));
-        
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 20,
+            ),
+        ));
+
         $this->render('mesmodifications', array('dataProvider' => $dataProvider));
     }
 
@@ -543,9 +553,7 @@ class AdminController extends Controller {
         Yii::app()->session['searchtype'] = 'admin';
         $this->activate_session_search_component();
 
-        $search_done = (isset($_GET['perunilidcrit1'])
-                && isset($_GET['embargocrit'])
-                && count($_GET) > 3);
+        $search_done = (isset($_GET['perunilidcrit1']) && isset($_GET['embargocrit']) && count($_GET) > 3);
 
         if ($search_done) {
             Yii::app()->session['search']->admin_query_tab = $_GET;

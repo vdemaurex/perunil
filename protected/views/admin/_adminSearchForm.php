@@ -59,7 +59,7 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
     }
 </style>
 
-<h1>Recherche administrateur</h1>
+<h1>Recherche admin</h1>
 <?php echo CHtml::beginForm($this->createUrl('admin/searchResults'), 'get', array("id" => "adminsearchform"));?>
 <div class="panel panel-default" style="width: 95%; margin:auto;">
 <table id="adminformtable" class="table table-striped">
