@@ -28,6 +28,8 @@ class CsvimportAction extends CAction {
 
     public function run() {
 
+        $controller = $this->getController();
+
         $model = new CsvImportForm;
         $render_data['model'] = $model;
         if (isset($_POST['CsvImportForm'])) {
@@ -83,21 +85,33 @@ class CsvimportAction extends CAction {
 
                         // Analyse de toutes les tables
                         foreach ($this->tables as $table) {
+                            // On ne peut modifier que les tables journal et abonnement
+                            if (!in_array($table, array('journal', 'abonnement'))) {
+                                continue;
+                            }
+
+                            // Le id de la table journal est une exception
+                            // sinon c'est table_id
                             $tableid = $table . "_id";
                             if ($table == 'journal') {
                                 $tableid = 'perunilid';
                             }
+
+                            // Nom de la table dans la base de donnée
                             $Table = ucfirst($table);
+
                             //
                             // Récupération du l'objet $table
                             //
                             // Si $table n'a pas déjà été traité, on procède à son analyse 
-                            if (!isset($usedid[$table]) ||
-                                    !array_key_exists($row[$table][$tableid], $usedid[$table])) {
+
+
+                            if (!isset($usedid[$table]) || !array_key_exists($row[$table][$tableid], $usedid[$table])) {
                                 $obj = $Table::model()->findByPk($row[$table][$tableid]);
 
                                 // Le objet existe dans la base
                                 if ($obj) {
+
                                     // pour chaque propriété, vérifier les différences
                                     foreach ($row[$table] as $column_name => $column_value) {
                                         // Une colonne a été modifiée    
@@ -117,18 +131,18 @@ class CsvimportAction extends CAction {
                                         }
                                     }
                                 }
-
-                                // Cet objet n'existe pas dans la base
-                                else {
-                                    // Si tous les attributs de l'entrée sont vides, ne pas en tenir compte
-                                    if (array_filter($row[$table], function ($v) {return $v != "";})) 
-                                    {
-                                        // Conserver la nouvelle entrée
-                                        $ajout[] = array(
-                                            'table' => $table,
-                                            'attributs' => $row[$table],
-                                        );
-                                    }
+                            }
+                            // Cet objet n'existe pas dans la base
+                            else {
+                                // Si tous les attributs de l'entrée sont vides, ne pas en tenir compte
+                                if (array_filter($row[$table], function ($v) {
+                                            return $v != "";
+                                        })) {
+                                    // Conserver la nouvelle entrée
+                                    $ajout[] = array(
+                                        'table' => $table,
+                                        'attributs' => $row[$table],
+                                    );
                                 }
                             }
                         }
@@ -151,7 +165,7 @@ class CsvimportAction extends CAction {
             $render_data['filename'] = $csvfile->name;
         } // Fin traitement du formulaire d'importation
 
-        $controller = $this->getController();
+
         $controller->render('csvimport', $render_data);
     }
 
@@ -159,7 +173,7 @@ class CsvimportAction extends CAction {
         $tc = array();
         foreach ($assocArray as $i => $row) {
             foreach (array_keys($row) as $key) {
-                $splitedkey = explode('.', $key);
+                $splitedkey = explode('-', $key);
                 $table = $splitedkey[0];
                 $column = $splitedkey[1];
                 $tc[$i][$table][$column] = $row[$key];
@@ -202,6 +216,6 @@ class CsvimportAction extends CAction {
         return $array;
     }
 
-            }
+}
 
 ?>
