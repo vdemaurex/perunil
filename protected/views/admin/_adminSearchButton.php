@@ -26,7 +26,7 @@ if (Yii::app()->session['searchtype'] == 'admin') {
         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/batchprocessing') . '"',
         'class' => "btn btn-default btn-sm"));
     echo " " . CHtml::button('Exporter en CSV', array(
-        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/csvexport') . '"',
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('csv/export') . '"',
         'class' => "btn btn-default btn-sm"));
 }
 //        if (Yii::app()->session['search']->admin_affichage == 'journal') {

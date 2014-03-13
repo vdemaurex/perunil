@@ -175,7 +175,7 @@ class SearchComponent extends CComponent {
 
     /**
      * Crée le critère de recherche pour la recherche avancée
-     * @return \CDbCriteria
+     * @return CDbCriteria
      * @throws CException 
      */
     private function advancedSearch() {
@@ -289,7 +289,7 @@ class SearchComponent extends CComponent {
 
                     case 'issn':
                         $issn = trim($this->simple_query_str);
-                        $Cwhere .= " j.issn $like '%$issn%' ";
+                        $Cwhere .= " j.issn $like '%$issn%' OR j.issnl $like '%$issn%' ";
                         $this->query_summary("issn = $this->simple_query_str");
                         break;
 

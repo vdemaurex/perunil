@@ -25,7 +25,7 @@ $this->breadcrumbs=array(
         <br /><br />
         <div class="row">
             <div class="col-md-4 text-center">
-                <a target="_self" href="<?= CController::createUrl('/admin/csvimport')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/importcsv.png" height="64" width="64"></a><br>
+                <a target="_self" href="<?= CController::createUrl('/csv/')?>"><img src="<?= Yii::app()->baseUrl; ?>/images/importcsv.png" height="64" width="64"></a><br>
                 <strong>Importation par lot (CSV)</strong>
             </div>
             <div class="col-md-4 text-center">

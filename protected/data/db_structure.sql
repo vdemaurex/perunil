@@ -137,14 +137,13 @@ CREATE TABLE IF NOT EXISTS `journal` (
   `DEPRECATED_sujetsfm` varchar(1000) DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
   `DEPRECATED_fmid`     INT           DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
   `DEPRECARED_historique` LONGTEXT    DEFAULT NULL COMMENT 'Ne pas ajouter de données.',
-  CONSTRAINT pk_perunilid     PRIMARY KEY (perunilid)
-  CONSTRAINT fk_creation      FOREIGN KEY (modifications)   REFERENCES modifications(id),
-  CONSTRAINT fk_modification  FOREIGN KEY (modifications)   REFERENCES modifications(id),
+  CONSTRAINT pk_perunilid     PRIMARY KEY (perunilid),
+  CONSTRAINT fk_creation      FOREIGN KEY (creation)       REFERENCES modifications(id),
+  CONSTRAINT fk_modification  FOREIGN KEY (modification)   REFERENCES modifications(id)
 )ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
 
 
 -- --------------------------------------------------------
--- C
 
 CREATE TABLE IF NOT EXISTS `sujet` (
   `sujet_id` SMALLINT    NOT NULL AUTO_INCREMENT,
@@ -157,7 +156,6 @@ CREATE TABLE IF NOT EXISTS `sujet` (
 )ENGINE = MYISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_unicode_ci';
 
 -- --------------------------------------------------------
--- C
 
 CREATE TABLE IF NOT EXISTS `biblio` (
   `biblio_id`      SMALLINT    NOT NULL AUTO_INCREMENT,
@@ -262,8 +260,8 @@ CREATE TABLE IF NOT EXISTS `abonnement` (
   `licence`	           SMALLINT      DEFAULT NULL, -- FK
   `creation`           bigint(20)    DEFAULT NULL,
   `modification`       bigint(20)    DEFAULT NULL,
-  CONSTRAINT fk_creation      FOREIGN KEY (modifications)   REFERENCES modifications(id),
-  CONSTRAINT fk_modification  FOREIGN KEY (modifications)   REFERENCES modifications(id),
+  CONSTRAINT fk_creation      FOREIGN KEY (creation)        REFERENCES modifications(id),
+  CONSTRAINT fk_modification  FOREIGN KEY (modification)    REFERENCES modifications(id),
   CONSTRAINT fk_editeur       FOREIGN KEY (editeur)         REFERENCES editeur(editeur_id),
   CONSTRAINT fk_histabo       FOREIGN KEY (histabo)         REFERENCES histabo(histabo_id),
   CONSTRAINT fk_statutabo     FOREIGN KEY (statutabo)       REFERENCES statutabo(statutabo_id),
