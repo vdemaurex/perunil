@@ -142,6 +142,12 @@ class CSVRow extends CComponent {
             return;
         }
 
+        // Correction de l'encodage
+        foreach ($data as $column => $value) {
+            $data[$column] = Encoding::toUTF8($value);
+        }
+
+
         // Le champ abonnement_id est rempli et valide
         if (!empty($data['abonnement_id'])) {
             $existing = Abonnement::model()->findByPk($data['abonnement_id']);
@@ -181,7 +187,6 @@ class CSVRow extends CComponent {
 
         foreach ($data as $column => $value) {
             if (Abonnement::model()->hasAttribute($column)) {
-
                 $this->validValues[$column] = $value;
             } else {
                 $this->invalideValues[$column] = $value;
@@ -340,16 +345,33 @@ class CSVRow extends CComponent {
         return $this->normalizeArray($this->searchComp->simple_dp->rawData);
     }
 
+    private function splitTerms($termsString) {
+        $terms = array();
+        foreach (explode(" ", $termsString) as $t) {
+            if ($t != "" || $t != "") {
+                $terms[] = "%$t%";
+            }
+        }
+        return $terms;
+    }
+
     protected function search_issn() {
+
+        $issns = array_merge($this->splitTerms($this->search_journal_issnl), $this->splitTerms($this->search_journal_issn));
+
+        $C1 = !empty($issns[0]) ? $issns[0] : "";
+        $C2 = !empty($issns[1]) ? $issns[1] : "";
+        $C3 = !empty($issns[2]) ? $issns[2] : "";
+
         $this->searchComp = new SearchComponent();
 
         $this->searchComp->search_type = SearchComponent::TWORDS;
         $this->searchComp->maxresults = 10;
         $this->searchComp->adv_query_tab = array(
             "advsearch" => "advsearch",
-            "C1" => array("op" => "AND", "search_type" => "issn", "text" => $this->search_journal_issn),
-            "C2" => array("op" => "AND", "search_type" => "issn", "text" => $this->search_journal_issnl),
-            "C3" => array("op" => "AND", "search_type" => "issn", "text" => ""),
+            "C1" => array("op" => "AND", "search_type" => "issn", "text" => $C1),
+            "C2" => array("op" => "AND", "search_type" => "issn", "text" => $C2),
+            "C3" => array("op" => "AND", "search_type" => "issn", "text" => $C3),
             "support" => "0",
             "accessunil" => "1",
             "openaccess" => "1",
@@ -380,14 +402,17 @@ class CSVRow extends CComponent {
 
     protected function process() {
         // Le traitement ne peut être effectué qu'une seule fois.
-        if ($this->processDone)
+        if ($this->processDone) {
             return;
+        }
 
         // Modification d'un abonnement existant
         if ($this->state == self::MODIF) {
             foreach ($this->validValues as $column => $newvalue) {
                 // Si il existe un différence
-                if (empty($this->DBAbo->$column) || $this->DBAbo->$column != $newvalue) {
+                if (empty($this->DBAbo->$column) || $this->DBAbo->$column !== $newvalue) {
+                    // Application des règle des valeurs
+                    $newvalue = CSVValuesRules::rule($column, $newvalue, $this->DBAbo->$column, false);
                     // La modification est notée
                     $this->changes[$column] = array($this->DBAbo->$column, $newvalue);
                     // La modification est enregistrée, mais pas sauvegardée
@@ -398,6 +423,8 @@ class CSVRow extends CComponent {
             $this->DBAbo = new Abonnement();
             $this->DBAbo->perunilid = $this->jrn->perunilid;
             foreach ($this->validValues as $column => $newvalue) {
+                // Application des règle des valeurs
+                $newvalue = CSVValuesRules::rule($column, $newvalue);
                 $this->changes[$column] = array("", $newvalue);
                 $this->DBAbo->$column = $newvalue;
             }

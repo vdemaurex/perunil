@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="language" content="en" />
+        <meta name="language" content="fr" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 
@@ -34,26 +34,9 @@
         Yii::app()->clientScript->registerCoreScript('autocomplete');
         ?>
 
-        <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/bootstrap.min.js"></script>
 
-    </head>
-
-    <body>
-
-        <div class="container" id="page" style="padding-left: 0px; padding-right: 0px;">
-
-            <div id="header">
-                <div id="logo">
-                    <a href ="<?= Yii::app()->baseUrl; ?>">
-                        <img src="<?= Yii::app()->baseUrl; ?>/images/logo_perunil.png"/>
-                        <span id="slogan">Recherche de périodiques disponibles sur le campus UNIL/CHUV</span>
-                    </a>
-
-                </div>
-
-            </div><!-- header -->
-            <!-- Navigation publique -->
-            <style>
+        <style>
                 .navbar-nav > li > a {
                     padding-bottom: 5px;
                     padding-top: 4px;
@@ -80,6 +63,25 @@
                     color: white;
                 }
             </style>
+        
+    </head>
+
+    <body>
+
+        <div class="container" id="page" style="padding-left: 0px; padding-right: 0px;">
+
+            <div id="header">
+                <div id="logo">
+                    <a href ="<?= Yii::app()->baseUrl; ?>">
+                        <img src="<?= Yii::app()->baseUrl; ?>/images/logo_perunil.png"/>
+                        <span id="slogan">Recherche de périodiques disponibles sur le campus UNIL/CHUV</span>
+                    </a>
+
+                </div>
+
+            </div><!-- header -->
+            <!-- Navigation publique -->
+            
             <nav class="navbar navbar-default navbar-inverse" role="navigation" style="margin-bottom: 0;">
                 <!--div id="mainmenu"-->
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -151,21 +153,21 @@
                 <div id="vd"> &nbsp; </div>
                 <div id="swissu">
                     <a href="http://www.swissuniversity.ch">
-                        <img alt="Swiss University" src="http://www.unil.ch/cms/images/logos/swissuniversity_blue_smush.png" border="0" height="17" width="136">
+                        <img alt="Swiss University" src="http://www.unil.ch/cms/images/logos/swissuniversity_blue_smush.png" border="0" height="17" width="136"></img>
                     </a>
                 </div>
                 <div id="logobottom">
                     <a href="http://www.vd.ch">
-                        <img border="0" alt="Canton de Vaud" src="http://www.unil.ch/cms/images/logos/vd_gray.gif">
+                        <img border="0" alt="Canton de Vaud" src="http://www.unil.ch/cms/images/logos/vd_gray.gif"></img>
                     </a>
                     <a class="liens" href="http://www.unil.ch">
-                        <img border="0" alt="UNIL" src="http://serval.unil.ch/img/unilogo_noir.png">
+                        <img border="0" alt="UNIL" src="http://serval.unil.ch/img/unilogo_noir.png"></img>
                     </a>
                     <a class="liens" href="http://www.unil.ch/bcu">
-                        <img border="0" alt="BCU Lausanne" src="http://www.unil.ch/webdav/site/serval/users/siteadmin/public/logo_bcu_gris.gif">
+                        <img border="0" alt="BCU Lausanne" src="http://www.unil.ch/webdav/site/serval/users/siteadmin/public/logo_bcu_gris.gif"></img>
                     </a>
                     <a class="liens" href="http://www.chuv.ch">
-                        <img border="0" alt="CHUV" src="http://serval.unil.ch/img/logo_chuv_transp_bleu.png">
+                        <img border="0" alt="CHUV" src="http://serval.unil.ch/img/logo_chuv_transp_bleu.png"></img>
                     </a>
                 </div>
                 <div id="linksbottom">
