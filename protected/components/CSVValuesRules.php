@@ -14,6 +14,10 @@
 class CSVValuesRules extends CComponent {
 
     public static function rule($column, $newValue, $oldValue = null, $newRecord = true) {
+        // Vider la colonne si NULL
+        if ($newValue == 'NULL'){
+            return "";
+        }
         if (method_exists('CSVValuesRules', $column)) {
             return self::$column($newValue, $oldValue, $newRecord);
         } else {
