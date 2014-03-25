@@ -371,6 +371,22 @@ class AdminController extends Controller {
                     ($days == 1 ? "les dernières 24 heures." : "les $days derniers jours.")));
     }
 
+    
+    public function actionUrlDetail($model, $id) {
+        if ($model == 'Journal'){
+            $this->redirect($this->createUrl("site/detail/" . $id));
+        }
+        if ($model == 'Abonnement'){
+            $abo = Abonnement::model()->findByPk($id);
+                    if ($abo){
+                        $this->redirect($this->createUrl("site/detail/$abo->perunilid#$id" ));
+                    }
+        }
+        // Aucune redirection valable
+        Yii::app()->user->setFlash('error', "Impossible de vous rediriger vers les détail du $model n° $id");
+        $this->redirect($this->createUrl("site"));
+    }
+    
     /**
      * Affiche le formulaire d'étidion du journal ainsi que les abonnement liés.
      * 

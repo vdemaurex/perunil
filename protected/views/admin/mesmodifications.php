@@ -48,8 +48,13 @@ $this->breadcrumbs = array(
         <?php
         //$columns[] = 'user_id';
         $columns[] = 'action';
-        $columns[] = 'model';
-        $columns[] = 'model_id';
+        //$columns[] = 'model';
+        //$columns[] = 'model_id';
+        $columns[] = array(
+            'name'=>'model',
+            'type'=>'raw',
+            'value' => '$data->model . " " . CHtml::link($data->model_id,Yii::app()->createUrl("admin/urlDetail",array("model"=>$data->model, "id"=>$data->model_id)),array("target"=>"_blank"))',
+      );
         $columns[] = 'field';
         $columns[] = 'old_value';
         $columns[] = 'new_value';
