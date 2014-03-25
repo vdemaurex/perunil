@@ -342,11 +342,15 @@ class AdminController extends Controller {
         $this->redirect($returnUrl);
     }
 
-    public function actionMesmodifications() {
+    public function actionMesmodifications($days = 1) {
 
+        if (($days < 1) || ($days > 30)){
+            $days = 1;
+        }
+        
         $userid = Yii::app()->user->getState('id');
         $today = date('Y-m-d H:i:s');
-        $yesterday = date('Y-m-d H:i:s', time() - 60 * 60 * 24);
+        $yesterday = date('Y-m-d H:i:s', time() - 60 * 60 * 24 * $days);
 
         $criteria = new CDbCriteria();
         $criteria->addCondition("stamp < '$today'");
@@ -361,7 +365,10 @@ class AdminController extends Controller {
             ),
         ));
 
-        $this->render('mesmodifications', array('dataProvider' => $dataProvider));
+        $this->render('mesmodifications', 
+                array('dataProvider' => $dataProvider,
+                      'searchtitle'  => "Vos modifications et créations durant " . 
+                    ($days == 1 ? "les dernières 24 heures." : "les $days derniers jours.")));
     }
 
     /**

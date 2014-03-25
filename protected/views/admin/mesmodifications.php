@@ -1,42 +1,70 @@
-<h3>Mes modifications durant les 24 dernières heures</h3>
-
 <?php
+/**
+ * Affichage des dernières modifications de l'utilisateur connecté.
+ */
+/* @var $this CsvController */
 
-            $columns[] = 'user_id';
-//            $columns[] = array(
-//                'name' => 'user_id',
-//                'value' => 'Utilisateur::model()->findAllByPk($data->user_id)->pseudo',//'$data->utilisateur==null ? "" : $data->utilisateur->pseudo',
-//                'header' => 'Utilisateur',
-//            );
-            $columns[] = 'action';
-            $columns[] = 'model';
-            $columns[] = 'model_id';
-            $columns[] = 'field';
-            $columns[] = 'old_value';
-            $columns[] = 'new_value';
-            $columns[] = 'stamp';
-
-//            $columns[] = array(
-//                'class' => 'CButtonColumn',
-//                'template' => '{view}{update}',
-//                'updateButtonUrl' => '$this->grid->controller->createUrl("/admin/aboedit/perunilid/" . $data->perunilid . "/aboid/" . $data->abonnement_id)',
-//                //--------------------- Affichage de la fenêtre de détail --------------------------
-//                'buttons' => array(
-//                    'view' =>
-//                    array(
-//                        'url' => '$this->grid->controller->createUrl("/site/detail", array("id"=>$data->perunilid, "activeTab" => $data->abonnement_id, "dialogue" => 1))',
-//                        'click' => 'function(){$("#cru-frame").attr("src",$(this).attr("href")); $("#cru-dialog").dialog("open");  return false;}',
-//                    ),
-//                ),
-                    //--------------------- fin de l'affichage de la fenêtre de détail --------------------------
-//            );
-
-
-            $this->widget('zii.widgets.grid.CGridView', array(
-                'id' => 'mesmodifications-grid',
-                'dataProvider' => $dataProvider,
-                'formatter' => new FrFormatter(),
-                'filter'=> Modifications::model(),
-                'columns' => $columns,
-            ));
+$this->breadcrumbs = array(
+    'Csv',
+);
 ?>
+
+<h3><?php echo $searchtitle ?></h3>
+
+<div class="btn-group">
+    <?php
+    echo " " . CHtml::button('24 heures', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '1')) . '"',
+        'class' => "btn btn-default"));
+
+    echo " " . CHtml::button('2 jours', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '2')) . '"',
+        'class' => "btn btn-default"));
+
+    echo " " . CHtml::button('3 jours', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '3')) . '"',
+        'class' => "btn btn-default"));
+
+    echo " " . CHtml::button('5 jours', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '5')) . '"',
+        'class' => "btn btn-default"));
+
+    echo " " . CHtml::button('7 jours', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '7')) . '"',
+        'class' => "btn btn-default"));
+    
+    echo " " . CHtml::button('14 jours', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '14')) . '"',
+        'class' => "btn btn-default"));
+    
+        echo " " . CHtml::button('30 jours', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/mesmodifications', array('days' => '30')) . '"',
+        'class' => "btn btn-default"));
+    ?>
+</div>
+<p></p>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <?php
+        //$columns[] = 'user_id';
+        $columns[] = 'action';
+        $columns[] = 'model';
+        $columns[] = 'model_id';
+        $columns[] = 'field';
+        $columns[] = 'old_value';
+        $columns[] = 'new_value';
+        $columns[] = 'stamp';
+
+
+        $this->widget('zii.widgets.grid.CGridView', array(
+            'id' => 'mesmodifications-grid',
+            'dataProvider' => $dataProvider,
+            'formatter' => new FrFormatter(),
+            'filter' => Modifications::model(),
+            'columns' => $columns,
+        ));
+        ?>
+    </div>
+</div>
+
+
