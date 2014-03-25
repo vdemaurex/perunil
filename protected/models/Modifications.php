@@ -59,7 +59,7 @@ class Modifications extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'utilisateur' => array(self::HAS_MANY, 'Utilisateur', 'utilisateur_id'),
+			'utilisateur' => array(self::BELONGS_TO, 'Utilisateur', 'user_id'),
 		);
 	}
 

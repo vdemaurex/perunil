@@ -45,16 +45,6 @@ $fields = array(
     @array('name' => 'licence', 'value' => $abo->licence0->licence, 'label' => 'Licence'),
 );
 
-// Ajout des détails réservés aux utilisateurs authentifiés
-if(!Yii::app()->user->isGuest){
-    $fields = array_merge(
-            $fields, array(
-                array('name' => 'acces_user', 'label' => "Nom d'utilisateur"),
-                array('name' => 'acces_pwd', 'label' => "Mot de passe"),
-                'commentaire_pro',
-                array('name' => 'titreexclu', 'label' => 'Titre exclu', 'type' => 'boolean'),
-                ));
-}
 
 // Ajout des détail spécifiques au support électornique
 if ($abo->support == 1) {
@@ -66,6 +56,23 @@ if ($abo->support == 1) {
         'embargo_mois',
             ));
 }
+
+
+
+// Ajout des détails réservés aux utilisateurs authentifiés
+if(!Yii::app()->user->isGuest){
+   
+    $fields = array_merge(
+            $fields, array(
+                array('name' => 'acces_user',  'label' => "Nom d'utilisateur"),
+                array('name' => 'acces_pwd',   'label' => "Mot de passe"),
+                'commentaire_pro',
+                array('name' => 'titreexclu',   'label' => 'Titre exclu', 'type' => 'boolean'),
+                array('name' => 'modification', 'label' => 'Dernière modification', 'value' => $abo->fieldToString('modification')),
+                array('name' => 'creation',     'label' => 'Date de création',      'value' => $abo->fieldToString('creation')),
+                ));
+}
+
 
 
 // Suppression des champs qui ne contiennent aucune information

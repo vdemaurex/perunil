@@ -50,11 +50,11 @@
  * @property Journal $perunil
  * @property Plateforme $plateforme0
  */
-class Abonnement extends CActiveRecord {
+class Abonnement extends ModifModel {
 
     public $journal_titre;
-
     private $modif_tmp;
+
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -74,7 +74,7 @@ class Abonnement extends CActiveRecord {
     public function behaviors() {
         return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
     }
-   
+
     /**
      * @return array validation rules for model attributes.
      */
@@ -101,7 +101,7 @@ class Abonnement extends CActiveRecord {
      */
     public function relations() {
 
-        return array(
+        $relations = array(
             // Générées automatiquements
             'editeur0' => array(self::BELONGS_TO, 'Editeur', 'editeur'),
             'histabo0' => array(self::BELONGS_TO, 'Histabo', 'histabo'),
@@ -115,13 +115,15 @@ class Abonnement extends CActiveRecord {
             // Modifiées
             'jrn' => array(self::BELONGS_TO, 'Journal', 'perunilid'),
         );
+        
+        return array_merge($relations, parent::relations());
     }
 
     public function getId() {
         return $this->abonnement_id;
     }
-    
-    public function getPapier () {
+
+    public function getPapier() {
         return (isset($this->support0) && $this->support0->support == "papier");
     }
 
@@ -231,8 +233,8 @@ class Abonnement extends CActiveRecord {
 
 
         return new CActiveDataProvider($this, array(
-                    'criteria' => $criteria,
-                ));
+            'criteria' => $criteria,
+        ));
     }
 
     public function copy($perunilid = null) {
@@ -240,7 +242,7 @@ class Abonnement extends CActiveRecord {
         $new = new Abonnement();
         $data = $this->attributes;
         unset($data['abonnement_id']); //Suppression de l'id, car c'est une nouvelle entrée.
-        if ($perunilid){
+        if ($perunilid) {
             $data['perunilid'] = $perunilid;
         }
         $new->setAttributes($data, false);
@@ -328,5 +330,7 @@ class Abonnement extends CActiveRecord {
         $desc .= "</dl></small>";
         return $desc;
     }
+
+
 
 }

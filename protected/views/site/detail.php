@@ -45,6 +45,16 @@ $fields = array(
     array('name' => 'commentaire_pub', 'label' => 'Remarques'),
 );
 
+// Ajout des détails réservés aux utilisateurs authentifiés
+if(!Yii::app()->user->isGuest){
+   
+    $fields = array_merge(
+            $fields, array(
+                array('name' => 'modification', 'label' => 'Dernière modification', 'value' => $model->fieldToString('modification')),
+                array('name' => 'creation',     'label' => 'Date de création',      'value' => $model->fieldToString('creation')),
+                ));
+}
+
 // Suppression des champs qui ne contiennent aucune information
 foreach ($fields as $key => $field) {
     if (is_array($field)) {
@@ -63,6 +73,7 @@ $fields[] = array('label' => 'Sujets', 'type' => 'raw', 'value' => $model->sujet
 if ($model->corecollection2str() != "") {
     $fields[] = array('label' => 'Core collection', 'type' => 'raw', 'value' => $model->corecollection2str());
 }
+
 
 $this->widget('zii.widgets.CDetailView', array(
     'data' => $model,
@@ -106,7 +117,7 @@ foreach ($abos as $abo) {
 $this->widget('CTabView', $tabviewparam);
 
 
-if (!Yii::app()->user->isGuest && !$model->getIsNewRecord() && !$dialogue) {
-    $this->widget('application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array('model' => $model,));
-}
+//if (!Yii::app()->user->isGuest && !$model->getIsNewRecord() && !$dialogue) {
+//    $this->widget('application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array('model' => $model,));
+//}
 ?>

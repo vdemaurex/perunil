@@ -32,7 +32,7 @@
  * @property Biblio[] $biblios
  * @property Sujet[] $sujets
  */
-class Journal extends CActiveRecord {
+class Journal extends ModifModel {
 
     public $perunilid;
     public $titre;
@@ -99,7 +99,7 @@ class Journal extends CActiveRecord {
     public function relations() {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
-        return array(
+        $relations = array(
             'abonnements' => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
             'activeabos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1',
@@ -124,6 +124,8 @@ class Journal extends CActiveRecord {
                 'condition' => 'support = 1',
                 'order'     => 'support'),
         );
+        
+        return array_merge($relations, parent::relations());
     }
 
     public function getId() {
