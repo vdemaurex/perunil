@@ -163,7 +163,7 @@
                     <a class="liens" href="http://www.unil.ch">
                         <img border="0" alt="UNIL" src="http://serval.unil.ch/img/unilogo_noir.png"></img>
                     </a>
-                    <a class="liens" href="http://www.unil.ch/bcu">
+                    <a class="liens" href="http://www.bcu-lausanne.ch/">
                         <img border="0" alt="BCU Lausanne" src="http://www.unil.ch/webdav/site/serval/users/siteadmin/public/logo_bcu_gris.gif"></img>
                     </a>
                     <a class="liens" href="http://www.chuv.ch">

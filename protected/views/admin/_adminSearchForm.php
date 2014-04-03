@@ -128,11 +128,13 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
         </tr>
         <tr ><td ><b>Publication Unil</b></td><td >
                 <input type="radio" value="1" name="publiunil" <?=r($this,'publiunil',"1" ,'checked');?>> Oui  |  
-                <input type="radio" value="0" name="publiunil" <?=r($this,'publiunil',"0" ,'checked');?>> Non
+                <input type="radio" value="0" name="publiunil" <?=r($this,'publiunil',"0" ,'checked');?>> Non  |  
+                <input type="radio" value="" name="publiunil" <?=r($this,'publiunil',"" ,'checked');?>> Ignorer
             </td></tr>
         <tr><td><b>Open Access</b></td><td>
                 <input type="radio" value="1" name="openaccess" <?=r($this,'openaccess',"1" ,'checked');?>> Oui  |  
-                <input type="radio" value="0" name="openaccess" <?=r($this,'openaccess',"0" ,'checked');?>> Non
+                <input type="radio" value="0" name="openaccess" <?=r($this,'openaccess',"0" ,'checked');?>> Non  |  
+                <input type="radio" value="" name="openaccess" <?=r($this,'openaccess',"" ,'checked');?>> Ignorer
             </td>
         </tr>
         <tr >
@@ -183,20 +185,23 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null){
         <tr>
             <td><b>Titre exclu de la licence</b></td>
             <td><input type="radio" value="1" name="titreexclu" <?=r($this,'titreexclu',"1" ,'checked');?>> Oui  |  
-                <input type="radio" value="0" name="titreexclu" <?=r($this,'titreexclu',"0" ,'checked');?>> Non
+                <input type="radio" value="0" name="titreexclu" <?=r($this,'titreexclu',"0" ,'checked');?>> Non  |  
+                <input type="radio" value="" name="titreexclu" <?=r($this,'titreexclu',"" ,'checked');?>> Ignorer
             </td>
         </tr>
         <tr >
             <td><b>Parution terminée</b></td>
             <td><input type="radio" value="1" name="parution_terminee" <?=r($this,'parution_terminee',"1" ,'checked');?>> Oui  |  
-                <input type="radio" value="0" name="parution_terminee" <?=r($this,'parution_terminee',"0" ,'checked');?>> Non
+                <input type="radio" value="0" name="parution_terminee" <?=r($this,'parution_terminee',"0" ,'checked');?>> Non  |  
+                <input type="radio" value="" name="parution_terminee" <?=r($this,'parution_terminee',"" ,'checked');?>> Ignorer
             </td>
         </tr>
         
         <tr>
             <td><b>Core collection</b></td>
             <td><input type="radio" value="1" name="corecollection" <?=r($this,'corecollection',"1" ,'checked');?>> Oui  |  
-                <input type="radio" value="0" name="corecollection" <?=r($this,'corecollection',"0" ,'checked');?>> Non
+                <input type="radio" value="0" name="corecollection" <?=r($this,'corecollection',"0" ,'checked');?>> Non  |  
+                <input type="radio" value="" name="corecollection" <?=r($this,'corecollection',"" ,'checked');?>> Ignorer
             </td>
         </tr>
         <tr >

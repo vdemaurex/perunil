@@ -13,6 +13,6 @@
                     </td><td>
                         <a target="_blank" href="http://www.jstor.org/"><img width="60" title="JSTOR" src="<?= Yii::app()->baseUrl; ?>/images/jstor.jpg"></a>
                     </td><td>
-                        <a target="_blank" href="http://www.cairn.info/"><img width="243" title="Ingenta Connect" src="<?= Yii::app()->baseUrl; ?>/images/CAIRN.INFO.png"></a>
+                        <a target="_blank" href="http://www.cairn.info/"><img width="243" title="Cairn.info" src="<?= Yii::app()->baseUrl; ?>/images/CAIRN.INFO.png"></a>
                     </td></tr></tbody></table>
     </div>

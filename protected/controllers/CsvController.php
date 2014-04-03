@@ -356,7 +356,7 @@ class CsvController extends Controller {
         $command->leftJoin("modifications am", "a.modification = am.id");
         $command->leftJoin("modifications ac", "a.creation     = ac.id");
 
-        $command->where("j.perunilid in ($perunilids_comma_separated)");
+        $command->where("j.perunilid in ($perunilids_comma_separated) AND a.support = " . Yii::app()->session['search']->support);
 
 
         // Génération du fichier CSV

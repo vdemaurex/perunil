@@ -33,7 +33,7 @@ class SiteController extends Controller {
         $this->render('simpleSearch');
     }
 
-    public function actionSimpleSearchResults(){
+    public function actionSimpleSearchResults() {
         Yii::app()->session['searchtype'] = 'simple';
         $this->activate_session_search_component();
 
@@ -41,27 +41,27 @@ class SiteController extends Controller {
 
         // Si une nouvelle recherche a été effectuée
         if ($search_done) {
-            Yii::app()->session['search']->support     = isset($_GET['support']) ? $_GET['support'] : '0';
+            Yii::app()->session['search']->support = isset($_GET['support']) ? $_GET['support'] : '0';
             Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
-            Yii::app()->session['search']->maxresults  = isset($_GET['maxresults']) ? $_GET['maxresults'] : '-1'; // infini par défaut
-            Yii::app()->session['search']->depotlegal  = isset($_GET['depotlegal']);
-            Yii::app()->session['search']->simple_query_str = $_GET['q'];   
+            Yii::app()->session['search']->maxresults = isset($_GET['maxresults']) ? $_GET['maxresults'] : '-1'; // infini par défaut
+            Yii::app()->session['search']->depotlegal = isset($_GET['depotlegal']);
+            Yii::app()->session['search']->simple_query_str = $_GET['q'];
         }
         // Si une recherche a été sauvegardée
-        if (isset(Yii::app()->session['search']->simple_query_str)){
-             $search_done = true;
+        if (isset(Yii::app()->session['search']->simple_query_str)) {
+            $search_done = true;
         }
-        
+
         // Affichage des résultats.
         $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
     }
-    
-     public function actionSimpleclean(){
+
+    public function actionSimpleclean() {
         unset(Yii::app()->session['search']);
         $this->actionIndex();
     }
 
-        /**
+    /**
      * Recherche avancée 
      */
     public function actionAdvSearchResults() {
@@ -70,39 +70,35 @@ class SiteController extends Controller {
         $this->activate_session_search_component();
 
         $search_done = isset($_GET['advsearch']) && trim($_GET['advsearch']) == "advsearch";
-        
+
         // Si une nouvelle recherche a été effectuée
         if ($search_done) {
             Yii::app()->session['search']->support = isset($_GET['support']) ? $_GET['support'] : '0';
-            Yii::app()->session['search']->depotlegal  = isset($_GET['depotlegal']);
+            Yii::app()->session['search']->depotlegal = isset($_GET['depotlegal']);
             Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
             Yii::app()->session['search']->adv_query_tab = $_GET;
-            
-            
         }
-        
+
         // Si une recherche a été sauvegardée
-        if (isset(Yii::app()->session['search']->adv_query_tab)){
-             $search_done = true;
+        if (isset(Yii::app()->session['search']->adv_query_tab)) {
+            $search_done = true;
         }
         // affichage de la recherche avancée.
         //$render_params['advsearch'] = true;  
-        
         // Affichage des résultats.
         $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'adv'));
     }
 
-    public function actionAdvSearch(){
+    public function actionAdvSearch() {
         $this->activate_session_search_component();
         $this->render('advSearch');
     }
 
-        public function actionAdvclean(){
+    public function actionAdvclean() {
         unset(Yii::app()->session['search']);
         $this->actionAdvSearch();
     }
-    
-    
+
     public function actionSujet() {
         $this->render('sujet');
     }
@@ -167,21 +163,20 @@ class SiteController extends Controller {
         $this->redirect(Yii::app()->homeUrl);
     }
 
-    public function actionDetail($id, $activeTab = false, $dialogue =false) {
+    public function actionDetail($id, $activeTab = false, $dialogue = false) {
         $model = Journal::model()->findByPk($id);
-        
-        if ($dialogue){
+
+        if ($dialogue) {
             // la vue en détail est appelée depuis un popup javascript
-                //$this->layout = "dialogue";
-            $this->layout=false;
-    
+            //$this->layout = "dialogue";
+            $this->layout = false;
+
             $this->render('detail', array(
                 'model' => $model,
                 'activeTab' => $activeTab,
                 'dialogue' => true,
             ));
-        }
-        else{
+        } else {
             // Affichage normal de la vue en détail
             $this->render('detail', array(
                 'model' => $model,
@@ -191,37 +186,76 @@ class SiteController extends Controller {
     }
 
     function actionAutocomplete() {
-        //if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
-        if (isset($_GET['term'])) {
-            $term = $_GET['term'];
+        $term = filter_input(INPUT_GET, 'term', FILTER_SANITIZE_STRING);
+        if (!empty($term)) {
+
+
             $models = Journal::model()->findAll(array(
                 'select' => 'titre', //,perunilid',
                 'condition' => "titre LIKE '$term%'",
                 'order' => "titre",
                 'distinct' => true,
                 'limit' => 10,
-                    ));
-            // Si on a aucun résultat, on cherche avec le mot au milieu
+            ));
+            // Si on a aucun résultat, on effectue une recherche avec le searchComponent
             if (!count($models)) {
-                $models = Journal::model()->findAll(array(
-                    'select' => 'titre', //,perunilid',
-                    'condition' => "titre LIKE '%$term%'",
-                    'order' => "titre",
-                    'distinct' => true,
-                    'limit' => 10,
-                        ));
+
+                $searchCmp = new SearchComponent();
+
+                $searchCmp->support = '0';
+                $searchCmp->search_type = SearchComponent::TWORDS;
+                $searchCmp->maxresults = 7;
+                $searchCmp->depotlegal = false;
+                $searchCmp->simple_query_str = $term;
+
+                foreach ($searchCmp->getSimple_dp()->rawData as $puidtab) {
+                    $models[] = Journal::model()->findByPk($puidtab['perunilid']);
+                }
             }
             $result = array();
-            foreach ($models as $m)
+            foreach ($models as $m) {
                 $result[] = array(
                     'label' => $m->titre,
                     //'value' => $m->attribute_for_input_field,
                     'id' => $m->perunilid,
                         //'field' => $m->attribute_for_another_field,
                 );
-
+            }
             echo CJSON::encode($result);
         }
+
+
+        //if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
+//        if (isset($_GET['term'])) {
+//            $term = $_GET['term'];
+//            $models = Journal::model()->findAll(array(
+//                'select' => 'titre', //,perunilid',
+//                'condition' => "titre LIKE '$term%'",
+//                'order' => "titre",
+//                'distinct' => true,
+//                'limit' => 10,
+//                    ));
+//            // Si on a aucun résultat, on cherche avec le mot au milieu
+//            if (!count($models)) {
+//                $models = Journal::model()->findAll(array(
+//                    'select' => 'titre', //,perunilid',
+//                    'condition' => "titre LIKE '%$term%'",
+//                    'order' => "titre",
+//                    'distinct' => true,
+//                    'limit' => 10,
+//                        ));
+//            }
+//            $result = array();
+//            foreach ($models as $m)
+//                $result[] = array(
+//                    'label' => $m->titre,
+//                    //'value' => $m->attribute_for_input_field,
+//                    'id' => $m->perunilid,
+//                        //'field' => $m->attribute_for_another_field,
+//                );
+//
+//            echo CJSON::encode($result);
+//        }
     }
 
     //

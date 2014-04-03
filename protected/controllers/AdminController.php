@@ -384,7 +384,7 @@ class AdminController extends Controller {
         }
         // Aucune redirection valable
         Yii::app()->user->setFlash('error', "Impossible de vous rediriger vers les détail du $model n° $id");
-        $this->redirect($this->createUrl("site"));
+        $this->redirect($this->createUrl("site/index"));
     }
     
     /**
@@ -580,6 +580,8 @@ class AdminController extends Controller {
 
         if ($search_done) {
             Yii::app()->session['search']->admin_query_tab = $_GET;
+            $support = filter_input(INPUT_GET, 'support', FILTER_VALIDATE_BOOLEAN);
+            Yii::app()->session['search']->support = $support !== NULL ? $support : '0';
         }
 
         if (isset(Yii::app()->session['search']->admin_query_tab)) {

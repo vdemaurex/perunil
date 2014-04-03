@@ -30,16 +30,17 @@
 
 ?>
 <h2>Résultats de la recherche <?php echo $titre; ?></h2>
+<div style="margin-bottom: 1em;">
 <?php
-echo  CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour au formulaire de recherche', array(
+echo  CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Modifier les critères de recherche', array(
                         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($search_url) . '"',
-                        'class'   => "btn btn-default  btn-xs")); 
+                        'class'   => "btn btn-default  btn-sm")); 
 echo " ";
 echo  CHtml::htmlButton('Nouvelle recherche', array(
                         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($clean_url) . '"',
-                        'class'   => "btn btn-default  btn-xs")); 
+                        'class'   => "btn btn-primary  btn-sm")); 
 ?>
-<br/>
+</div>
 
 <?php
 // On affiche la zone des résultats uniquement si un recherche existe. 

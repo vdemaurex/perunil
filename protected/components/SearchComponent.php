@@ -321,6 +321,7 @@ class SearchComponent extends CComponent {
                         // Ajout de la requête des titres à la requête générale
 
                         $Cwhere .= " ( $Twhere ) ";
+                        $this->query_summary("titre : '$this->q'");
                         break;
 
                     case 'editeur':
@@ -471,6 +472,10 @@ class SearchComponent extends CComponent {
 
     public function getSimple_sql_query_count() {
         return $this->simple_sql_query_count;
+    }
+    
+    public function getSimple_sql_query() {
+        return $this->simple_sql_query;
     }
 
     /*  public function setSimple_dp($dp) {
@@ -873,7 +878,7 @@ class SearchComponent extends CComponent {
         $var = str_ireplace(". ", " ", $var);
         $var = str_ireplace(": ", " ", $var);
         $var = str_ireplace(":", " ", $var);
-        $var = str_ireplace("-", " ", $var);
+        //$var = str_ireplace("-", " ", $var); // Pour les issn, il ne faut pas retirer le -
         $var = str_ireplace(";", "", $var);
         $var = str_ireplace(" (the) ", " ", $var);
         $var = str_ireplace(" the ", " ", $var);
@@ -945,14 +950,14 @@ class SearchComponent extends CComponent {
         }
     }
 
-    private function refreshAdminCriteria() {
-        $this->q_summary = "";
-        if (isset($this->admin_affichage) && $this->admin_affichage == 'journal') {
-            $this->admin_criteria = $this->adminSearch();
-        } else {
-            $this->admin_criteria = $this->aboadminSearch();
-        }
-    }
+//    private function refreshAdminCriteria() {
+//        $this->q_summary = "";
+//        if (isset($this->admin_affichage) && $this->admin_affichage == 'journal') {
+//            $this->admin_criteria = $this->adminSearch();
+//        } else {
+//            $this->admin_criteria = $this->aboadminSearch();
+//        }
+//    }
 
     public function getAdmin_criteria() {
         return $this->admin_criteria;
