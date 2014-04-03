@@ -127,11 +127,11 @@ class SearchComponent extends CComponent {
             $rawData = $this->adv_sql_command->queryAll();
             $this->adv_count = count($rawData);
             $this->adv_dp = new CArrayDataProvider($rawData, array(
-                        'keyField' => 'perunilid',
-                        'pagination' => array(
-                            'pageSize' => $this->pagesize,
-                        ),
-                    ));
+                'keyField' => 'perunilid',
+                'pagination' => array(
+                    'pageSize' => $this->pagesize,
+                ),
+            ));
         } else {
             throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche avancée.");
         }
@@ -151,11 +151,11 @@ class SearchComponent extends CComponent {
 
 
             $adp = new CActiveDataProvider('Abonnement', array(
-                        'criteria' => $criteria,
-                        'pagination' => array(
-                            'pageSize' => $this->pagesize,
-                        ),
-                    ));
+                'criteria' => $criteria,
+                'pagination' => array(
+                    'pageSize' => $this->pagesize,
+                ),
+            ));
         } else {
             throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
         }
@@ -325,7 +325,7 @@ class SearchComponent extends CComponent {
                         break;
 
                     case 'editeur':
-                        if (!$editorAlreadyJointed){
+                        if (!$editorAlreadyJointed) {
                             $c->leftjoin(
                                     'editeur ed', "a.editeur = ed.editeur_id "//AND ed.editeur LIKE :editeur", array(':editeur' => "%$this->q%")
                             );
@@ -335,13 +335,13 @@ class SearchComponent extends CComponent {
 
                         // Recherche dans la plateforme
                         // Si la plateforme n'as pas encore été jointe, on l'associe.
-                        if (!$plateformeAlreadyJointed){
+                        if (!$plateformeAlreadyJointed) {
                             if (!(isset($this->adv_query_tab['plateforme']) && $this->adv_query_tab['plateforme'] != '')) {
                                 $c->leftjoin(
                                         'plateforme pl', "a.plateforme = pl.plateforme_id"
                                 );
                                 $plateformeAlreadyJointed = true;
-                            }   
+                            }
                         }
                         $quotedq = Yii::app()->db->quoteValue("%$this->q%");
                         $Cwhere .= " (ed.editeur LIKE $quotedq OR pl.plateforme LIKE $quotedq) ";
@@ -368,8 +368,8 @@ class SearchComponent extends CComponent {
             $c->andWhere("a.localisation != $this->depotlegal_idlocalisation OR a.localisation IS NULL");
             $this->query_summary("avec les périodiques du dépot légal BCU");
         }
-        
-        
+
+
         $c->order("j.titre");
 
         $sql = $c->text;
@@ -399,7 +399,7 @@ class SearchComponent extends CComponent {
         if (isset($this->simple_query_str)) {
             return $this->simple_query_str;
         } else {
-            return null;
+          http://www.yiiframework.com/doc/api/1.1/CActiveRecord#save-detail  return null;
         }
     }
 
@@ -418,16 +418,16 @@ class SearchComponent extends CComponent {
             $rawData = Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
             $this->simple_sql_query_count = count($rawData);
             $this->simple_dp = new CArrayDataProvider($rawData, array(
-                        'keyField' => 'perunilid',
-                        //'sort' => array(
-                        //    'attributes' => array(
-                        //        'id', 'username', 'email',
-                        //    ),
-                        //),
-                        'pagination' => array(
-                            'pageSize' => $this->pagesize,
-                        ),
-                    ));
+                'keyField' => 'perunilid',
+                //'sort' => array(
+                //    'attributes' => array(
+                //        'id', 'username', 'email',
+                //    ),
+                //),
+                'pagination' => array(
+                    'pageSize' => $this->pagesize,
+                ),
+            ));
 
 
 
@@ -459,11 +459,11 @@ class SearchComponent extends CComponent {
 
 
             $adp = new CActiveDataProvider('Abonnement', array(
-                        'criteria' => $criteria,
-                        'pagination' => array(
-                            'pageSize' => $this->pagesize,
-                        ),
-                    ));
+                'criteria' => $criteria,
+                'pagination' => array(
+                    'pageSize' => $this->pagesize,
+                ),
+            ));
         } else {
             throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
         }
@@ -473,7 +473,7 @@ class SearchComponent extends CComponent {
     public function getSimple_sql_query_count() {
         return $this->simple_sql_query_count;
     }
-    
+
     public function getSimple_sql_query() {
         return $this->simple_sql_query;
     }
@@ -584,7 +584,7 @@ class SearchComponent extends CComponent {
             }
 
             // Limitation au support
-            if ($this->support > 0){
+            if ($this->support > 0) {
                 $q .= "AND a.support = $this->support ";
                 $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
             }
@@ -735,11 +735,11 @@ class SearchComponent extends CComponent {
             $q .= "AND a.support = $this->support ";
             $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
         }
-        
+
         // Ajout des abonnements du dépot légal
         if ($this->depotlegal) {
-                $q .= " AND (a.localisation <> $this->depotlegal_idlocalisation OR a.localisation IS NULL) ";
-                $this->query_summary("avec les périodiques du dépot légal BCU");
+            $q .= " AND (a.localisation <> $this->depotlegal_idlocalisation OR a.localisation IS NULL) ";
+            $this->query_summary("avec les périodiques du dépot légal BCU");
         }
 
         // Jointure des tables liées à abonnement
@@ -960,6 +960,11 @@ class SearchComponent extends CComponent {
 //    }
 
     public function getAdmin_criteria() {
+        if ($this->getAdmin_affichage() == 'Journal') {
+            $this->admin_criteria = $this->adminSearch();
+        } else {
+            $this->admin_criteria = $this->aboadminSearch();
+        }
         return $this->admin_criteria;
     }
 
@@ -975,17 +980,12 @@ class SearchComponent extends CComponent {
         $affichage = ucfirst($this->getAdmin_affichage());
 
         $this->q_summary = "";
-        if ($affichage == 'Journal') {
-            $this->admin_criteria = $this->adminSearch();
-        } else {
-            $this->admin_criteria = $this->aboadminSearch();
-        }
+        $this->getAdmin_criteria();
 
 
         $this->admin_dp = new CActiveDataProvider(
-                        $affichage::model(),
-                        array('criteria' => $this->admin_criteria,
-                            'pagination' => array('pageSize' => $this->pagesize))
+                $affichage::model(), array('criteria' => $this->admin_criteria,
+            'pagination' => array('pageSize' => $this->pagesize))
         );
 
         $this->admin_count = $this->admin_dp->totalItemCount;
@@ -1095,10 +1095,7 @@ class SearchComponent extends CComponent {
 // 2. Liste de Perunilid ou d'abonnement_id comme resultat de la requête
 //    avec une maximum selon $limite
 // 3. la liste d'id est passée à une clause IN dans la requête principale.
-        if (trim($qt['signaturecreation'])
-                || trim($qt['signaturemodification'])
-                || trim($qt['datecreation1'])
-                || trim($qt['datemodif1'])) {
+        if (trim($qt['signaturecreation']) || trim($qt['signaturemodification']) || trim($qt['datecreation1']) || trim($qt['datemodif1'])) {
 
 
             $where_string = "";
@@ -1334,10 +1331,7 @@ class SearchComponent extends CComponent {
 // 2. Liste de Perunilid ou d'abonnement_id comme resultat de la requête
 //    avec une maximum selon $limite
 // 3. la liste d'id est passée à une clause IN dans la requête principale.
-        if (trim($qt['signaturecreation'])
-                || trim($qt['signaturemodification'])
-                || trim($qt['datecreation1'])
-                || trim($qt['datemodif1'])) {
+        if (trim($qt['signaturecreation']) || trim($qt['signaturemodification']) || trim($qt['datecreation1']) || trim($qt['datemodif1'])) {
 
 
             $where_string = "";

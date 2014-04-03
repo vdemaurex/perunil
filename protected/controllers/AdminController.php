@@ -173,6 +173,8 @@ class AdminController extends Controller {
                     true => array(), // update réussis
                     false => array()); // update échoués
                 $nbr_rows = 0; // nombre de lignes mises à jour
+                //Passage au mode abonnement
+                Yii::app()->session['search']->setAdmin_affichage('abonnement');
                 // Mise à jour de tous les éléments du lot
                 foreach (Abonnement::model()->findAll(Yii::app()->session['search']->admin_criteria) as $abo) {
                     
@@ -189,9 +191,16 @@ class AdminController extends Controller {
                             }
                         }
                     }
-                    // Vider les champs dont le contenu est NULL
+                    
                     // Application de la mise à jour
-                    $result = Abonnement::model()->updateByPk($abo->abonnement_id, $updt_local);
+                    
+                    foreach ($updt_local as $field => $value) {
+                        $abo->$field = $value;
+                    }
+                    
+                    $result = $abo->save();
+                        
+                    //$result = Abonnement::model()->updateByPk($abo->abonnement_id, $updt_local);
                     // Collecte des statistiques
                     $update_results[$result][] = $abo->abonnement_id;
                     $nbr_rows++;
