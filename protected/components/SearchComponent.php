@@ -75,7 +75,7 @@ class SearchComponent extends CComponent {
      * @var bool false par défaut.
      */
     public $depotlegal = false;
-    private $depotlegal_idlocalisation = 64;
+    private $depotlegal_idlocalisation = '23, 24, 25, 26';
 
     /**
      * Nombre de résultats affichés par page.
@@ -365,8 +365,9 @@ class SearchComponent extends CComponent {
 
         // Ajout des abonnements du dépot légal
         if ($this->depotlegal) {
-            $c->andWhere("a.localisation != $this->depotlegal_idlocalisation OR a.localisation IS NULL");
             $this->query_summary("avec les périodiques du dépot légal BCU");
+        } else {
+            $c->andWhere("a.localisation NOT IN ($this->depotlegal_idlocalisation)");
         }
 
 
@@ -399,7 +400,7 @@ class SearchComponent extends CComponent {
         if (isset($this->simple_query_str)) {
             return $this->simple_query_str;
         } else {
-          http://www.yiiframework.com/doc/api/1.1/CActiveRecord#save-detail  return null;
+            http://www.yiiframework.com/doc/api/1.1/CActiveRecord#save-detail  return null;
         }
     }
 
@@ -574,27 +575,30 @@ class SearchComponent extends CComponent {
         $q = "FROM  journal AS j ";
 
         // Jointure de l'abonnement pour la sélection du support
-        if ($this->support > 0 || $this->depotlegal) {
-            if (Yii::app()->user->isGuest) {
-                $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-            }
-            // Si admin, tous les journaux, même sans abonnement
-            else {
-                $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-            }
-
-            // Limitation au support
-            if ($this->support > 0) {
-                $q .= "AND a.support = $this->support ";
-                $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
-            }
-            // Ajout des abonnements du dépot légal
-            if ($this->depotlegal) {
-                $q .= " AND (a.localisation <> $this->depotlegal_idlocalisation OR a.localisation IS NULL) ";
-                $this->query_summary("avec les périodiques du dépot légal BCU");
-            }
+        // La sélection du dépot legal impose de faire la jointure avec les abonnements dans tous les cas.
+//        if ($this->support > 0 || $this->depotlegal) {
+        if (Yii::app()->user->isGuest) {
+            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
+        }
+        // Si admin, tous les journaux, même sans abonnement
+        else {
+            $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
         }
 
+        // Limitation au support
+        if ($this->support > 0) {
+            $q .= "AND a.support = $this->support ";
+            $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
+        }
+        // Ajout des abonnements du dépot légal
+        if ($this->depotlegal) {
+
+            $this->query_summary("avec les périodiques du dépot légal BCU");
+        } else {
+
+            $q .= " AND (a.localisation NOT IN ($this->depotlegal_idlocalisation)) ";
+        }
+//        }
         // Condition
 
         $q .= "WHERE ";
@@ -738,8 +742,9 @@ class SearchComponent extends CComponent {
 
         // Ajout des abonnements du dépot légal
         if ($this->depotlegal) {
-            $q .= " AND (a.localisation <> $this->depotlegal_idlocalisation OR a.localisation IS NULL) ";
             $this->query_summary("avec les périodiques du dépot légal BCU");
+        } else {
+            $q .= " AND (a.localisation NOT IN ($this->depotlegal_idlocalisation)) ";
         }
 
         // Jointure des tables liées à abonnement
