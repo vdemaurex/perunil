@@ -614,7 +614,7 @@ class AdminController extends Controller {
 
     public function actionSearchclean() {
         unset(Yii::app()->session['search']);
-        $this->actionSearch();
+        $this->redirect($this->createUrl("admin/search"));
     }
 
     public function actionAddSmallListEntry($type, $id) {

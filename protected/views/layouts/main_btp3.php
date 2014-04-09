@@ -88,7 +88,7 @@
                     <?php
                     $this->widget('zii.widgets.CMenu', array(
                         'items' => array(
-                            array('label' => 'Recherche simple', 'url' => array('/site/index')),
+                            array('label' => 'Recherche simple', 'url' => array('/site/simpleclean')),
                             array('label' => 'Recherche avancée', 'url' => array('/site/advclean')),
                             array('label' => 'Recherche admin', 'url' => array('/admin/searchclean'), 'visible' => !Yii::app()->user->isGuest),
                             array('label' => 'Sujets', 'url' => array('/site/sujet')),

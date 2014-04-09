@@ -965,7 +965,7 @@ class SearchComponent extends CComponent {
 //    }
 
     public function getAdmin_criteria() {
-        if ($this->getAdmin_affichage() == 'Journal') {
+        if ($this->getAdmin_affichage() == 'journal') {
             $this->admin_criteria = $this->adminSearch();
         } else {
             $this->admin_criteria = $this->aboadminSearch();

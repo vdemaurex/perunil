@@ -47,6 +47,8 @@ class Journal extends ModifModel {
     public $coden;
     public $urn;
 
+    const DEPOTLEGALID = '23, 24, 25, 26';
+
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -241,7 +243,64 @@ class Journal extends ModifModel {
                     'criteria' => $criteria,
                 ));
     }
+    
 
+    /**
+     * Cherche dans le titre d'abord par titre, puis par mot. Renvoi la liste de journaux.
+     * @param string $query mots donnée par l'utilisateur
+     * @param boolean $withDepotLegat si vrai, la recherche porte aussi sur le dépot legal
+     * @param integer $limite nombre maxi
+     * @return array Liste des journaux qui correspondent aux critères de recherche
+     */
+    public function searchTitleWord($query, $withDepotLegat = false, $searchtype = SearchComponent::TBEGIN, $limite = 10) {
+        
+        $criteria = new CDbCriteria();
+        $criteria->select = "titre";
+        $criteria->distinct = true;
+        $criteria->alias = "j";
+        $criteria->join ="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
+
+        // Suppression des abonnements du dépot légal
+        if (!$withDepotLegat) {
+            $criteria->join .= "AND a.localisation NOT IN (". self::DEPOTLEGALID.")";
+        }
+
+        $cols = array('titre');//, 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
+
+        $tokens = array();
+        // Par défaut, on cherche le début du titre, sauf si spécifier différement
+        if ($searchtype == SearchComponent::TWORDS){
+            foreach (explode(" ", $query) as $word) {
+                if ($word != "" || $word != "") {
+                    $tokens[] = "%$word%";
+                }
+            }
+        }
+        else{
+            $tokens[] = "$query%";
+        }
+ 
+        // Boucle sur toutes les colonnes
+        foreach ($cols as $col) {
+            // Boucle sur touts les mots de la recherche
+            foreach ($tokens as $word) {
+                if ($word != "") {
+                    $criteria->addCondition("$col LIKE " . Yii::app()->db->quoteValue($word), 'AND');
+                }
+            }
+        }
+        $criteria->order = "titre";
+
+        // Nombre maximum de résultats
+        $criteria->limit = $limite;
+   
+
+        return Journal::model()->findAll($criteria);
+    }
+
+    
+    
+    
     public function copy() {
         Yii::log("Duplication du journal " . $this->perunilid, 'info', 'copy' . __CLASS__);
         $new = new Journal();
