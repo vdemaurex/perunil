@@ -6,7 +6,7 @@ $this->breadcrumbs=array(
 ?>
 <h1>Aide à l'utilisation de PérUNIL</h1>
 
-<p>Si vous rencontrer des difficultés à utiliser PérUnil, merci de prendre contact
+<p>Si vous rencontrez des difficultés à utiliser PérUnil, merci de prendre contact
 avec la Bibliothèque Universitaire de Médecine (BiUM).</p>
 
 <p><strong><?= CHtml::link("Bibliothèque Universitaire de Médecine", "http://www.bium.ch");?></strong><br/>
