@@ -356,8 +356,12 @@ class CsvController extends Controller {
         $command->leftJoin("modifications am", "a.modification = am.id");
         $command->leftJoin("modifications ac", "a.creation     = ac.id");
 
-        $command->where("j.perunilid in ($perunilids_comma_separated) AND a.support = " . Yii::app()->session['search']->support);
-
+        if (empty(Yii::app()->session['search']->support) || Yii::app()->session['search']->support == 0){
+            $command->where("j.perunilid in ($perunilids_comma_separated)");
+        }
+        else{
+            $command->where("j.perunilid in ($perunilids_comma_separated) AND a.support = " . Yii::app()->session['search']->support);
+        }
 
         // Génération du fichier CSV
         // Extension ECSVExport : http://www.yiiframework.com/extension/csvexport
