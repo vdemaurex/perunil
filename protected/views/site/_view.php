@@ -37,19 +37,21 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
     <div class="panel-heading">
         <!-- Titre du journal !-->
         <div class="row">
-            <div class="col-md-6">
+            <div <?php if (!Yii::app()->user->isGuest){ echo 'class="col-md-6"';}?>>
 
-<?php
-echo "<strong>";
-echo ucfirst($data->titre);
+            <strong>
+                <?php echo ucfirst($data->titre); ?>
+            </strong>
+                
+                 <div style="float:right;">
 
-echo CHtml::link(
-        ' <span class="glyphicon glyphicon-search"></span>', array('site/detail',
+<?php echo CHtml::link(
+        ' Détail <span class="glyphicon glyphicon-search"></span>', array('site/detail',
     'id' => $data->perunilid), array('title' => "Cliquez pour afficher les détails")
 );
-echo "</strong>";
 ?>
-            </div>
+           </div>
+                </div>
                 <?php
                 // Commandes d'administration
                 if (!Yii::app()->user->isGuest) {
@@ -82,7 +84,7 @@ echo "</strong>";
 
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div <?php if (!Yii::app()->user->isGuest){ echo 'class="col-md-6"';}?>>
 <?php
 $txthd = '';
 if ($data->soustitre):
