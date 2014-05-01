@@ -74,8 +74,8 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
             <tr>
                 <td><strong>Accès</strong></td>
                 <td colspan =" 2">
-                    <input type="checkbox" value="1" name="accessunil" <?= isset($last) && isset($last['accessunil']) ? $last['accessunil'] == '1' ? "checked" : ""  : "checked" ?>> abonnements Unil et CHUV &nbsp;
-                    <input id="openaccess" type="checkbox" value="1" name="openaccess" <?= isset($last) && isset($last['openaccess']) ? $last['openaccess'] == '1' ? "checked" : ""  : "checked" ?>> périodiques en accès libre &nbsp;
+                    <input type="checkbox" value="1" name="accessunil" <?= isset($last) && isset($last['accessunil']) ? $last['accessunil'] == '1' ? "checked" : ""  : "checked" ?>> inclure les abonnements Unil et CHUV &nbsp;
+                    <input id="openaccess" type="checkbox" value="1" name="openaccess" <?= isset($last) && isset($last['openaccess']) ? $last['openaccess'] == '1' ? "checked" : ""  : "checked" ?>> inclure les périodiques en accès libre &nbsp;
                 </td>
             </tr>
             <tr>
