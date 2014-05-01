@@ -207,7 +207,7 @@ class SiteController extends Controller {
             $models = Journal::model()->searchTitleWord($term,$withDepotLegal);
             
 //            // Si on a aucun résultat, on effectue une recherche avec le searchComponent
-          if (count($models) < 5) {
+          if (count($models) == 0) {
               $models2 = Journal::model()->searchTitleWord($term, $withDepotLegal, SearchComponent::TWORDS);
               $models = array_merge($models,$models2);
             }
