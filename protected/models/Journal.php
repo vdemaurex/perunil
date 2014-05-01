@@ -262,7 +262,7 @@ class Journal extends ModifModel {
 
         // Suppression des abonnements du dépot légal
         if (!$withDepotLegat) {
-            $criteria->join .= "AND a.localisation NOT IN (". self::DEPOTLEGALID.")";
+            $criteria->join .= "AND (a.localisation NOT IN (". self::DEPOTLEGALID.") OR a.localisation IS NULL)";
         }
 
         $cols = array('titre');//, 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
