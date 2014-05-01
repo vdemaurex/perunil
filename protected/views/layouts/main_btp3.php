@@ -74,7 +74,7 @@
                 <div id="logo">
                     <a href ="<?= Yii::app()->baseUrl; ?>">
                         <img src="<?= Yii::app()->baseUrl; ?>/images/logo_perunil.png"/>
-                        <span id="slogan">Recherche de périodiques disponibles sur le campus UNIL/CHUV</span>
+                        <?php //<span id="slogan">Recherche de périodiques disponibles sur le campus UNIL/CHUV</span>?>
                     </a>
 
                 </div>
@@ -164,7 +164,8 @@
                         <img border="0" alt="UNIL" src="http://serval.unil.ch/img/unilogo_noir.png"></img>
                     </a>
                     <a class="liens" href="http://www.bcu-lausanne.ch/">
-                        <img border="0" alt="BCU Lausanne" src="http://www.unil.ch/webdav/site/serval/users/siteadmin/public/logo_bcu_gris.gif"></img>
+                        
+                        <img border="0" alt="BCU Lausanne" src="<?= Yii::app()->baseUrl; ?>/images/logo_bcu_gris.gif"/>
                     </a>
                     <a class="liens" href="http://www.chuv.ch">
                         <img border="0" alt="CHUV" src="http://serval.unil.ch/img/logo_chuv_transp_bleu.png"></img>
