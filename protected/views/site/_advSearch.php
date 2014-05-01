@@ -18,7 +18,19 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
 <?php echo CHtml::hiddenField("advsearch", "advsearch"); ?>
 <?php echo CHtml::hiddenField("C1[op]", "AND"); ?>
 
-
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('input[name=support]').click(function() {
+            if ($("#imprimes").is(":checked")) {
+                $('#openaccess').prop('checked', false);
+                $('#openaccess').prop('disabled', true);
+            } else {
+                $('#openaccess').prop('checked', true);
+                $('#openaccess').prop('disabled', false);
+            }
+        })
+    });
+</script>
 <div class="panel panel-default" style="width: 705px; margin:auto;">
     <div class="panel-heading">Votre recherche</div>
     <div class="panel-body">
@@ -54,16 +66,16 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
             <tr>
                 <td><strong>Format</strong></td>
                 <td colspan =" 2">
-                    <input type="radio" name="support" value="0" <?= isset($last) && isset($last['support']) ? $last['support'] == '0' ? "checked" : ""  : "checked" ?>>tous &nbsp;
-                    <input type="radio" name="support" value="1" <?= isset($last) && isset($last['support']) ? $last['support'] == '1' ? "checked" : ""  : "" ?>>électroniques &nbsp;
-                    <input type="radio" name="support" value="2" <?= isset($last) && isset($last['support']) ? $last['support'] == '2' ? "checked" : ""  : "" ?>> imprimés
+                    <input id="tous" type="radio" name="support" value="0" <?= isset($last) && isset($last['support']) ? $last['support'] == '0' ? "checked" : ""  : "checked" ?>>tous &nbsp;
+                    <input id="electronique" type="radio" name="support" value="1" <?= isset($last) && isset($last['support']) ? $last['support'] == '1' ? "checked" : ""  : "" ?>>électroniques &nbsp;
+                    <input id="imprimes" type="radio" name="support" value="2" <?= isset($last) && isset($last['support']) ? $last['support'] == '2' ? "checked" : ""  : "" ?>> imprimés
                 </td>
             </tr>
             <tr>
                 <td><strong>Accès</strong></td>
                 <td colspan =" 2">
                     <input type="checkbox" value="1" name="accessunil" <?= isset($last) && isset($last['accessunil']) ? $last['accessunil'] == '1' ? "checked" : ""  : "checked" ?>> abonnements Unil et CHUV &nbsp;
-                    <input type="checkbox" value="1" name="openaccess" <?= isset($last) && isset($last['openaccess']) ? $last['openaccess'] == '1' ? "checked" : ""  : "checked" ?>> périodiques gratuits ou Open Access &nbsp;
+                    <input id="openaccess" type="checkbox" value="1" name="openaccess" <?= isset($last) && isset($last['openaccess']) ? $last['openaccess'] == '1' ? "checked" : ""  : "checked" ?>> périodiques en accès libre &nbsp;
                 </td>
             </tr>
             <tr>
@@ -77,7 +89,19 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
         </table>
     </div>
 </div>
-<br/>
+<div class="panel panel-default" style="width: 705px; margin:auto;">
+    <div class="panel-body">
+        <div style=" margin-left: 220px;">
+            <?= CHtml::submitButton("Chercher", array('class' => "btn btn-primary")); ?> &nbsp;
+            <?=
+            CHtml::button('Vider le formulaire', array(
+                'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('site/advclean')) . '"',
+                'class' => "btn btn-default"));
+            ?>
+        </div>
+    </div>
+</div>
+<br>
 <div class="panel panel-default" style="width: 705px; margin:auto;">
     <div class="panel-heading">Limiter la recherche à</div>
     <div class="panel-body">
@@ -132,18 +156,7 @@ echo CHtml::beginForm($this->createUrl('site/advSearchResults'), 'get', array('r
         </table>
     </div>
 </div>
-<div class="panel panel-default" style="width: 705px; margin:auto;">
-    <div class="panel-body">
-        <div style=" margin-left: 220px;">
-            <?= CHtml::submitButton("Chercher", array('class' => "btn btn-primary")); ?> &nbsp;
-            <?=
-            CHtml::button('Vider le formulaire', array(
-                'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(array('site/advclean')) . '"',
-                'class' => "btn btn-default"));
-            ?>
-        </div>
-    </div>
-</div>
+
 <?php echo CHtml::endForm(); ?>
 
 
