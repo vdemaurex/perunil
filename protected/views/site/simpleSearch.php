@@ -1,6 +1,6 @@
 <?php $this->pageTitle = Yii::app()->name; ?>
 
-<h2>Recherche sur <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h2>
+<h2 style="font-weight: normal;">Recherche de périodiques disponibles sur les sites UNIL, CHUV, BCUL</h2>
 <br/>
 
 <p class="text-center">
