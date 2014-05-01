@@ -151,6 +151,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            <?php if (!Yii::app()->user->isGuest) : ?>  
                             <tr>
                                 <th colspan="2"  style="padding-bottom:10px;">Nombre maximum de résultats</th>
                                 <td colspan="3" style="padding-top:10px;">
@@ -162,6 +163,7 @@
                                     </select>
                                 </td>
                             </tr>
+                            <?php endif; ?>
                         </table>
                     </td>
 
