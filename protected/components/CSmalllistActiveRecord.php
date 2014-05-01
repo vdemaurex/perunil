@@ -22,8 +22,7 @@ class CSmalllistActiveRecord extends CActiveRecord {
 
         $this->slcount_table_id = $this->getAttribute($tbl . "_id");
 
-        $this->slcount_sql =
-                "SELECT COUNT(*) " .
+        $this->slcount_sql = "SELECT COUNT(*) " .
                 "FROM $abo_table ";
         if ($this->slcount_table_id) {
             $this->slcount_sql .=
@@ -58,13 +57,12 @@ class CSmalllistActiveRecord extends CActiveRecord {
         }
         return $this->slcount;
     }
-    
-    
-     /**
+
+    /**
      * @return array validation rules for model attributes.
      */
     public function rules() {
-        
+
         $tbl = $this->tableName();
         $tbl_id = $tbl . "_id";
         // NOTE: you should only define rules for those attributes that
@@ -78,22 +76,19 @@ class CSmalllistActiveRecord extends CActiveRecord {
             array("$tbl_id, $tbl, slcount", 'safe', 'on' => 'search'),
         );
     }
-    
-    
+
     /**
      * @return array relational rules.
      */
     public function relations() {
         $tbl = $this->tableName();
-        
+
         return array(
             'abonnements' => array(self::HAS_MANY, 'Abonnement', $tbl),
             // Relation de calcul
             'slcount' => array(self::STAT, 'Abonnement', $tbl),
         );
     }
-    
-    
 
     public function search() {
 
@@ -134,13 +129,23 @@ class CSmalllistActiveRecord extends CActiveRecord {
 
 
         return new CActiveDataProvider(get_class($this), array(
-                    'criteria' => $criteria,
-                    'sort' => $sort,
-                    'pagination' => array(
-                        'pageSize' => 20,
-                    ),
-                ));
+            'criteria' => $criteria,
+            'sort' => $sort,
+            'pagination' => array(
+                'pageSize' => 20,
+            ),
+        ));
     }
+
+    /**
+     * Après une modification des tables de constantes, on vide le cache.
+     */
+    public function afterSave() {
+        parent::afterSave();
+
+        Yii::app()->cache->flush();
+    }
+
 }
 
-?>
+
