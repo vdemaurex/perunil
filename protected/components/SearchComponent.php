@@ -195,7 +195,7 @@ class SearchComponent extends CComponent {
         // Jointure des abonnements
         // Si public, seulement les journaux qui ont un abonnement
         if (Yii::app()->user->isGuest) {
-            $c->join('abonnement a', 'j.perunilid = a.perunilid AND a.titreexclu = 0');
+            $c->join('abonnement a', 'j.perunilid = a.perunilid AND a.titreexclu = 0 ');
         }
         // Si admin, tous les journaux, même sans abonnement
         else {
@@ -578,7 +578,7 @@ class SearchComponent extends CComponent {
         // La sélection du dépot legal impose de faire la jointure avec les abonnements dans tous les cas.
 //        if ($this->support > 0 || $this->depotlegal) {
         if (Yii::app()->user->isGuest) {
-            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid AND a.titreexclu = 0";
+            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid AND a.titreexclu = 0 ";
         }
         // Si admin, tous les journaux, même sans abonnement
         else {
@@ -609,14 +609,15 @@ class SearchComponent extends CComponent {
 
         $tokens = array();
         if ($this->search_type == self::TEXACT) {
-            $tokens[] = "$this->simple_query_str";
+            $tokens[] = "$this->q"; //"$this->simple_query_str";
         } elseif ($this->search_type == self::TBEGIN) {
             $tokens[] = "$this->q%";
             $cols = array('titre');
         } else { // Recherche de chaque mot indépendamment.
             foreach (explode(" ", $this->q) as $word) {
                 if ($word != "" || $word != "") {
-                    $tokens[] = "%$word%";
+                    $tokens[] = "%$word%"; //Recherche en milieu de mots
+                    //$tokens[] = "$word%"; // Recherche en début de mots
                 }
             }
         }
@@ -727,7 +728,7 @@ class SearchComponent extends CComponent {
         // Jointure des abonnements
         // Si public, seulement les journaux qui ont un abonnement
         if (Yii::app()->user->isGuest) {
-            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid  AND a.titreexclu = 0";
+            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid  AND a.titreexclu = 0 ";
         }
         // Si admin, tous les journaux, même sans abonnement
         else {
