@@ -5,12 +5,12 @@ class SelectWidget extends CWidget {
     public $model;
     public $selected = 'all';
     public $defaultlabel = "Tous";
+
     /**
      * Si vrai, affiche une entrée "NULL", utile pour supprimer une association.
      * @var bool 
      */
     public $showNull = false;
-    
     public $ajax = false;
     public $column;      // Nom de la colonne, si non spécifié, c'est le nom de la table qui est utilisé.
     private $tbl_name;
@@ -24,11 +24,11 @@ class SelectWidget extends CWidget {
     public function init() {
         $this->tbl_name = get_class($this->model);
         $this->tbl_name_low = strtolower($this->tbl_name);
-        
-        if (!isset($this->column)){
+
+        if (!isset($this->column)) {
             $this->column = $this->tbl_name_low;
         }
-        
+
         $this->tbl_id = strtolower($this->tbl_name . "_id");
         // Création du id du select
         $this->select_id = 'selectWidget' . $this->tbl_name . rand(101, 999);
@@ -44,39 +44,28 @@ class SelectWidget extends CWidget {
     }
 
     public function run() {
-        if (!$this->ajax)echo "<div style=\"display: inline-block;\" id=\"{$this->select_id}div\">";
+        if (!$this->ajax)
+            echo "<div style=\"display: inline-block;\" id=\"{$this->select_id}div\">";
         echo '<select name="' . $this->select_name . '" id="' . $this->select_id . '" class="form-control input-sm form-inline" style="width: auto;">';
         echo '<option value="">' . $this->defaultlabel . '</option>';
-        if ($this->showNull){
-             echo '<option value="NULL">VIDER (NULL)</option>';
+        if ($this->showNull) {
+            echo '<option value="NULL">VIDER (NULL)</option>';
         }
+
         // La table sujet a deux sous-groupes, elle est traitée à part
         if ($this->tbl_name == 'Sujet') {
-            $lists = array(
-                'Sciences humaines' => "shs=1",
-                'Sciences biomédicales' => "stm=1");
-
-            foreach ($lists as $group => $condition) {
-                echo '<optgroup label="' . $group . '">';
-                foreach ($this->model->findAll(array('condition' => $condition, 'order' => 'nom_fr')) as $s) {
-                    echo "<option value=\"$s->sujet_id\"";
-                    if ($this->selected == $s->sujet_id)
-                        echo " selected";
-                    echo ">$s->nom_fr</option>";
-                }
-                echo '</optgroup>';
-            }
-        } else { // pour toutes les tables sauf les sujets
-            foreach ($this->model->findAll(array('order' => $this->column)) as $m) {
-                echo '<option value="' . $m->{$this->tbl_id} . '"';
-                if ($this->selected == $m->{$this->tbl_id})
-                    echo " selected";
-                echo '>' . $this->trim_text($m->{$this->column}, 70) . '</option>';
-            }
+            $this->subjectSelectData();
+        } else {
+            // pour toutes les tables sauf les sujets
+            $this->tableSelectData();
         }
+
         echo '</select>';
-        if (!$this->ajax) echo '</div>';
-        else return;
+        if (!$this->ajax) {
+            echo '</div>';
+        } else {
+            return;
+        }
 
 
         //
@@ -85,41 +74,84 @@ class SelectWidget extends CWidget {
          if ($this->frm_classname) {
             $divid = $this->select_id . 'Dialog';
 
-            echo " ".CHtml::ajaxButton(
-                    "+", 
-                    Yii::app()->createUrl("admin/addSmallListEntry/type/$this->tbl_name/id/$this->select_id"), 
-                    array('update' => '#' . $divid), 
-                    array('onclick' => '$("#' . $divid . '").dialog("open");', 'class' => "btn btn-default btn-sm")
+            echo " " . CHtml::ajaxButton(
+                    "+", Yii::app()->createUrl("admin/addSmallListEntry/type/$this->tbl_name/id/$this->select_id"), array('update' => '#' . $divid), array('onclick' => '$("#' . $divid . '").dialog("open");', 'class' => "btn btn-default btn-sm")
             );
 
             // Affichage du dialogue
             $this->beginWidget('zii.widgets.jui.CJuiDialog', array(
-            'id' => $divid,
-            // additional javascript options for the dialog plugin
-            'options' => array(
-                'title' => "$this->tbl_name : ajout d'une entrée",
-                'autoOpen' => false,
-                'close' => 'js:function(){
+                'id' => $divid,
+                // additional javascript options for the dialog plugin
+                'options' => array(
+                    'title' => "$this->tbl_name : ajout d'une entrée",
+                    'autoOpen' => false,
+                    'close' => 'js:function(){
                     jQuery.ajax({
-                        "url":"'.Yii::app()->createUrl("admin/refreshselect/type/$this->tbl_name").'",
+                        "url":"' . Yii::app()->createUrl("admin/refreshselect/type/$this->tbl_name") . '",
                         "cache":false,
-                        "success":function(html){jQuery("#'.$this->select_id.'div").html(html)}
+                        "success":function(html){jQuery("#' . $this->select_id . 'div").html(html)}
                           })}',
-                
-                'buttons' => array(
-                    'Annuler' => 'js:function(){
+                    'buttons' => array(
+                        'Annuler' => 'js:function(){
                                     $(this).dialog("close");
                                     }',
-                    'Ajouter' => 'js:function(){
+                        'Ajouter' => 'js:function(){
                                     $.post(
-                                        $("#'.$this->select_id.'Form").attr("action"), // the url to submit to
-                                        $("#'.$this->select_id.'Form").serialize(), // the data is serialized
-                                        function(){$("#'.$divid.'").dialog("close");} // in the success the dialog is closed
+                                        $("#' . $this->select_id . 'Form").attr("action"), // the url to submit to
+                                        $("#' . $this->select_id . 'Form").serialize(), // the data is serialized
+                                        function(){$("#' . $divid . '").dialog("close");} // in the success the dialog is closed
                                     );
                             }',
-                    
-                ))));
+            ))));
             $this->endWidget('zii.widgets.jui.CJuiDialog');
+        }
+    }
+
+    private function subjectSelectData() {
+
+
+        $lists = array(
+            'Sciences humaines' => "shs=1",
+            'Sciences biomédicales' => "stm=1");
+
+        foreach ($lists as $group => $condition) {
+            echo '<optgroup label="' . $group . '">';
+            foreach ($this->subjectData($condition) as $s) {
+                echo "<option value=\"$s->sujet_id\"";
+                if ($this->selected == $s->sujet_id) {
+                    echo " selected";
+                }
+                echo ">$s->nom_fr</option>";
+            }
+            echo '</optgroup>';
+        }
+    }
+    
+    private function subjectData ($condition){
+        $selectData = Yii::app()->cache->get($this->tbl_name_low.$condition);
+        if ($selectData === false) {
+            // Régénère $selectData car il ne se trouve pas dans le cache
+            $selectData = $this->model->findAll(array('condition' => $condition, 'order' => 'nom_fr'));
+            // Sauvegarde pour une utlisation utlérieure
+            Yii::app()->cache->set($this->tbl_name_low, $selectData);
+        }
+        return $selectData;
+    }
+
+    private function tableSelectData() {
+        $selectData = Yii::app()->cache->get($this->tbl_name_low);
+        if ($selectData === false) {
+            // Régénère $selectData car il ne se trouve pas dans le cache
+            $selectData = $this->model->findAll(array('order' => $this->column));
+            // Sauvegarde pour une utlisation utlérieure
+            Yii::app()->cache->set($this->tbl_name_low, $selectData);
+        }
+        foreach ($selectData as $m) {
+            echo '<option value="' . $m->{$this->tbl_id} . '"';
+            if ($this->selected == $m->{$this->tbl_id}) {
+                echo " selected";
+            }
+            echo '>' . $this->trim_text($m->{$this->column}, 70) . '</option>';
         }
     }
 
