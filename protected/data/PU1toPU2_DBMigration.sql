@@ -302,21 +302,6 @@ CREATE TABLE IF NOT EXISTS `abonnement` (
 -- ----------------------------------------------------------------------------
 -- Insertion des tables de "constantes"
 -- ----------------------------------------------------------------------------
-INSERT INTO `histabo` (`histabo`) VALUES 
-	('BCUD'),
-	('BCUR'),
-	('Biologie'),
-	('BiUM'),
-	('BPUL'),
-	('CDSP'),
-	('CURML'),
-	('HEPL'),
-	('IPA'),
-	('IST'),
-	('IUHMSP'),
-	('IUMSP'),
-	('Physiologie');
-
 INSERT INTO `statutabo` (`statutabo_id`, `statutabo`) VALUES 
 	(0, 'Terminé'),
 	(1, 'Actif'),
@@ -326,46 +311,9 @@ INSERT INTO `statutabo` (`statutabo_id`, `statutabo`) VALUES
 	(5, 'Gestion provisoire');
 
 
-INSERT INTO `localisation` (`localisation`) 
-SELECT DISTINCT `perunil_journals`.`journals`.localisation
-FROM `perunil_journals`.`journals`
-WHERE `perunil_journals`.`journals`.localisation <> ""
-AND `perunil_journals`.`journals`.localisation IS NOT NULL;
-
-
-INSERT INTO `gestion` (`gestion`) VALUES
-('Abo e-only'),
-('Echange'),
-('Opt-in title'),
-('Print+Online');
-
-INSERT INTO `format` (`format`) VALUES
-('Autres sources'),
-('Base de données'),
-('Dictionnaire'),
-('Encyclopédie'),
-('Quotidien');
-
-
-INSERT INTO `support` (`support`) VALUES
-('electronique'),
-('papier');
-
-
-INSERT INTO `plateforme` (`plateforme`) 
-SELECT DISTINCT `perunil_journals`.`journals`.plateforme
-FROM `perunil_journals`.`journals`
-WHERE `perunil_journals`.`journals`.plateforme <> ""
-AND `perunil_journals`.`journals`.plateforme IS NOT NULL;
-
-
-
-INSERT INTO `licence` (`licence`) 
-SELECT DISTINCT `perunil_journals`.`journals`.licence
-FROM `perunil_journals`.`journals`
-WHERE `perunil_journals`.`journals`.licence <> ""
-AND `perunil_journals`.`journals`.licence IS NOT NULL;
-
+INSERT INTO `support` (`support_id`, `support`) VALUES
+('1', 'electronique'),
+('2', 'papier');
 
 INSERT INTO `biblio` (`biblio`) VALUES
 ('BCU'),
@@ -413,6 +361,50 @@ mot_de_passe, status, creation_ip, creation_on ) VALUES
 ('','mpfister@bium.ch','mpfister', '', 'Consultation', NULL, '2013-04-11'),
 ('Administrateur Test Perunil 2', 'vincent.demaurex@chuv.ch', 'atestpu2','b2b0000cd5e3f848a148932cbb1173c4', 'Modification', '130.223.2.82', '2013-07-04 12:18:58'),
 ('Jolanda Elmers', 'Jolanda.Elmers@chuv.ch', 'jelmers', 'ed1a62b71887ed2fa43da8f5daa7644d', 'Administration', '155.105.7.44', '2014-01-07 13:25:47');
+
+
+-- ----------------------------------------------------------------------------
+-- Insertion des tables de "listes" issue d'un select distinct
+-- ----------------------------------------------------------------------------
+INSERT INTO `histabo` (`histabo`) 
+SELECT DISTINCT `perunil_journals`.`journals`.historiqueabo
+FROM `perunil_journals`.`journals`
+WHERE `perunil_journals`.`journals`.historiqueabo <> ""
+AND `perunil_journals`.`journals`.historiqueabo IS NOT NULL;
+
+
+INSERT INTO `localisation` (`localisation`) 
+SELECT DISTINCT `perunil_journals`.`journals`.localisation
+FROM `perunil_journals`.`journals`
+WHERE `perunil_journals`.`journals`.localisation <> ""
+AND `perunil_journals`.`journals`.localisation IS NOT NULL;
+
+INSERT INTO `gestion` (`gestion`) 
+SELECT DISTINCT `perunil_journals`.`journals`.`gestion`
+FROM `perunil_journals`.`journals`
+WHERE `perunil_journals`.`journals`.`gestion` <> ""
+AND `perunil_journals`.`journals`.`gestion` IS NOT NULL;
+
+
+INSERT INTO `format` (`format`) 
+SELECT DISTINCT `perunil_journals`.`journals`.`format`
+FROM `perunil_journals`.`journals`
+WHERE `perunil_journals`.`journals`.`format` <> ""
+AND `perunil_journals`.`journals`.`format` IS NOT NULL;
+
+
+INSERT INTO `plateforme` (`plateforme`) 
+SELECT DISTINCT `perunil_journals`.`journals`.plateforme
+FROM `perunil_journals`.`journals`
+WHERE `perunil_journals`.`journals`.plateforme <> ""
+AND `perunil_journals`.`journals`.plateforme IS NOT NULL;
+
+
+INSERT INTO `licence` (`licence`) 
+SELECT DISTINCT `perunil_journals`.`journals`.licence
+FROM `perunil_journals`.`journals`
+WHERE `perunil_journals`.`journals`.licence <> ""
+AND `perunil_journals`.`journals`.licence IS NOT NULL;
 
 
 -- ----------------------------------------------------------------------------

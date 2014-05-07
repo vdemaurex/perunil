@@ -1,3 +1,39 @@
+<script>
+    /* Chargement des selects avec Ajax*/
+    $(document).ready(function() {
+        $("#editeurSelect").select2({
+            placeholder: "Rechercher un éditeur",
+            width: '516px',
+            ajax: {
+                url: "<?php echo Yii::app()->request->hostInfo . $this->createUrl('admin/editorSelect') ?>",
+                dataType: 'json',
+                quietMillis: 100,
+                data: function(term, page) {
+                    return {
+                        term: term, //search term
+                        page_limit: 8 // page size
+                    };
+                },
+                results: function(data, page) {
+                    return {results: data.results};
+                }
+
+            },
+            initSelection: function(element, callback) {
+                return $.getJSON("<?php echo Yii::app()->request->hostInfo . $this->createUrl('admin/editorSelect') ?>?id=" + (element.val()), null, function(data) {
+
+                    return callback(data);
+
+                });
+            }
+
+        });
+<?php if (!empty($model->editeur)) :?>
+            $("#editeurSelect").select2("val", "<?php echo $model->editeur; ?>");
+<?php endif; ?>
+    });
+
+</script>
 <div class="form">
 
 
@@ -10,7 +46,7 @@
     $form = $this->beginWidget('CActiveForm', array(
         'id' => 'abonnement-_aboeditform-form',
         'enableAjaxValidation' => false,
-            ));
+    ));
     ?>
 
     <p class="note">Les champs marqué d'un asterisque (<span class="required">*</span>) doivent obligatoirement être remplis.</p>
@@ -89,12 +125,13 @@
             <tr class="even">
                 <th><?php echo $form->labelEx($model, 'editeur', array('class' => "control-label")); ?></th>
                 <td colspan="3">
-                    <?php
+                    <input type="hidden" data-placeholder="Sélectionnez un éditeur.." class="input-xlarge" id="editeurSelect" name="Abonnement[editeur]" >
+                    <?php /*
                     $this->widget('SelectWidget', array(
                         'model' => Editeur::model(),
                         'frm_classname' => get_class($model),
                         'selected' => isset($model->editeur) ? $model->editeur : ''));
-                    ?>
+                    */ ?>
                 </td>
             </tr>
             <tr class="odd">
@@ -239,8 +276,8 @@
 <script>
     $(document).ajaxComplete(function(event, xhr, settings) {
 
-        $( ".log" ).text( "Triggered ajaxComplete handler. The result is " +
-            xhr.responseHTML );
+        $(".log").text("Triggered ajaxComplete handler. The result is " +
+                xhr.responseHTML);
 
     });
 </script>

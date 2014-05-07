@@ -19,7 +19,7 @@ class SelectWidget extends CWidget {
     // Varables pour les formulaire d'édition uniquement
     public $frm_classname; // si true, le widget est utilisé dans un formulaire d'édition
     public $select_name = "";
-    private $select_id; // #id du select, construit dans init()
+    public $select_id; // #id du select, construit dans init()
 
     public function init() {
         $this->tbl_name = get_class($this->model);
@@ -30,9 +30,12 @@ class SelectWidget extends CWidget {
         }
 
         $this->tbl_id = strtolower($this->tbl_name . "_id");
-        // Création du id du select
-        $this->select_id = 'selectWidget' . $this->tbl_name . rand(101, 999);
-
+        
+// Création du id du select
+        if (empty($this->select_id)){
+            $this->select_id = 'selectWidget' . $this->tbl_name . rand(101, 999);
+        }
+        
         if ($this->select_name == "") {
             $this->select_name = $this->tbl_name_low; // nom de la balise select et donc de l'entrée dans $_POST
         }

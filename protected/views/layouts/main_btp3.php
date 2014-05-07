@@ -153,22 +153,22 @@
                 <div id="vd"> &nbsp; </div>
                 <div id="swissu">
                     <a href="http://www.swissuniversity.ch">
-                        <img alt="Swiss University" src="http://www.unil.ch/cms/images/logos/swissuniversity_blue_smush.png" border="0" height="17" width="136"></img>
+                        <img alt="Swiss University" src="<?= Yii::app()->baseUrl; ?>/images/swissuniversity_blue_smush.png" border="0" height="17" width="136"></img>
                     </a>
                 </div>
                 <div id="logobottom">
                     <a href="http://www.vd.ch">
-                        <img border="0" alt="Canton de Vaud" src="http://www.unil.ch/cms/images/logos/vd_gray.gif"></img>
+                        <img border="0" alt="Canton de Vaud" src="<?= Yii::app()->baseUrl; ?>/images/vd_gray.gif"></img>
                     </a>
                     <a class="liens" href="http://www.unil.ch">
-                        <img border="0" alt="UNIL" src="http://serval.unil.ch/img/unilogo_noir.png"></img>
+                        <img border="0" alt="UNIL" src="<?= Yii::app()->baseUrl; ?>/images/unilogo_noir.png"></img>
                     </a>
                     <a class="liens" href="http://www.bcu-lausanne.ch/">
                         
                         <img border="0" alt="BCU Lausanne" src="<?= Yii::app()->baseUrl; ?>/images/logo_bcu_gris.gif"/>
                     </a>
                     <a class="liens" href="http://www.chuv.ch">
-                        <img border="0" alt="CHUV" src="http://serval.unil.ch/img/logo_chuv_transp_bleu.png"></img>
+                        <img border="0" alt="CHUV" src="<?= Yii::app()->baseUrl; ?>/images/logo_chuv_transp_bleu.png"></img>
                     </a>
                 </div>
                 <div id="linksbottom">
