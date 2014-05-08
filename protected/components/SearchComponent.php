@@ -75,7 +75,7 @@ class SearchComponent extends CComponent {
      * @var bool false par défaut.
      */
     public $depotlegal = false;
-    private $depotlegal_idlocalisation = '23, 24, 25, 26';
+    const depotlegal_idlocalisation = '23, 24, 25, 26';
 
     /**
      * Nombre de résultats affichés par page.
@@ -367,7 +367,7 @@ class SearchComponent extends CComponent {
         if ($this->depotlegal) {
             $this->query_summary("avec les périodiques du dépot légal BCU");
         } else {
-            $c->andWhere("(a.localisation NOT IN ($this->depotlegal_idlocalisation) OR a.localisation IS NULL)");
+            $c->andWhere("(a.localisation NOT IN (". self::depotlegal_idlocalisation. ") OR a.localisation IS NULL)");
         }
 
 
@@ -596,7 +596,7 @@ class SearchComponent extends CComponent {
             $this->query_summary("avec les périodiques du dépot légal BCU");
         } else {
 
-            $q .= " AND (a.localisation NOT IN ($this->depotlegal_idlocalisation) OR a.localisation IS NULL) ";
+            $q .= " AND (a.localisation NOT IN (".self::depotlegal_idlocalisation.") OR a.localisation IS NULL) ";
         }
 //        }
         // Condition
@@ -745,7 +745,7 @@ class SearchComponent extends CComponent {
         if ($this->depotlegal) {
             $this->query_summary("avec les périodiques du dépot légal BCU");
         } else {
-            $q .= " AND (a.localisation NOT IN ($this->depotlegal_idlocalisation) OR a.localisation IS NULL) ";
+            $q .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
         }
 
         // Jointure des tables liées à abonnement

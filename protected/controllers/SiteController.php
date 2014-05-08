@@ -200,76 +200,7 @@ class SiteController extends Controller {
         }
     }
 
-    function actionAutocompleteDepotLegalStatus(){
-        $depotlegal = filter_input(INPUT_GET, 'depotlegal', FILTER_VALIDATE_BOOLEAN);
-        
-        // Mise à jour du dépot legal par ajax.
-        if (!empty($depotlegal)){
-            Yii::app()->session['depotlegal'] = $depotlegal;
-            return;
-        }
-    }
-    
-    function actionAutocomplete() {
-        $withDepotLegal = false;
  
-        if (!empty(Yii::app()->session['depotlegal'])){
-            $withDepotLegal = Yii::app()->session['depotlegal'];
-        }
-        $term = filter_input(INPUT_GET, 'term', FILTER_SANITIZE_STRING);
-        if (!empty($term)) {
-            $models = Journal::model()->searchTitleWord($term,$withDepotLegal);
-            
-//            // Si on a aucun résultat, on effectue une recherche avec le searchComponent
-          if (count($models) == 0) {
-              $models2 = Journal::model()->searchTitleWord($term, $withDepotLegal, SearchComponent::TWORDS);
-              $models = array_merge($models,$models2);
-            }
-            $result = array();
-            foreach ($models as $m) {
-                $result[] = array(
-                    'label' => $m->titre,
-                    //'value' => $m->attribute_for_input_field,
-                    'id' => $m->perunilid,
-                        //'field' => $m->attribute_for_another_field,
-                );
-            }
-            echo CJSON::encode($result);
-        }
-
-
-        //if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
-//        if (isset($_GET['term'])) {
-//            $term = $_GET['term'];
-//            $models = Journal::model()->findAll(array(
-//                'select' => 'titre', //,perunilid',
-//                'condition' => "titre LIKE '$term%'",
-//                'order' => "titre",
-//                'distinct' => true,
-//                'limit' => 10,
-//                    ));
-//            // Si on a aucun résultat, on cherche avec le mot au milieu
-//            if (!count($models)) {
-//                $models = Journal::model()->findAll(array(
-//                    'select' => 'titre', //,perunilid',
-//                    'condition' => "titre LIKE '%$term%'",
-//                    'order' => "titre",
-//                    'distinct' => true,
-//                    'limit' => 10,
-//                        ));
-//            }
-//            $result = array();
-//            foreach ($models as $m)
-//                $result[] = array(
-//                    'label' => $m->titre,
-//                    //'value' => $m->attribute_for_input_field,
-//                    'id' => $m->perunilid,
-//                        //'field' => $m->attribute_for_another_field,
-//                );
-//
-//            echo CJSON::encode($result);
-//        }
-    }
 
     //
 // Function pour nettoyer les critères de recherche (mots vides, ponctuation...)

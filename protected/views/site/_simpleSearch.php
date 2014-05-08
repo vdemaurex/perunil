@@ -19,7 +19,7 @@
             if ($(this).is(":checked")) {
                 $.ajax({
                 type: 'GET', // Le type de ma requete
-                        url: '<?php echo Yii::app()->request->hostInfo . $this->createUrl('site/autocompleteDepotLegalStatus'); ?>', // L'url vers laquelle la requete sera envoyee
+                        url: '<?php echo Yii::app()->request->hostInfo . $this->createUrl('ajaxPublic/autocompleteDepotLegalStatus'); ?>', // L'url vers laquelle la requete sera envoyee
                         data: {
                         depotlegal: 'true', // Les donnees que l'on souhaite envoyer au serveur au format JSON
                         }
@@ -27,7 +27,7 @@
             } else {
                 $.ajax({
                 type: 'GET', // Le type de ma requete
-                        url: '<?php echo Yii::app()->request->hostInfo . $this->createUrl('site/autocompleteDepotLegalStatus'); ?>', // L'url vers laquelle la requete sera envoyee
+                        url: '<?php echo Yii::app()->request->hostInfo . $this->createUrl('ajaxPublic/autocompleteDepotLegalStatus'); ?>', // L'url vers laquelle la requete sera envoyee
                         data: {
                         depotlegal: 'false', // Les donnees que l'on souhaite envoyer au serveur au format JSON
                         }
@@ -52,7 +52,7 @@
                         $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
                             'name' => 'q',
                             'value' => isset(Yii::app()->session['search']->simple_query_str) ? Yii::app()->session['search']->simple_query_str : '',
-                            'source' => $this->createUrl('site/autocomplete'),
+                            'source' => $this->createUrl('ajaxPublic/autocomplete'),
                             'options' => array(
                                 'minLength' => 2,
                             ),
