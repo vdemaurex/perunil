@@ -39,6 +39,14 @@ echo " ";
 echo  CHtml::htmlButton('Nouvelle recherche', array(
                         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($clean_url) . '"',
                         'class'   => "btn btn-primary  btn-sm")); 
+    echo " ";
+    echo CHtml::htmlButton('Affichage liste', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=1"',
+        'class' => "btn btn-warning  btn-sm"));
+    echo " ";
+    echo CHtml::htmlButton('Affichage tableau', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=2"',
+        'class' => "btn btn-warning  btn-sm"));
 ?>
 </div>
 

@@ -33,7 +33,7 @@ class SiteController extends Controller {
         $this->render('simpleSearch');
     }
 
-    public function actionSimpleSearchResults() {
+    public function actionSimpleSearchResults($typeAffichage = NULL) {
         Yii::app()->session['searchtype'] = 'simple';
         $this->activate_session_search_component();
 
@@ -52,8 +52,22 @@ class SiteController extends Controller {
             $search_done = true;
         }
 
+        if ($typeAffichage == NULL && empty(Yii::app()->session['typeAffichage'])){
+            Yii::app()->session['typeAffichage'] = 1;
+        }
+        if ($typeAffichage != NULL) {
+            Yii::app()->session['typeAffichage'] = $typeAffichage;
+        }
+
+        if (Yii::app()->session['typeAffichage'] == 1){
+            $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
+        }
+        else{
+            $this->render('searchResults_tab', array('search_done' => $search_done, 'searchtype' => 'simple'));
+        }
+        
         // Affichage des résultats.
-        $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
+        //$this->render('searchResults_tab', array('search_done' => $search_done, 'searchtype' => 'simple'));
     }
 
     public function actionSimpleclean() {
