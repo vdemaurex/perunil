@@ -242,10 +242,10 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
             </tr>
 
             <tr>
-                <td><b>Core collection</b></td>
-                <td><input type="radio" value="1" name="corecollection" <?= r($this, 'corecollection', "1", 'checked'); ?>> Oui  |  
-                    <input type="radio" value="0" name="corecollection" <?= r($this, 'corecollection', "0", 'checked'); ?>> Non  |  
-                    <input type="radio" value="" name="corecollection" <?= r($this, 'corecollection', "", 'checked'); ?>> Ignorer
+                <td><b>Core collection BiUM</b></td>
+                <td><input type="radio" value="VRAI" name="corecollection" <?= r($this, 'corecollection', "VRAI", 'checked'); ?>> Oui  |  
+                    <input type="radio" value="FAUX" name="corecollection" <?= r($this, 'corecollection', "FAUX", 'checked'); ?>> Non  |  
+                    <input type="radio" value="IGNORER" name="corecollection" <?= r($this, 'corecollection', "IGNORER", 'checked'); ?>> Ignorer
                 </td>
             </tr>
             <tr >

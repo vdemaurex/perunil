@@ -10,11 +10,21 @@ class SearchComponent extends CComponent {
     const TWORDS = 'twords'; // Recherche de tous les mots indépendamment
     const JRNALL = 'jrnall'; // Recherche dans tous les champs publiques de la table Journal
 
+    
+     /**
+     * Si true, les périodiques du dépot légal sont inculs dans la recherche.
+     * @var bool false par défaut.
+     */
+    public $depotlegal = false;
+    const depotlegal_idlocalisation = '23, 24, 25, 26';
+    
+    const BiUM_Corecollection = 6;
+    
+    
     /**
      * Requête de la recherche avancée
      * @var array 
      */
-
     private $adv_query_tab;
     private $adv_sql_command;
     private $adv_count;
@@ -70,12 +80,7 @@ class SearchComponent extends CComponent {
      */
     public $support = 0;
 
-    /**
-     * Si true, les périodiques du dépot légal sont inculs dans la recherche.
-     * @var bool false par défaut.
-     */
-    public $depotlegal = false;
-    const depotlegal_idlocalisation = '23, 24, 25, 26';
+
 
     /**
      * Nombre de résultats affichés par page.
@@ -1089,9 +1094,16 @@ class SearchComponent extends CComponent {
             }
         }
 
-        if (isset($qt['corecollection']) && trim($qt['corecollection']) == '1') {
-            // FIXME : id biblio en dur !
-            $criteria->join .= 'INNER JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id = 6';
+        if (isset($qt['corecollection'])){
+            if ($qt['corecollection'] == 'VRAI') { // Joindre la corecollection BiUM
+                $criteria->join .= 'INNER JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id = ' . self::BiUM_Corecollection;
+                $this->query_summary("avec la core collection BiUM");
+            }
+            elseif($qt['corecollection'] == 'FAUX'){ // Exclure la corecollection BiUM
+                $criteria->addCondition("t.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = ". self::BiUM_Corecollection .")");
+                $this->query_summary("sans la core collection BiUM");
+                //$criteria->join .= 'LEFT JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id != ' . self::BiUM_Corecollection;
+            }
         }
         // Jointure pour corecollection
         // $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
@@ -1248,6 +1260,7 @@ class SearchComponent extends CComponent {
 // Recherche exacte : "= $term"
         $exact_fields = @array(
             't.openaccess' => $qt['openaccess'],
+            't.publiunil'  => $qt['publiunil'],
             't.parution_terminee' => $qt['parution_terminee'],
             'abonnements.licence' => $qt['licence'],
             'abonnements.statutabo' => $qt['statutabo'],
@@ -1270,8 +1283,8 @@ class SearchComponent extends CComponent {
             'abonnements.acces_elec_unil' => $qt['acces_elec_unil'],
         );
         foreach ($exact_fields as $column => $value) {
-            $value = trim($value);
-            if ($value) {
+            //$value = trim($value);
+            if (strlen(trim($value)) > 0) {
                 $criteria->addCondition("$column = '$value'");
                 $this->query_summary("$column = $value");
             }
