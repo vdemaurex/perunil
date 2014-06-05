@@ -52,9 +52,9 @@ class AdminController extends Controller {
      */
     public function actions() {
         return array(
-            'csvexport' => 'application.controllers.admin.CsvexportAction',
-            'csvimport' => 'application.controllers.admin.CsvimportAction',
-            'csvimportprocess' => 'application.controllers.admin.CsvimportprocessAction',
+//            'csvexport' => 'application.controllers.admin.CsvexportAction',
+//            'csvimport' => 'application.controllers.admin.CsvimportAction',
+//            'csvimportprocess' => 'application.controllers.admin.CsvimportprocessAction',
                 //'upload'           => 'application.controllers.admin.UploadAction',
         );
     }
