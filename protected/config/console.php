@@ -11,6 +11,7 @@ return array(
     ),
     // application components
     'components' => array(
+        /* Connexion à la base PU2 */
         'db' => array(
             'connectionString' => 'mysql:host=localhost;dbname=perunil_journals-v2',
             'emulatePrepare' => true,
@@ -18,7 +19,15 @@ return array(
             'password' => 'jvbcdb',
             'charset' => 'utf8',
             'schemaCachingDuration' => 3600,
-        //'enableParamLogging'=>true
+        ),
+        /* Connexion à la base PU1 */
+        'dbpu1' => array(
+            'connectionString' => 'mysql:host=localhost;dbname=perunil_journals',
+            'username'         => 'root',
+            'password'         => 'jvbcdb',
+            'charset'          => 'utf8',
+            'emulatePrepare'   => true,
+            'class'            => 'CDbConnection'
         ),
     ),
 );
