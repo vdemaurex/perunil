@@ -72,7 +72,13 @@ class Abonnement extends ModifModel {
     }
 
     public function behaviors() {
-        return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
+        // Pas de suivit avec AuditTrail si on est en ligne de commande.
+        if (php_sapi_name() != 'cli'){
+            return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
+        }
+        else{
+            return array();
+        }
     }
 
     /**
