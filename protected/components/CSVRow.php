@@ -275,9 +275,16 @@ class CSVRow extends CComponent {
     public function getPerunilid() {
         if (!empty($this->jrn)) {
             return $this->jrn->perunilid;
-        } elseif (!empty($this->validValues['perunilid'])) {
-            return $this->validValues['perunilid'];
-        } else {
+        }
+        elseif (!empty ($this->DBAbo)) {
+            return $this->DBAbo->perunilid;
+        }
+        
+        // La valeur validValues['perunilid'] peut ne pas être correct
+//        elseif (!empty($this->validValues['perunilid'])) {
+//            return $this->validValues['perunilid'];
+//        } 
+        else {
             return null;
         }
     }
