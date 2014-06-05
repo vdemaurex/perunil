@@ -83,14 +83,15 @@
             
             <nav class="navbar navbar-default navbar-inverse" role="navigation" style="margin-bottom: 0;">
                 <!--div id="mainmenu"-->
-                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                
+                <div>
                     <?php
                     $this->widget('zii.widgets.CMenu', array(
                         'items' => array(
                             array('label' => 'Recherche simple', 'url' => array('/site/simpleclean')),
                             array('label' => 'Recherche avancée', 'url' => array('/site/advclean')),
                             array('label' => 'Recherche admin', 'url' => array('/admin/searchclean'), 'visible' => !Yii::app()->user->isGuest),
-                            array('label' => 'Sujets', 'url' => array('/site/sujet')),
+                            array('label' => 'Sujets', 'url' => array('/site/sujet'), 'linkOptions' => array('class' => "hidden-xs")),
                             // array('label' => 'Contact', 'url' => array('/site/contact')),
                             array('label' => '?', 'url' => array('/site/page', 'view' => 'aide')),
                         ),
@@ -110,7 +111,7 @@
                             array('label' => 'Actions <b class="caret"></b>',
                                 'url' => array('#'),
                                 'visible' => !Yii::app()->user->isGuest,
-                                'linkOptions' => array('class' => "dropdown-toggle", 'data-toggle' => "dropdown"),
+                                'linkOptions' => array('class' => "dropdown-toggle hidden-xs", 'data-toggle' => "dropdown"),
                                 'itemOptions' => array('class' => 'dropdown user'),
                                 'items' => array(
                                     array('label' => 'Accueil administration', 'url' => array('/admin/index')),
@@ -148,7 +149,7 @@
 
             <div class="clear"></div>
 
-            <div id="footer">
+            <div id="footer" class="hidden-xs">
                 <div id="vd"> &nbsp; </div>
                 <div id="swissu">
                     <a href="http://www.swissuniversity.ch">
@@ -185,7 +186,7 @@
             </div><!-- footer -->
 
         </div><!-- page -->
-        <div id="postaddress"> 
+        <div id="postaddress"  class="hidden-xs"> 
             Bibliothèque Universitaire de Médecine&nbsp;&nbsp;-&nbsp;
             CHUV BH08 - Bugnon 46&nbsp;-&nbsp;
             CH-1011 Lausanne&nbsp;
