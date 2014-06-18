@@ -39,9 +39,6 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
     ?>
     <tr <?php echo $stripClass; ?> >
     <?php if ($i == 0) : ?>
-            <th>
-            <?php echo $index; ?>
-            </th>
             <td><!-- Titre -->
 
                 <strong>
@@ -91,9 +88,6 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
         ?>
     <tr <?php echo $stripClass; ?> >
     <?php if ($i == 0) : ?>
-            <th rowspan="<?php echo $nbabo; ?>" >
-            <?php echo $index; ?>
-            </th>
             <td rowspan="<?php echo $nbabo; ?>" ><!-- Titre -->
 
                 <strong>

@@ -41,33 +41,33 @@ switch ($searchtype) {
         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($clean_url) . '"',
         'class' => "btn btn-primary  btn-sm"));
     echo " ";
-    echo CHtml::htmlButton('Affichage liste', array(
-        'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=1"',
-        'class' => "btn btn-warning  btn-sm"));
-    echo " ";
-    echo CHtml::htmlButton('Affichage tableau', array(
-        'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=2"',
-        'class' => "btn btn-warning  btn-sm"));
+    if ($titre == "simple") {
+        echo CHtml::htmlButton('Affichage liste', array(
+            'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=1"',
+            'class' => "btn btn-warning  btn-sm"));
+        echo " ";
+        echo CHtml::htmlButton('Affichage tableau', array(
+            'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=2"',
+            'class' => "btn btn-warning  btn-sm"));
+    }
     ?>
 </div>
 
 <?php
 // On affiche la zone des résultats uniquement si un recherche existe. 
 if ($search_done) {
-    if (!Yii::app()->user->isGuest){
+    if (!Yii::app()->user->isGuest) {
         $this->renderPartial('/admin/_adminSearchButton');
         if (Yii::app()->session['search']->admin_affichage == 'abonnement') {
             // Affichage par abonnement
             $this->renderPartial('/admin/_aboSearchResults', array('dataProvider' => Yii::app()->session['search']->$adp));
         }
     }
-    
     ?>
 
     <table class="table table-responsive">
         <thead> <!-- En-tête du tableau -->
             <tr>
-                <th>#</th>
                 <th>Titre</th>
                 <th>Lien</th>
                 <th>Etat de collection</th>
@@ -85,14 +85,13 @@ if ($search_done) {
                     'ajaxUpdate' => false,
                     'template' => "{pager}\n{items}\n",
                 ));
-            }
-            elseif (Yii::app()->session['search']->admin_affichage == 'journal') {
-                    $this->widget('AdminCListView', array(
-                        'dataProvider' => Yii::app()->session['search']->$dp,
-                        'itemView' => '/site/_view_tab',
-                        'ajaxUpdate' => false,
-                        'template' => "{pager}\n{items}\n",
-                    ));
+            } elseif (Yii::app()->session['search']->admin_affichage == 'journal') {
+                $this->widget('AdminCListView', array(
+                    'dataProvider' => Yii::app()->session['search']->$dp,
+                    'itemView' => '/site/_view_tab',
+                    'ajaxUpdate' => false,
+                    'template' => "{pager}\n{items}\n",
+                ));
             }
             ?>
         </tbody>
@@ -105,7 +104,7 @@ if ($search_done) {
     if (Yii::app()->session['search']->maxresults > 0 && $searchtype == "simple") { // Il y a une limitation du nombre de résultats
         $msg = ", limitée à " . Yii::app()->session['search']->maxresults . " résultats,";
     }
-    Yii::app()->user->setFlash('success', "Votre requête$msg a retourné " .
+    Yii::app()->user->setFlash('success', "Votre recherche$msg a produit " .
             Yii::app()->session['totalItemCount'] .
             " résultat(s).<br/>" .
             Yii::app()->session['search']->getQuerySummary());
