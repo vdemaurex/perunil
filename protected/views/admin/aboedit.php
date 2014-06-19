@@ -25,10 +25,10 @@ $this->breadcrumbs=array(
                 
                 // Choix du titre de l'onglet
                 if(isset($abo->licence0) && isset($abo->licence0->licence)){
-                    $abotitle .= $abo->licence0->licence;
+                    $abotitle .= htmlspecialchars($abo->licence0->licence);
                 }
                 elseif (isset($abo->localisation0) && isset($abo->localisation0->localisation)) {
-                    $abotitle .= $abo->localisation0->localisation;
+                    $abotitle .= htmlspecialchars($abo->localisation0->localisation);
                 }
                 else{ // En dernier recours, on affiche l'id de l'abonnement
                     $abotitle .= "Abonnement n°" . $abo->abonnement_id;

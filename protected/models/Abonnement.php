@@ -334,7 +334,7 @@ class Abonnement extends ModifModel {
         if (isset($this->etatcoll) && $this->etatcoll != "")
             $desc .= "<dt>Etatcoll</dt><dd>" . $this->etatcoll . "</dd>";
         $desc .= "</dl></small>";
-        return $desc;
+        return htmlspecialchars($desc);
     }
 
 
