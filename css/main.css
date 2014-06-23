@@ -405,7 +405,10 @@ table.simplesearch td{
 .centpp{
     width: 100%;
 }
-
+.centpp tr td{
+    padding-left: 8px;
+    padding-right: 8px;
+}
 /*
  * Recherche avancée
 */
@@ -421,6 +424,16 @@ table.simplesearch td{
 /*****************************************************************************
  * Affichage de la liste des journaux
  *****************************************************************************/
+
+span.journal-titre{
+    font-weight: bold;
+    color: black;
+}
+
+span.journal-soustitre{
+    font-size: smaller;
+    color: black;
+}
 
 div.view
 {
@@ -444,34 +457,6 @@ table.journal td.etiquette{
     width:250px;
 }
 
-.titre{
-    font-size: medium;
-}
-
-.titre a{
-    text-decoration: none;
-}
-
-.titre a:hover{
-    text-decoration: underline;    
-}
-
-.sous-titre{
-    font-size: smaller;
-}
-
-.sujets{
-    font-size: smaller;
-    margin-top: 10px;
-}
-.sujets a {
-    text-decoration: none;
-    color: lightskyblue;
-
-}
-.sujets a:hover{
-    text-decoration: underline;    
-}
 
 table.journal td.support{
     width:35px;
