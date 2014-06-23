@@ -37,25 +37,34 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
     <div class="panel-heading">
         <!-- Titre du journal !-->
         <div class="row">
-            <div <?php if (!Yii::app()->user->isGuest){ echo 'class="col-md-6"';}?>>
+            <div style="padding-left: 5px; padding-right: 5px;" <?php if (!Yii::app()->user->isGuest){ echo 'class="col-md-6"';}?>>
 
-            <strong>
+                <span class="journal-titre">
                 <?php echo ucfirst($data->titre); ?>
-            </strong>
+            </span>
                 
-                 <div style="float:right;">
+ 
 
-<?php echo CHtml::link(
-        ' Détail <span class="glyphicon glyphicon-search"></span>', array('site/detail',
-    'id' => $data->perunilid), array('title' => "Cliquez pour afficher les détails")
-);
+<?php 
+
+
+if (Yii::app()->user->isGuest) {
+    echo '<div style="float:right;">';
+    echo CHtml::htmlButton('<span class="glyphicon glyphicon-search"></span> Détail', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/detail", array("id" => $data->perunilid)) . '"',
+                'class' => "btn btn-default  btn-xs"));
+    echo '</div>';
+}
 ?>
-           </div>
+           
                 </div>
                 <?php
                 // Commandes d'administration
                 if (!Yii::app()->user->isGuest) {
-                    echo '<div class="col-md-3 pull-right">';
+                    echo '<div class="col-md-4 pull-right">';
+                    echo CHtml::htmlButton('<span class="glyphicon glyphicon-search"></span> Détail', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/detail", array("id" => $data->perunilid)) . '"',
+                'class' => "btn btn-default  btn-xs"));
                     echo " " . CHtml::button('Editer', array(
                         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/peredit/', array('perunilid' => $data->perunilid)) . '"',
                         'class' => "btn btn-primary btn-xs"));
@@ -83,8 +92,8 @@ if ($nbabo == 0 && Yii::app()->user->isGuest) {
                 ?>   
 
         </div>
-        <div class="row">
-            <div <?php if (!Yii::app()->user->isGuest){ echo 'class="col-md-6"';}?>>
+        <div class="row" style="padding-left: 5px;">
+            <div class="journal-soustitre" <?php if (!Yii::app()->user->isGuest){ echo 'class="col-md-6"';}?>>
 <?php
 $txthd = '';
 if ($data->soustitre):
