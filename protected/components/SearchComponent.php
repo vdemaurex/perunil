@@ -621,8 +621,9 @@ class SearchComponent extends CComponent {
         } else { // Recherche de chaque mot indépendamment.
             foreach (explode(" ", $this->q) as $word) {
                 if ($word != "" || $word != "") {
-                    $tokens[] = "%$word%"; //Recherche en milieu de mots
+                    //$tokens[] = "%$word%"; //Recherche en milieu de mots
                     //$tokens[] = "$word%"; // Recherche en début de mots
+                        $tokens[] ='"[[:<:]]' . quotemeta($word) . '"';
                 }
             }
         }
@@ -633,7 +634,12 @@ class SearchComponent extends CComponent {
             // Boucle sur touts les mots de la recherche
             foreach ($tokens as $word) {
                 if ($word != "") {
+                    if ($this->search_type == self::TEXACT || $this->search_type == self::TBEGIN){
                     $wq .= "$col LIKE " . Yii::app()->db->quoteValue($word) . " AND ";
+                    }
+                    else{
+                    $wq .= ' `'.$col.'` REGEXP ' . $word . ' AND ';
+                    }
                 }
             }
             // Suppression d'un OR surnuméraire
