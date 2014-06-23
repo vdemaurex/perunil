@@ -48,7 +48,7 @@ class PU1toPU2Command extends CConsoleCommand {
 
     public function run($args) {
 
-        
+
         echo "****************************************************************\n";
         echo "**       MIGRATION DE LA BASE PERUNIL 1 À PERUNIL 2           **\n";
         echo "****************************************************************\n\n";
@@ -66,7 +66,7 @@ class PU1toPU2Command extends CConsoleCommand {
 
         echo ">>>> SI LE CHAMP MODIFICATION EST NULL : VALEUR CRÉATION\n";
         $this->completeModifIfNull();
-        
+
         echo ">>>> SI LE CHAMP PERUNIL-FUSION = 0 : VALEUR PERUNILID\n";
         $this->replacePuIdFuZero();
 
@@ -80,11 +80,11 @@ class PU1toPU2Command extends CConsoleCommand {
         // Pour tous les perunilid-fusion, classé par perunilid
 //        foreach ($this->debugset as $idfusion) {
         foreach ($puidfs as $i => $idfusion) {
-        //for ($idfusion = self::PuIdMin; $idfusion <= self::PuIdMax; $idfusion++) {
+            //for ($idfusion = self::PuIdMin; $idfusion <= self::PuIdMax; $idfusion++) {
             echo "   > $idfusion \n";
 
 
-            //      Récupérer les lignes, classée par perunilid
+            //      Récupérer les lignes, classée par dernière modification
             $sql = "SELECT * FROM `journals_fusion` WHERE `perunilid_fusion` = $idfusion ORDER BY `datemodif` DESC;";
             $rows = Yii::app()->dbpu1->createCommand($sql)->queryAll();
 
@@ -233,11 +233,20 @@ class PU1toPU2Command extends CConsoleCommand {
         $abo->plateforme = $this->findConstTableId($row['plateforme'], 'plateforme');
         $abo->editeur = $this->findConstTableId($row['editeur'], 'editeur');
         $abo->histabo = $this->findConstTableId($row['historiqueabo'], 'histabo');
-        $abo->localisation = $this->findConstTableId($row['localisation'], 'localisation');
-        $abo->gestion = $this->findConstTableId($row['gestion'], 'gestion');
-        $abo->format = $this->findConstTableId($row['format'], 'format');
         $abo->support = $this->findConstTableId($row['support'], 'support');
+        // La localisation n'a du sens que pour les journaux papier.
+        if ($abo->support == 2) {
+            $abo->localisation = $this->findConstTableId($row['localisation'], 'localisation');
+        }
+        // La gestion n'a de sens que pour les titre électroniques
+        if ($abo->support == 1) {
+            $abo->gestion = $this->findConstTableId($row['gestion'], 'gestion');
+        }
+        $abo->format = $this->findConstTableId($row['format'], 'format');
         $abo->licence = $this->findConstTableId($row['licence'], 'licence');
+
+        // Ajout des anciennes donnée du journal dans le commentaire pro
+        $abo->commentaire_pro .= $this->addPU1Data($row);
 
         if ($abo->save(false)) {
             echo "   > :-) abonnement $abo->abonnement_id enregistré \n";
@@ -257,6 +266,45 @@ class PU1toPU2Command extends CConsoleCommand {
      * 
      * -------------------------------------------------------------------------
      */
+
+    protected function addPU1Data($row) {
+        $txt = "\n Données Perunil 1 : \n";
+        $data = array(
+            "Perunilid : " => $row['perunilid'],
+            "Titre : " => $row['titre'],
+            "Sous titre : " => $row['soustitre'],
+            "Titre abrégé : " => $row['titreabrege'],
+            "Variante de titre : " => $row['variantetitre'],
+            "Fait suite à : " => $row['faitsuitea'],
+            "Devient : " => $row['devient'],
+            "issn : " => $row['issn'],
+            "issnl : " => $row['issnl'],
+            "nlmid : " => $row['nlmid'],
+            "reroid : " => $row['reroid'],
+            "doi : " => $row['doi'],
+            "urn : " => $row['urn'],
+            "publiunil : " => $row['publiunil'],
+            "Openaccess : " => $row['openaccess'],
+            "RSS : " => $row['rss'],
+            "Commentaire pub : '" => $row['commentairepub'],
+            "Historique : '" => $row['historique']
+        );
+
+        foreach ($data as $label => $value) {
+            $txt .= $this->PU1DataLine($label, $value);
+        }
+
+        return $txt;
+    }
+
+    protected function PU1DataLine($label, $value) {
+        $value = trim($value);
+        if (!empty($value)) {
+            return $label . $value . "; \n";
+        } else {
+            return null;
+        }
+    }
 
     protected function findLastNonEmpty($rows, $field) {
 
@@ -309,6 +357,11 @@ class PU1toPU2Command extends CConsoleCommand {
     }
 
     protected function findConstTableId($value, $field) {
+        // Si la valeur est vide, on ne fait rien
+        $value = trim($value);
+        if (empty($value)) {
+            return null;
+        }
         $class = ucfirst($field);
 
         $criteria = new CDbCriteria;
@@ -324,7 +377,7 @@ class PU1toPU2Command extends CConsoleCommand {
 
     /* -------------------------------------------------------------------------
      * 
-     *  PRÉPARATION DE LA BASE DE DONNÉES PERUNIL 2
+     *  PRÉPARATION DE LA BAmost linkSE DE DONNÉES PERUNIL 2
      * 
      * -------------------------------------------------------------------------
      */
@@ -339,9 +392,7 @@ WHERE 1
 EOT;
         $this->executeSQL($sql, 'dbpu1');
     }
-    
-    
-    
+
     protected function rebulidPU2db() {
 
         // Supprime toutes les table de la base PU2
