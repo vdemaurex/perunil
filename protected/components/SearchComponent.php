@@ -294,6 +294,10 @@ class SearchComponent extends CComponent {
 
                     case 'issn':
                         $issn = trim($this->simple_query_str);
+                        // Ajout du - comme 5ème caratère si nécessaire
+                        if (strpos($issn, '-') === FALSE){
+                           $issn = substr_replace($issn, '-', 4, 0); 
+                        }
                         $Cwhere .= " j.issn $like '%$issn%' OR j.issnl $like '%$issn%' ";
                         $this->query_summary("issn = $this->simple_query_str");
                         break;
@@ -513,7 +517,7 @@ class SearchComponent extends CComponent {
                 $this->query_summary("Recherche d'un titre commençant par '$this->q'");
             case self::TEXACT:
                 if ($this->q_summary == "")
-                    $this->query_summary("Recherche d'un titre correspondant exactement à '$this->q'");
+                    $this->query_summary("Recherche d'un titre correspondant exactement à '$this->simple_query_str'");
             case self::TWORDS:
                 if ($this->q_summary == "")
                     $this->query_summary("Recherche d'un titre contenant au moins un de ces mots : '$this->q'");
@@ -614,7 +618,7 @@ class SearchComponent extends CComponent {
 
         $tokens = array();
         if ($this->search_type == self::TEXACT) {
-            $tokens[] = "$this->q"; //"$this->simple_query_str";
+            $tokens[] = "$this->simple_query_str"; //"$this->q"; //"$this->simple_query_str";
         } elseif ($this->search_type == self::TBEGIN) {
             $tokens[] = "$this->q%";
             $cols = array('titre');
