@@ -39,7 +39,7 @@ body
 
 #footer
 {
-    background-image: url("http://www.unil.ch/cms/images/background/common/fond_footer_blue.png");
+    background-image: url("../images/fond_footer_blue.png");
     background-repeat: repeat-x;
     height: 131px;
     position: relative;
