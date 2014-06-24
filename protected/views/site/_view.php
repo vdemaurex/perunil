@@ -61,7 +61,7 @@ if (Yii::app()->user->isGuest) {
                 <?php
                 // Commandes d'administration
                 if (!Yii::app()->user->isGuest) {
-                    echo '<div class="col-md-4 pull-right">';
+                    echo '<div class="pull-right" style="padding-left: 5px; padding-right: 5px;">';
                     echo CHtml::htmlButton('<span class="glyphicon glyphicon-search"></span> Détail', array(
                 'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/detail", array("id" => $data->perunilid)) . '"',
                 'class' => "btn btn-default  btn-xs"));
