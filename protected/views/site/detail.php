@@ -1,24 +1,25 @@
-<?php $this->pageTitle = Yii::app()->name . " - " . $model->titre; 
+<?php
+$this->pageTitle = Yii::app()->name . " - " . $model->titre;
 
-if (!isset($dialogue)){
+if (!isset($dialogue)) {
     $dialogue = false;
 }
 
 if (!$dialogue) {
     echo"<p>";
-    echo  CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour aux résultats de la recherche', array(
-                        'onclick' => 'history.go(-1);return false;',
-                        'class'   => "btn btn-default  btn-xs")); 
-   
+    echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour aux résultats de la recherche', array(
+        'onclick' => 'history.go(-1);return false;',
+        'class' => "btn btn-default  btn-xs"));
+
     if (!Yii::app()->user->isGuest) {
         //echo"<p>";
         //echo CHtml::link('Editer le journal', array('admin/peredit/perunilid/' . $model->perunilid));
-        echo  " " . CHtml::htmlButton('Editer le journal', array(
-                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("admin/peredit", array('perunilid' => $model->perunilid)) . '"',
-                        'class'   => "btn btn-primary  btn-xs")); 
+        echo " " . CHtml::htmlButton('Editer le journal', array(
+            'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("admin/peredit", array('perunilid' => $model->perunilid)) . '"',
+            'class' => "btn btn-primary  btn-xs"));
         //echo"</p>";
     }
-     ?></p>
+    ?></p>
     <h1><?= $model->titre ?></h1>
     <?php
 }
@@ -39,20 +40,20 @@ $fields = array(
     'coden',
     'urn',
     array('name' => 'publiunil', 'label' => 'Est une publication UNIL ?', 'type' => 'boolean'),
-    array('name' => 'url_rss', 'value' => "<a href='".$model->url_rss."' target='_blank'>". $model->url_rss ."</a>", 'type' => 'raw', 'label' => "Flux RSS du périodique"),
+    array('name' => 'url_rss', 'value' => "<a href='" . $model->url_rss . "' target='_blank'>" . $model->url_rss . "</a>", 'type' => 'raw', 'label' => "Flux RSS du périodique"),
     array('name' => 'parution_terminee', 'label' => 'Parution terminée ?', 'type' => 'boolean'),
     array('name' => 'openaccess', 'label' => 'Openaccess (gratuit) ?', 'type' => 'boolean'),
     array('name' => 'commentaire_pub', 'label' => 'Remarques'),
 );
 
 // Ajout des détails réservés aux utilisateurs authentifiés
-if(!Yii::app()->user->isGuest){
-   
+if (!Yii::app()->user->isGuest) {
+
     $fields = array_merge(
             $fields, array(
-                array('name' => 'modification', 'label' => 'Dernière modification', 'value' => $model->fieldToString('modification')),
-                array('name' => 'creation',     'label' => 'Date de création',      'value' => $model->fieldToString('creation')),
-                ));
+        array('name' => 'modification', 'label' => 'Dernière modification', 'value' => $model->fieldToString('modification')),
+        array('name' => 'creation', 'label' => 'Date de création', 'value' => $model->fieldToString('creation')),
+    ));
 }
 
 // Suppression des champs qui ne contiennent aucune information
@@ -84,9 +85,9 @@ $this->widget('zii.widgets.CDetailView', array(
 $tabviewparam = array();
 $i = 1;
 
-if (Yii::app()->user->isGuest){
+if (Yii::app()->user->isGuest) {
     $abos = $model->activeabos;
-}else{
+} else {
     // Admin, inculre les abo exculs
     $abos = $model->AllAbos;
 }
@@ -104,6 +105,12 @@ foreach ($abos as $abo) {
     } else {
         $tabtitle = "Abonnement n°" . $abo->abonnement_id;
     }
+
+    // Pour éviter une séparation des onglets en deux, on remplace les espaces
+    // pas des espaces inscéables
+    $tabtitle = str_replace(' ', '&nbsp;', $tabtitle);
+
+
     $tabviewparam['tabs'][$abo->abonnement_id] = array(
         'title' => $tabtitle,
         'view' => '_aboview',
@@ -113,7 +120,23 @@ foreach ($abos as $abo) {
 
     $i++;
 }
+?>
+<style>
+    .yiiTab ul.tabs {
+        border-bottom: 1px solid #4f81bd;
+        font: bold 12px Verdana,sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
+    .yiiTab ul.tabs li {
+        display: inline;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 0;
+    }
+</style>
+<?php
 $this->widget('CTabView', $tabviewparam);
 
 
