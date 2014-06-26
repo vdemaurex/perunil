@@ -46,8 +46,15 @@
                     <a href ="<?= Yii::app()->baseUrl; ?>">
                         <img src="<?= Yii::app()->baseUrl; ?>/images/logo_perunil.png"/>
                     </a>
-
+                    <a href="http://www2.unil.ch/ebooks">
+                        <button type="button" class="btn btn-default" style="float: right">
+                            <span style="font-size: 10pt">Visitez</span><br>
+                            <img width="128px" src="<?= Yii::app()->baseUrl; ?>/images/logo_ebooks.png"/><br>
+                            <span style="font-size: 8pt">livres électroniques à l'UNIL et au CHUV</span>
+                        </button>
+                    </a>
                 </div>
+                
 
             </div><!-- header -->
             <!-- Navigation publique -->
@@ -144,8 +151,8 @@
                 </div>
                 <div id="linksbottom">
                     <?php echo CHtml::mailto('Contact', 'wwwperun@unil.ch'); ?> &nbsp;-&nbsp;
-                    <?php echo CHtml::link('Copyright', 'http://www.unil.ch/central/page2200.html'); ?> &nbsp;-&nbsp;
-                    <?php echo CHtml::link('Impressum', '/site/pages/impressum'); ?> &nbsp;-&nbsp;
+                    <?php echo CHtml::link('Informations légales', 'http://www.unil.ch/central/home/legalinformation.html'); ?> &nbsp;-&nbsp;
+                    <?php echo CHtml::link('Impressum', 'http://www.unil.ch/central/home/impressum.html'); ?> &nbsp;-&nbsp;
                     <?php
                     if (Yii::app()->user->isGuest) {
                         echo CHtml::link('Login', array('/site/login'), array('visible' => Yii::app()->user->isGuest));
