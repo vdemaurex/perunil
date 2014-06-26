@@ -7,12 +7,23 @@ $this->breadcrumbs=array(
 //
 // Affichage du titre de la page
 //
+
+echo "<h1>$jrn->titre</h1>";
+//
+// Affichage du titre de la page
+////
+//if($model->getIsNewRecord()){
+//    echo "<h3>Création d'un nouvel abonnement pour {$jrn->titre}</h3>\n";
+//}
+// else {
+//    echo "<h3>Edition de l'abonnement n° $model->abonnement_id</h3>\n";
+//}
 ?>
-<h1><?=$jrn->titre;?></h1>
-
-
-    <ul class="nav nav-tabs">
-        <li><?= CHtml::link(" Fiche journal ", CController::createUrl('admin/peredit/perunilid/' . $jrn->perunilid), array('title' => "Editer le journal")) ?></li> 
+  <div class="row">
+      <div class=" col-sm-3 col-md-3">
+  
+    <ul class="nav nav-pills nav-stacked">
+        <li><?= CHtml::link(" <strong>Fiche journal</strong> ", CController::createUrl('admin/peredit/perunilid/' . $jrn->perunilid), array('title' => "Editer le journal")) ?></li> 
         <?php
         
        // Si le journal contient des abonnements, on les affiche
@@ -41,15 +52,15 @@ $this->breadcrumbs=array(
                     $id = "abo". $abo->abonnement_id;
                     ?><li><a href="<?= CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid . '/aboid/' . $abo->abonnement_id); ?>"
                        data-content="<?= $abo->htmlShortDescription(); ?>" rel="popover" data-original-title=""
-                       data-toggle="popover"  data-placement="bottom" id="<?= $id ?>"><?= $abotitle ?></a></li>
+                       data-toggle="popover"  data-placement="right" id="<?= $id ?>"><?= $abotitle ?></a></li>
                     <script>
-                        $('#<?= $id; ?>').popover({ html : true, trigger: "hover" });
+                        $('#<?= $id; ?>').popover({ html : true, trigger: "hover", template: '<div class="popover special-class" style="width:350px;"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>' });
                     </script>
                     <?php
                 }
             }
         }
-        $addabo = CHtml::image(Yii::app()->baseUrl . "/images/add16.png", "Ajouter");
+        $addabo = CHtml::image(Yii::app()->baseUrl . "/images/add16.png", "Ajouter") . "<span style='color:darkgreen'> Nouvel abonnement</span>";
         if (!$jrn->getIsNewRecord()) {
             echo "<li>";
             if ($model->getIsNewRecord()){
@@ -64,18 +75,11 @@ $this->breadcrumbs=array(
 
 <br/>
 
+    </div>
+    <div class="col-sm-6 col-md-9">
+
+
 <?
-
-//
-// Affichage du titre de la page
-//
-if($model->getIsNewRecord()){
-    echo "<h2>Création d'un nouvel abonnement pour {$jrn->titre}</h2>\n";
-}
- else {
-    echo "<h2>Edition de l'abonnement n° $model->abonnement_id</h2>\n";
-}
-
 
 // Affichage du formulaire de création/modification du journal
 $this->renderPartial('_aboeditform', array('model' => $model));
@@ -84,3 +88,6 @@ if (!$model->getIsNewRecord()) {
 $this->widget( 'application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array( 'model' => $model, ) );
 }
 ?>
+
+        </div>
+  </div>

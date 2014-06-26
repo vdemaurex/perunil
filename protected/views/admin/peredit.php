@@ -15,9 +15,11 @@ if ($model->getIsNewRecord()) {
     echo "<h1>$model->titre</h1>\n";
 }
 ?>
-
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#" rel="url1" >Fiche journal</a></li> 
+  <div class="row">
+      <div class=" col-sm-3 col-md-3">
+  
+    <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a href="#" rel="url1" ><strong>Fiche journal</strong></a></li> 
         <?php
         if (isset($model->abonnements)) {
             foreach ($model->abonnements as $abo) {
@@ -38,9 +40,9 @@ if ($model->getIsNewRecord()) {
                 $id = "abo". $abo->abonnement_id;
                 ?><li><a href="<?= CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid . '/aboid/' . $abo->abonnement_id); ?>"
                        data-content="<?= $abo->htmlShortDescription(); ?>" rel="popover" data-original-title=""
-                       data-toggle="popover"  data-placement="bottom" id="<?= $id ?>"><?= $abotitle ?></a></li>
+                       data-toggle="popover"  data-placement="right" id="<?= $id ?>"><?= $abotitle ?></a></li>
                     <script>
-                        $('#<?= $id; ?>').popover({ html : true, trigger: "hover" });
+                        $('#<?= $id; ?>').popover({ html : true, trigger: "hover", template: '<div class="popover special-class" style="width:350px;"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>' });
                     </script>
                     <?php
                 
@@ -50,18 +52,26 @@ if ($model->getIsNewRecord()) {
 
         if (!$model->getIsNewRecord()) {
             echo "<li>" .
-            CHtml::link(CHtml::image(Yii::app()->baseUrl . "/images/add16.png", "Ajouter"), CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid), array('title' => "Ajouter un abonnement")) .
+            CHtml::link(
+                    CHtml::image(Yii::app()->baseUrl . "/images/add16.png", "Ajouter"). "<span style='color:darkgreen'> Nouvel abonnement</span>", 
+                    CController::createUrl('/admin/aboedit/perunilid/' . $model->perunilid),
+                    array('title' => "Ajouter un abonnement")
+                    ) .
                     "</li>";
         }
         ?>
     </ul>
 
+    </div>
+    <div class="col-sm-6 col-md-9">
 
-
-<?
+<?php
 // Affichage du formulaire de création/modification du journal
 
 $this->renderPartial('_pereditform', array('model' => $model));
 if (!$model->getIsNewRecord()) {
     $this->widget('application.modules.auditTrail.widgets.portlets.ShowAuditTrail', array('model' => $model,));
 }
+?>
+</div>
+  </div>
