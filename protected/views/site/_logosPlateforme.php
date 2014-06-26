@@ -1,4 +1,4 @@
-    <div class="hidden-xs hidden-sm"> 
+    <div class="hidden-xs hidden-sm hidden-md"> 
         <hr/>
         <h3>Accès direct aux principales plateformes</h3>
         <div style="margin: auto;">
