@@ -34,34 +34,6 @@
         ?>
 
         <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/bootstrap.min.js"></script>
-
-        <style>
-                .navbar-nav > li > a {
-                    padding-bottom: 5px;
-                    padding-top: 4px;
-                }
-                .navbar {
-
-                    margin-bottom: 20px;
-                    min-height: 30px;
-                    position: relative;
-                    z-index: 1000;
-                }
-
-                .navbar-default {
-                    background-color: #026390;
-                    border-color: black;
-                }
-
-                .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
-                    background-color: #2182C6;
-                    color: #FFFFFF;
-                }
-
-                .navbar-inverse .navbar-nav > li > a {
-                    color: white;
-                }
-            </style>
         
     </head>
 
@@ -73,7 +45,6 @@
                 <div id="logo">
                     <a href ="<?= Yii::app()->baseUrl; ?>">
                         <img src="<?= Yii::app()->baseUrl; ?>/images/logo_perunil.png"/>
-                        <?php //<span id="slogan">Recherche de périodiques disponibles sur le campus UNIL/CHUV</span>?>
                     </a>
 
                 </div>
