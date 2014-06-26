@@ -51,21 +51,22 @@ class SiteController extends Controller {
         if (isset(Yii::app()->session['search']->simple_query_str)) {
             $search_done = true;
         }
-
-        if ($typeAffichage == NULL && empty(Yii::app()->session['typeAffichage'])){
-            Yii::app()->session['typeAffichage'] = 1;
-        }
-        if ($typeAffichage != NULL) {
-            Yii::app()->session['typeAffichage'] = $typeAffichage;
-        }
-
-        if (Yii::app()->session['typeAffichage'] == 1){
-            $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
-        }
-        else{
-            $this->render('searchResults_tab', array('search_done' => $search_done, 'searchtype' => 'simple'));
-        }
         
+        // Affichage tableau
+//        if ($typeAffichage == NULL && empty(Yii::app()->session['typeAffichage'])){
+//            Yii::app()->session['typeAffichage'] = 1;
+//        }
+//        if ($typeAffichage != NULL) {
+//            Yii::app()->session['typeAffichage'] = $typeAffichage;
+//        }
+//
+//        if (Yii::app()->session['typeAffichage'] == 1){
+            $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
+//        }
+//        else{
+//            $this->render('searchResults_tab', array('search_done' => $search_done, 'searchtype' => 'simple'));
+//        }
+//        
         // Affichage des résultats.
         //$this->render('searchResults_tab', array('search_done' => $search_done, 'searchtype' => 'simple'));
     }
