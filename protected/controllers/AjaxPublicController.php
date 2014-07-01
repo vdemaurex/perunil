@@ -45,7 +45,7 @@ class AjaxPublicController extends Controller {
     }
 
     private function sqlQueryStart() {
-        $sql = 'SELECT j.`perunilid` AS id, j.`titre` AS label FROM journal AS j ';
+        $sql = 'SELECT DISTINCT j.`perunilid` AS id, j.`titre` AS label FROM journal AS j ';
 
         if (Yii::app()->user->isGuest) {
             $sql .= " INNER JOIN abonnement AS a ON j.perunilid = a.perunilid AND a.titreexclu = 0 ";
@@ -64,7 +64,7 @@ class AjaxPublicController extends Controller {
 
     private function searchTitleWordBegining($term) {
         $sql = $this->sqlQueryStart();
-        $sql .= ' `titre` REGEXP "^' . quotemeta($term) . '*" LIMIT 8';
+        $sql .= ' `titre` REGEXP "[[:<:]]' . addslashes(quotemeta($term)) . '" LIMIT 8';
         $cmd = Yii::app()->db->createCommand($sql);
         //$cmd->bindParam(":term", "^$term*");
         return $cmd->queryAll();
