@@ -620,14 +620,14 @@ class SearchComponent extends CComponent {
         if ($this->search_type == self::TEXACT) {
             $tokens[] = "$this->simple_query_str"; //"$this->q"; //"$this->simple_query_str";
         } elseif ($this->search_type == self::TBEGIN) {
-            $tokens[] = "$this->q%";
+            $tokens[] = "$this->simple_query_str%";
             $cols = array('titre');
         } else { // Recherche de chaque mot indépendamment.
             foreach (explode(" ", $this->q) as $word) {
                 if ($word != "" || $word != "") {
                     //$tokens[] = "%$word%"; //Recherche en milieu de mots
                     //$tokens[] = "$word%"; // Recherche en début de mots
-                        $tokens[] ='"[[:<:]]' . quotemeta($word) . '"';
+                        $tokens[] ='"[[:<:]]' . addslashes(quotemeta($word)) . '"';
                 }
             }
         }
