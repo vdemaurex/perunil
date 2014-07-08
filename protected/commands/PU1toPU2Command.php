@@ -5,41 +5,7 @@ ini_set("memory_limit", "2400M");
 
 class PU1toPU2Command extends CConsoleCommand {
 
-//    const PuIdMin =  1;
-//    const PuIdMax = 103936;
-
-    private $debugset = array(
-//        "788",
-//        "812",
-//        "834",
-//        "847",
-//        "873",
-//        "1253",
-//        "1298",
-//        "1335",
-//        "1539",
-//        "1545",
-//        "1624",
-//        "1689",
-//        "1695",
-//        "1719",
-//        "1724",
-//        "1749",
-//        "1758",
-//        "1760",
-//        "1779",
-//        "1780",
-//        "1794",
-//        "1827",
-//        "1857",
-//        "1878",
-//        "1888",
-//        "1894",
-//        "1922",
-//        "1923",
-//        "1928",
-//        "1929",
-        "103779");
+    
 
     public function getHelp() {
         $out = "Effectue les tâches de migrations pour transformer la base PU1 en PU2. La base PU1 doit comporter le champs \n\n";
@@ -53,6 +19,9 @@ class PU1toPU2Command extends CConsoleCommand {
         echo "**       MIGRATION DE LA BASE PERUNIL 1 À PERUNIL 2           **\n";
         echo "****************************************************************\n\n";
 
+        print "Le script va réinitialiser la base. Tapez ENTER pour continuer.";
+        fgets(STDIN);  
+        
         echo "*******                 TACHES PREALABLES                *******\n\n";
 
         echo ">>>>  RECONSTRUCTION DE LA BASE PU2 \n\n";
@@ -85,7 +54,8 @@ class PU1toPU2Command extends CConsoleCommand {
 
 
             //      Récupérer les lignes, classée par dernière modification
-            $sql = "SELECT * FROM `journals_fusion` WHERE `perunilid_fusion` = $idfusion ORDER BY `datemodif` DESC;";
+//            $sql = "SELECT * FROM `journals_fusion` WHERE `perunilid_fusion` = $idfusion ORDER BY `datemodif` DESC;";
+            $sql = "SELECT * FROM `journals_fusion` WHERE `perunilid_fusion` = $idfusion ORDER BY `etatcolldeba` DESC;";
             $rows = Yii::app()->dbpu1->createCommand($sql)->queryAll();
 
 
@@ -122,11 +92,37 @@ class PU1toPU2Command extends CConsoleCommand {
      * 
      * -------------------------------------------------------------------------
      */
-
+    
     protected function buildJournal($rows) {
+        $rowNo= null; // ligne sélectionéée pour la notice
+        // Les lignes sont calassée par deba
+        foreach ($rows as $i => $candidate) {
+            if ($candidate['etatcolldeba'] < 9999 && $candidate['etatcolldeba'] > 0 
+                    && stripos($candidate['titre'], 'Supplement') === false){
+                $rowNo = $i;
+                
+                break;
+            }
+        }
+        
+        // Aucune ligne trouvée, on choisi d'après la date de modif
+        
+        if ($rowNo == null){
+            $rowNo = 0;
+            foreach ($rows as $i => $candidate){
+                $tref = strtotime($rows[$rowNo]['datemodif']);
+                $tcdt = strtotime($candidate['datemodif']);
+                if ( $tcdt > $tref  && 
+                        stripos($candidate['titre'], 'Supplement') === false){
+                    $rowNo = $i;
+                }
+            }
+        }
+
         // Sélection du journal le plus récent
-        $row = $rows[0];
-        $titleRowNo = $this->findBestTitleJournalRow($rows);
+        
+        $row = $rows[$rowNo];
+        $titleRowNo = $this->findBestTitleJournalRow($rows, $rowNo);
 
         $jrn = new Journal();
         $jrn->perunilid = $row['perunilid_fusion'];
@@ -144,7 +140,7 @@ class PU1toPU2Command extends CConsoleCommand {
         $jrn->doi = $row['doi'];
         $jrn->coden = $row['coden'];
         $jrn->urn = $row['urn'];
-        $jrn->publiunil = $this->findPubliUnil($rows);
+        $jrn->publiunil = $this->findPubliUnil($rows,$rowNo);
         $jrn->url_rss = $row['rss'];
         $jrn->commentaire_pub = $this->findLastNonEmpty($rows, 'commentairepub');
         $jrn->parution_terminee = 0;
@@ -171,7 +167,7 @@ class PU1toPU2Command extends CConsoleCommand {
      * @param array $rows
      * @return int Numéro de la ligne qui contient les information pertinantes
      */
-    protected function findBestTitleJournalRow($rows) {
+    protected function findBestTitleJournalRow($rows, $rowNo) {
 
         // La si une notice contient un titre et un soustitre, on la conserve de préférence
         foreach ($rows as $i => $row) {
@@ -182,16 +178,16 @@ class PU1toPU2Command extends CConsoleCommand {
             }
         }
         // La ligne la plus récente est sélectionnée par défaut
-        return 0;
+        return $rowNo;
     }
 
-    protected function findPubliUnil($rows) {
+    protected function findPubliUnil($rows, $rowNo) {
         foreach ($rows as $row) {
             if ($row['publiunil'] == 1) {
                 return 1;
             }
         }
-        return 0;
+        return $rowNo;
     }
 
     /* -------------------------------------------------------------------------
@@ -268,7 +264,7 @@ class PU1toPU2Command extends CConsoleCommand {
      */
 
     protected function addPU1Data($row) {
-        $txt = "\n Données Perunil 1 : \n";
+        $txt = " || DONNEES PERUNIL 1 : ";
         $data = array(
             "Perunilid : " => $row['perunilid'],
             "Titre : " => $row['titre'],
@@ -294,13 +290,13 @@ class PU1toPU2Command extends CConsoleCommand {
             $txt .= $this->PU1DataLine($label, $value);
         }
 
-        return $txt;
+        return $txt . " || ";
     }
 
     protected function PU1DataLine($label, $value) {
         $value = trim($value);
         if (!empty($value)) {
-            return $label . $value . "; \n";
+            return $label . $value . "; ";
         } else {
             return null;
         }
@@ -354,6 +350,18 @@ class PU1toPU2Command extends CConsoleCommand {
         } else {
             echo "      - ERREUR lors de l'enregistrement de la $action du journal {$row['perunilid_fusion']} enregistré \n";
         }
+        
+        
+        // Création du lien vers la dernière modification
+        if ($action == "Création") {
+            $model->creation = $modif->id;
+        } elseif ($action == "Modification") {
+            $model->modification = $modif->id;
+        } else {
+            throw new Exception("$action n'est pas admis comme action de modification.");
+        }
+        $model->save(false);
+        
     }
 
     protected function findConstTableId($value, $field) {
@@ -365,7 +373,9 @@ class PU1toPU2Command extends CConsoleCommand {
         $class = ucfirst($field);
 
         $criteria = new CDbCriteria;
-        $criteria->addSearchCondition($field, $value);
+        $criteria->condition = $field . '=:field';
+        $criteria->params = array(':field'=>$value);
+        //$criteria->addSearchCondition($field, $value);
         $model = $class::model()->find($criteria);
 
         if (!empty($model)) {
