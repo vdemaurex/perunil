@@ -248,22 +248,30 @@
                 <th colspan="4" style="vertical-align: middle; text-align: center;">
                     <?php
                     if ($model->getIsNewRecord()) {
-                        echo CHtml::submitButton('Enregister le nouvel abonnement', array('class' => "btn btn-primary"));
-                    } else {
-                        echo CHtml::submitButton('Enregister l\'abonnement', array('class' => "btn btn-primary"));
-                    }
-
-                    if (!$model->getIsNewRecord()) {
+                        echo CHtml::submitButton('Créer le nouvel abonnement', array('class' => "btn btn-primary"));
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
-                        echo CHtml::button('Supprimer cet abonnement', array(
+                        echo CHtml::button('Annuler', array(
+                            'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(Yii::app()->request->urlReferrer) . '"',
+                            'class' => "btn btn-default"));
+                    } else {
+                        echo CHtml::submitButton('Enregister', array('class' => "btn btn-primary"));
+                        echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+                        echo CHtml::button('Annuler', array(
+                            'onclick' => 'js:document.location.href="' . CHtml::normalizeUrl(Yii::app()->request->requestUri) . '"',
+                            'class' => "btn btn-default"));
+                        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                        echo CHtml::button('Supprimer', array(
                             'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('/admin/abodelete/perunilid/' . $model->perunilid . '/aboid/' . $model->abonnement_id) . '"',
                             'confirm' => 'Êtes-vous sûr de vouloir définitivement supprimer cet abonnement ?',
                             'class' => "btn btn-danger"));
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;";
-                        echo CHtml::button('Dupliquer cet abonnement', array(
+                        echo CHtml::button('Dupliquer', array(
                             'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('/admin/aboduplicate/perunilid/' . $model->perunilid . '/aboid/' . $model->abonnement_id) . '"',
                             'confirm' => 'Une copie de cet abonnement sera crée, êtes-vous sûr de vouloir continuer ?',
-                            'class' => "btn btn-default"));
+                            'class' => "btn btn-success"));
+                        
+                        
+                        
                     }
                     ?></strong>
                 </th>
