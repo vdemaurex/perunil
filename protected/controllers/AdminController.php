@@ -65,6 +65,12 @@ class AdminController extends Controller {
     public function actionIndex() {
         $this->render('index');
     }
+    
+    public function actionEmptycache(){
+        Yii::app()->cache->flush();
+        Yii::app()->user->setFlash('success', "Le cache de la base de donnée à été réinitialisé.");
+        $this->redirect(Yii::app()->request->urlReferrer);
+    }
 
     /**
      * Traite le formulaire de modification par lot, affiche la confirmation et applique les modifications.
