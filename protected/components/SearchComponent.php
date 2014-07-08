@@ -16,7 +16,7 @@ class SearchComponent extends CComponent {
      * @var bool false par défaut.
      */
     public $depotlegal = false;
-    const depotlegal_idlocalisation = '23, 24, 25, 26';
+    const depotlegal_idlocalisation = '24, 25, 26, 27';
     
     const BiUM_Corecollection = 6;
     
