@@ -67,10 +67,9 @@ class Journal extends ModifModel {
 
     public function behaviors() {
         // Pas de suivit avec AuditTrail si on est en ligne de commande.
-        if (php_sapi_name() != 'cli'){
+        if (php_sapi_name() != 'cli') {
             return array('LoggableBehavior' => 'application.modules.auditTrail.behaviors.LoggableBehavior',);
-        }
-        else{
+        } else {
             return array();
         }
     }
@@ -115,24 +114,24 @@ class Journal extends ModifModel {
             'corecollection' => array(self::MANY_MANY, 'Biblio', 'corecollection(perunilid, biblio_id)'),
             'sujets' => array(self::MANY_MANY, 'Sujet', 'journal_sujet(perunilid, sujet_id)'),
             // Abonnements
-            'activeAllAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+            'activeAllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1',
-                'order'     => 'support'),
-            'activePaperAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'order' => 'support'),
+            'activePaperAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1 AND support = 2',
-                'order'     => 'support'),
-            'activeElecAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'order' => 'support'),
+            'activeElecAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1 AND support = 1',
-                'order'     => 'support'),
-            'AllAbos'    => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
-            'PaperAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'order' => 'support'),
+            'AllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
+            'PaperAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'support = 2',
-                'order'     => 'support'),
-            'ElecAbos'  => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'order' => 'support'),
+            'ElecAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'support = 1',
-                'order'     => 'support'),
+                'order' => 'support'),
         );
-        
+
         return array_merge($relations, parent::relations());
     }
 
@@ -171,7 +170,7 @@ class Journal extends ModifModel {
     }
 
     public function delete() {
-        
+
         // La supression des abonnements doit se faire manuellement.
         if (count($this->abonnements) > 0) {
             $listabos = "Liste des abonnement liés à ce journal : ";
@@ -180,13 +179,13 @@ class Journal extends ModifModel {
             }
             throw new CDbException("Impossible de supprimer ce journal (perunilid $this->perunilid) car des abonnements lui sont liés. \n<br/>$listabos");
         }
-        
+
         // Supression des sujets liés
         JournalSujet::model()->deleteAll("perunilid=:perunilid", array("perunilid" => $this->perunilid));
-        
+
         // Supression des corecollection liées
         Corecollection::model()->deleteAll("perunilid=:perunilid", array("perunilid" => $this->perunilid));
-   
+
         // Supression du journal
         return parent::delete();
     }
@@ -195,7 +194,9 @@ class Journal extends ModifModel {
         $sujet_str = "";
         foreach ($this->sujets as $s) {
             $sujet_str .= CHtml::link($s->nom_fr, array(
-                        'site/adv',
+                        'site/advSearchResults',
+                        'accessunil' => '1',
+                        'openaccess' => '1',
                         'advsearch' => "advsearch",
                         'sujet' => $s->sujet_id,
                     )) . "$delimiter ";
@@ -246,10 +247,9 @@ class Journal extends ModifModel {
         $criteria->compare('DEPRECATED_historique', $this->DEPRECATED_historique, true);
 
         return new CActiveDataProvider($this, array(
-                    'criteria' => $criteria,
-                ));
+            'criteria' => $criteria,
+        ));
     }
-    
 
     /**
      * Cherche dans le titre d'abord par titre, puis par mot. Renvoi la liste de journaux.
@@ -259,33 +259,32 @@ class Journal extends ModifModel {
      * @return array Liste des journaux qui correspondent aux critères de recherche
      */
     public function searchTitleWord($query, $withDepotLegat = false, $searchtype = SearchComponent::TBEGIN, $limite = 10) {
-        
+
         $criteria = new CDbCriteria();
         $criteria->select = "titre";
         $criteria->distinct = true;
         $criteria->alias = "j";
-        $criteria->join ="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
+        $criteria->join = "INNER JOIN abonnement AS a ON j.perunilid = a.perunilid ";
 
         // Suppression des abonnements du dépot légal
         if (!$withDepotLegat) {
-            $criteria->join .= "AND (a.localisation NOT IN (". self::DEPOTLEGALID.") OR a.localisation IS NULL)";
+            $criteria->join .= "AND (a.localisation NOT IN (" . self::DEPOTLEGALID . ") OR a.localisation IS NULL)";
         }
 
-        $cols = array('titre');//, 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
+        $cols = array('titre'); //, 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
 
         $tokens = array();
         // Par défaut, on cherche le début du titre, sauf si spécifier différement
-        if ($searchtype == SearchComponent::TWORDS){
+        if ($searchtype == SearchComponent::TWORDS) {
             foreach (explode(" ", $query) as $word) {
                 if ($word != "" || $word != "") {
                     $tokens[] = "%$word%";
                 }
             }
-        }
-        else{
+        } else {
             $tokens[] = "$query%";
         }
- 
+
         // Boucle sur toutes les colonnes
         foreach ($cols as $col) {
             // Boucle sur touts les mots de la recherche
@@ -299,14 +298,11 @@ class Journal extends ModifModel {
 
         // Nombre maximum de résultats
         $criteria->limit = $limite;
-   
+
 
         return Journal::model()->findAll($criteria);
     }
 
-    
-    
-    
     public function copy() {
         Yii::log("Duplication du journal " . $this->perunilid, 'info', 'copy' . __CLASS__);
         $new = new Journal();
