@@ -75,7 +75,7 @@ class AboUrlWidget extends CWidget {
             //echo CHtml::image($src, "Login", array('title' => "Protégé par mot de passe")) . "&nbsp;";
             echo '<span class="glyphicon glyphicon-lock"></span>&nbsp;';
             //echo CHtml::link(CHtml::encode($this->link_text), $this->url, array(
-            echo CHtml::link(CHtml::encode("Lire en ligne $this->link_text"), $this->url, array(
+            echo CHtml::link(CHtml::encode("Accéder en ligne $this->link_text"), $this->url, array(
                 'target' => '_blank',
                 'onclick' => '$("#' . $this->abo->abonnement_id . '").dialog("open"); return false;',
                 'title' => $this->link_title));
@@ -123,7 +123,7 @@ class AboUrlWidget extends CWidget {
             // Aucun mot de passe n'est requis
             echo CHtml::link(
                     //CHtml::encode($this->link_text), 
-                    CHtml::encode("Lire en ligne $this->link_text"), $this->url, array('target' => '_blank', 'title' => $this->link_title));
+                    CHtml::encode("Accéder en ligne $this->link_text"), $this->url, array('target' => '_blank', 'title' => $this->link_title));
         }
     }
 
