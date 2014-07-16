@@ -10,17 +10,16 @@ class SearchComponent extends CComponent {
     const TWORDS = 'twords'; // Recherche de tous les mots indépendamment
     const JRNALL = 'jrnall'; // Recherche dans tous les champs publiques de la table Journal
 
-    
-     /**
+    /**
      * Si true, les périodiques du dépot légal sont inculs dans la recherche.
      * @var bool false par défaut.
      */
+
     public $depotlegal = false;
+
     const depotlegal_idlocalisation = '24, 25, 26, 27';
-    
     const BiUM_Corecollection = 6;
-    
-    
+
     /**
      * Requête de la recherche avancée
      * @var array 
@@ -80,8 +79,6 @@ class SearchComponent extends CComponent {
      */
     public $support = 0;
 
-
-
     /**
      * Nombre de résultats affichés par page.
      * @var int 
@@ -115,7 +112,7 @@ class SearchComponent extends CComponent {
     public function setAdv_query_tab($query_tab) {
 
         $this->adv_query_tab = $query_tab;
-        //$this->adv_criteria = $this->advancedSearch();
+//$this->adv_criteria = $this->advancedSearch();
         $this->advancedSearch(); // => $this->adv_sql_command
     }
 
@@ -186,7 +183,7 @@ class SearchComponent extends CComponent {
     private function advancedSearch() {
         $this->q_summary = "";
 
-        // Vérification de l'existance et de la conformité de la requête.
+// Vérification de l'existance et de la conformité de la requête.
         if (!$this->adv_query_tab && !is_array($this->adv_query_tab)) {
             throw new CException("Recherche avancée impossible : requête n'est enregistrée.");
         }
@@ -197,19 +194,19 @@ class SearchComponent extends CComponent {
         $c->from('journal j');
 
 
-        // Jointure des abonnements
-        // Si public, seulement les journaux qui ont un abonnement
+// Jointure des abonnements
+// Si public, seulement les journaux qui ont un abonnement
         if (Yii::app()->user->isGuest) {
             $c->join('abonnement a', 'j.perunilid = a.perunilid AND a.titreexclu = 0 ');
         }
-        // Si admin, tous les journaux, même sans abonnement
+// Si admin, tous les journaux, même sans abonnement
         else {
             $c->leftJoin('abonnement a', 'j.perunilid = a.perunilid');
         }
 
 
 
-        // 1. Jointure en fonction des limitations demandées
+// 1. Jointure en fonction des limitations demandées
 
         if (isset($this->adv_query_tab['plateforme']) && $this->adv_query_tab['plateforme'] != '') {
             $c->join(
@@ -240,7 +237,7 @@ class SearchComponent extends CComponent {
         }
 
 
-        // Jointure avec la table sujet
+// Jointure avec la table sujet
         if (isset($this->adv_query_tab['sujet']) && $this->adv_query_tab['sujet'] != '') {
             $c->join(
                     "journal_sujet js", "js.perunilid = j.perunilid");
@@ -250,7 +247,7 @@ class SearchComponent extends CComponent {
             $this->query_summary("Sujet = « " . Sujet::model()->findByPk($this->adv_query_tab['sujet'])->nom_fr . " »");
         }
 
-        // Pour les critère d'accès, unil-chuv et openaccès, on ne traite que si c'est décoché
+// Pour les critère d'accès, unil-chuv et openaccès, on ne traite que si c'est décoché
         if (!isset($this->adv_query_tab['accessunil']) || !$this->adv_query_tab['accessunil']) {
             $c->andWhere("a.acces_elec_unil !=1 && a.acces_elec_chuv !=1");
             $this->query_summary("sans les abonnements UNIL et CHUV.");
@@ -268,10 +265,10 @@ class SearchComponent extends CComponent {
         foreach (array('C1', 'C2', 'C3') as $CN) {
             if (!isset($this->adv_query_tab[$CN]))
                 continue;
-            // nettoyage du champ
+// nettoyage du champ
             $this->simple_query_str = $this->adv_query_tab[$CN]['text'];
             $this->q = $this->clean_search($this->simple_query_str);
-            // si le champ ne contient rien , on abandonne ici.
+// si le champ ne contient rien , on abandonne ici.
             if ($this->q == "")
                 continue;
             else { // Traitement du champ CN
@@ -294,9 +291,9 @@ class SearchComponent extends CComponent {
 
                     case 'issn':
                         $issn = trim($this->simple_query_str);
-                        // Ajout du - comme 5ème caratère si nécessaire
-                        if (strpos($issn, '-') === FALSE){
-                           $issn = substr_replace($issn, '-', 4, 0); 
+// Ajout du - comme 5ème caratère si nécessaire
+                        if (strpos($issn, '-') === FALSE) {
+                            $issn = substr_replace($issn, '-', 4, 0);
                         }
                         $Cwhere .= " j.issn $like '%$issn%' OR j.issnl $like '%$issn%' ";
                         $this->query_summary("issn = $this->simple_query_str");
@@ -313,21 +310,21 @@ class SearchComponent extends CComponent {
                         }
 
                         $cols = array('j.titre', 'j.titre_abrege', 'j.titre_variante', 'j.soustitre', 'j.faitsuitea', 'j.devient');
-                        // Boucle sur toutes les colonnes
+// Boucle sur toutes les colonnes
                         foreach ($cols as $col) {
                             $Twhere .= " (";
-                            // Boucle sur touts les mots de la recherche
+// Boucle sur touts les mots de la recherche
                             foreach ($tokens as $word) {
                                 $Twhere .= "$col $like $word AND ";
                             }
-                            // Suppression d'un OR surnuméraire
+// Suppression d'un OR surnuméraire
                             $Twhere = trim($Twhere, "AND ");
                             $Twhere .= " ) OR ";
                         }
 
-                        // Suppression d'un AND surnuméraire
+// Suppression d'un AND surnuméraire
                         $Twhere = trim($Twhere, " OR ");
-                        // Ajout de la requête des titres à la requête générale
+// Ajout de la requête des titres à la requête générale
 
                         $Cwhere .= " ( $Twhere ) ";
                         $this->query_summary("titre : '$this->q'");
@@ -342,8 +339,8 @@ class SearchComponent extends CComponent {
                         }
                         $this->query_summary("éditeur ou plateforme contenant l'expression : « " . $this->q . " »");
 
-                        // Recherche dans la plateforme
-                        // Si la plateforme n'as pas encore été jointe, on l'associe.
+// Recherche dans la plateforme
+// Si la plateforme n'as pas encore été jointe, on l'associe.
                         if (!$plateformeAlreadyJointed) {
                             if (!(isset($this->adv_query_tab['plateforme']) && $this->adv_query_tab['plateforme'] != '')) {
                                 $c->leftjoin(
@@ -364,19 +361,19 @@ class SearchComponent extends CComponent {
             }
         }
 
-        // Si une requête à été générée pour les CN, il faut enlever les conjonction surnuméraires
+// Si une requête à été générée pour les CN, il faut enlever les conjonction surnuméraires
         if ($Cwhere != "") {
             $Cwhere = trim($Cwhere, "OR ");
             $Cwhere = trim($Cwhere, "AND ");
-            // Ajour de Cwhere à la requête générale
+// Ajour de Cwhere à la requête générale
             $c->andWhere($Cwhere);
         }
 
-        // Ajout des abonnements du dépot légal
+// Ajout des abonnements du dépot légal
         if ($this->depotlegal) {
             $this->query_summary("avec les périodiques du dépot légal BCU");
         } else {
-            $c->andWhere("(a.localisation NOT IN (". self::depotlegal_idlocalisation. ") OR a.localisation IS NULL)");
+            $c->andWhere("(a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL)");
         }
 
 
@@ -386,9 +383,9 @@ class SearchComponent extends CComponent {
 
         $this->adv_sql_command = $c;
 
-        //return $criteria;
-        // Gérération d'une requête count
-        //$c->select = "SELECT DISTINCT COUNT(*) ";
+//return $criteria;
+// Gérération d'une requête count
+//$c->select = "SELECT DISTINCT COUNT(*) ";
     }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -430,10 +427,10 @@ class SearchComponent extends CComponent {
             $this->simple_dp = new CArrayDataProvider($rawData, array(
                 'keyField' => 'perunilid',
                 //'sort' => array(
-                //    'attributes' => array(
-                //        'id', 'username', 'email',
-                //    ),
-                //),
+//    'attributes' => array(
+//        'id', 'username', 'email',
+//    ),
+//),
                 'pagination' => array(
                     'pageSize' => $this->pagesize,
                 ),
@@ -509,8 +506,8 @@ class SearchComponent extends CComponent {
             $this->search_type = self::TBEGIN;
 
 // Suppression des anciennes requêtes
-        //$this->simple_criteria = null;
-        //$this->simple_sql_query = null;
+//$this->simple_criteria = null;
+//$this->simple_sql_query = null;
 // Création des requêtes.
         switch ($this->search_type) {
             case self::TBEGIN:
@@ -521,10 +518,10 @@ class SearchComponent extends CComponent {
             case self::TWORDS:
                 if ($this->q_summary == "")
                     $this->query_summary("Recherche d'un titre contenant au moins un de ces mots : '$this->q'");
-                //$criteria = new CDbCriteria();
-                //$this->joinAbo($criteria);
+//$criteria = new CDbCriteria();
+//$this->joinAbo($criteria);
                 $this->simpletitleSearch();
-                //$this->simple_criteria = $criteria;
+//$this->simple_criteria = $criteria;
                 break;
             case self::JRNALL:
                 $this->query_summary("Recherche dans l'ensemble des champs de la base Pérunil des mots '$this->q'");
@@ -570,6 +567,10 @@ class SearchComponent extends CComponent {
         $criteria->distinct = true;
     }
 
+    
+    
+    
+    
     /**
      * Recherche dans les champs titre de la table journal : titre, 
      * titre_abrege, titre_variante, soustitre.
@@ -580,42 +581,82 @@ class SearchComponent extends CComponent {
     private function simpletitleSearch() {
 
         $select = "SELECT DISTINCT j.perunilid ";
-        //$count = "SELECT DISTINCT COUNT(*) ";
+//$count = "SELECT DISTINCT COUNT(*) ";
         $q = "FROM  journal AS j ";
 
-        // Jointure de l'abonnement pour la sélection du support
-        // La sélection du dépot legal impose de faire la jointure avec les abonnements dans tous les cas.
+// Jointure de l'abonnement pour la sélection du support
+// La sélection du dépot legal impose de faire la jointure avec les abonnements dans tous les cas.
 //        if ($this->support > 0 || $this->depotlegal) {
         if (Yii::app()->user->isGuest) {
             $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid AND a.titreexclu = 0 ";
         }
-        // Si admin, tous les journaux, même sans abonnement
+// Si admin, tous les journaux, même sans abonnement
         else {
             $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
         }
 
-        // Limitation au support
+// Limitation au support
         if ($this->support > 0) {
             $q .= "AND a.support = $this->support ";
             $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
         }
-        // Ajout des abonnements du dépot légal
+// Ajout des abonnements du dépot légal
         if ($this->depotlegal) {
 
             $this->query_summary("avec les périodiques du dépot légal BCU");
         } else {
 
-            $q .= " AND (a.localisation NOT IN (".self::depotlegal_idlocalisation.") OR a.localisation IS NULL) ";
+            $q .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
         }
 //        }
-        // Condition
+// Condition
 
         $q .= "WHERE ";
 
-        //$like = $use_not_like ? "NOT LIKE" : "LIKE";
-        //$like = "LIKE";
         $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
+        //$cols = array('titre');
 
+
+        if ($this->search_type == self::TEXACT || $this->search_type == self::TBEGIN) {
+            if ($this->search_type == self::TEXACT) {
+                $word = "$this->simple_query_str"; //"$this->q"; //"$this->simple_query_str";
+            } elseif ($this->search_type == self::TBEGIN) {
+                $word = "$this->simple_query_str%";
+                $cols = array('titre');
+            }
+            // Boucle sur toutes les colonnes
+            foreach ($cols as $col) {
+                if (!empty($word)) {
+                    $q .= " $col LIKE " . Yii::app()->db->quoteValue($word) . " OR ";
+                }
+            }
+            $q = trim($q, "OR ");
+            
+        } else { // Recherche de chaque mot indépendamment.
+            $words = explode(" ", $this->q);
+            foreach ($words as $word) {
+                if (empty($word)) {
+                    continue;
+                }
+                $wq = "";
+                
+                // Pour chaque colone, on cherche les mots
+                foreach ($cols as $col) {
+                    //$cq = "$col LIKE '%$word%'";
+                    $cq = ' `' . $col . '` LIKE "' . $word . '%" OR ';
+                    $cq .= ' `' . $col . '` LIKE "% ' . $word . '%"  ';
+
+                    $wq .= " $cq OR ";
+//                    
+                }// Fin boucle mots
+                $wq = trim($wq, "OR ");
+                $q .= " ( $wq ) AND";
+            } // Fin boucle colonne
+        }
+        
+
+
+/*       ANCIENNE RECHERCHE AVEC LES REGEXP
         $tokens = array();
         if ($this->search_type == self::TEXACT) {
             $tokens[] = "$this->simple_query_str"; //"$this->q"; //"$this->simple_query_str";
@@ -626,8 +667,10 @@ class SearchComponent extends CComponent {
             foreach (explode(" ", $this->q) as $word) {
                 if ($word != "" || $word != "") {
                     //$tokens[] = "%$word%"; //Recherche en milieu de mots
-                    //$tokens[] = "$word%"; // Recherche en début de mots
-                        $tokens[] ='"[[:<:]]' . addslashes(quotemeta($word)) . '"';
+                    $tokens[] = "wine_name = 'Faugères'
+   OR wine_name LIKE 'Faugères %'
+   OR wine_name LIKE '% Faugères'$word%"; // Recherche en début de mots
+                     //$tokens[] ='"[[:<:]]' . addslashes(quotemeta($word)) . '"';
                 }
             }
         }
@@ -652,23 +695,32 @@ class SearchComponent extends CComponent {
                 $q .= " ( $wq ) OR ";
             }
         }
-        // Suppression d'un AND surnuméraire
-        $q = trim($q, "OR ");
+
+ *  */
+        
+        
+        
+// Suppression d'un OR surnuméraire
+        $q = trim($q, "AND ");
 
         $q .= " ORDER BY titre ";
-
-        // Nombre maximum de résultats
+// Nombre maximum de résultats
         if ($this->maxresults > 0) {
             $q .= " LIMIT " . $this->maxresults;
         }
 
-        // Fin de la requête
+// Fin de la requête
         $q .= ";";
 
-        //$this->simple_sql_query_count = $count . $q;
+//$this->simple_sql_query_count = $count . $q;
         $this->simple_sql_query = $select . $q;
     }
 
+    
+    
+    
+    
+    
     private function titleSearch($criteria, $not_like = false) {
         $like = $not_like ? "NOT LIKE" : "LIKE";
 
@@ -686,11 +738,11 @@ class SearchComponent extends CComponent {
         }
 
         $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
-        // Boucle sur toutes les colonnes
+// Boucle sur toutes les colonnes
         foreach ($tokens as $word) {
             $q = "";
             if ($word != "") {
-                // Boucle sur touts les mots de la recherche
+// Boucle sur touts les mots de la recherche
                 foreach ($cols as $col) {
                     $q .= "$col $like " . Yii::app()->db->quoteValue($word) . " OR ";
                 }
@@ -727,43 +779,43 @@ class SearchComponent extends CComponent {
 
     private function allSearch() {
 
-        //
-        // Jointure de tous les tables liées au journal
-        //
+//
+// Jointure de tous les tables liées au journal
+//
         $select = "SELECT DISTINCT j.perunilid ";
-        //$count = "SELECT DISTINCT COUNT(*) ";
+//$count = "SELECT DISTINCT COUNT(*) ";
         $q = "FROM  journal AS j ";
 
-        // Jointure pour corecollection
-        // $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
-        // $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
-        // Jointure pour les sujets
-        // $q .="LEFT JOIN journal_sujet AS js ON j.perunilid = js.perunilid ";
-        // $q .="LEFT JOIN sujet AS sj ON js.sujet_id = sj.sujet_id ";
-        // Jointure des abonnements
-        // Si public, seulement les journaux qui ont un abonnement
+// Jointure pour corecollection
+// $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
+// $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
+// Jointure pour les sujets
+// $q .="LEFT JOIN journal_sujet AS js ON j.perunilid = js.perunilid ";
+// $q .="LEFT JOIN sujet AS sj ON js.sujet_id = sj.sujet_id ";
+// Jointure des abonnements
+// Si public, seulement les journaux qui ont un abonnement
         if (Yii::app()->user->isGuest) {
             $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid  AND a.titreexclu = 0 ";
         }
-        // Si admin, tous les journaux, même sans abonnement
+// Si admin, tous les journaux, même sans abonnement
         else {
             $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
         }
 
-        // Limitation au support
+// Limitation au support
         if ($this->support > 0) {
             $q .= "AND a.support = $this->support ";
             $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
         }
 
-        // Ajout des abonnements du dépot légal
+// Ajout des abonnements du dépot légal
         if ($this->depotlegal) {
             $this->query_summary("avec les périodiques du dépot légal BCU");
         } else {
             $q .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
         }
 
-        // Jointure des tables liées à abonnement
+// Jointure des tables liées à abonnement
         $q .="LEFT JOIN plateforme   AS pl ON a.plateforme   = pl.plateforme_id ";
         $q .="LEFT JOIN editeur      AS ed ON a.editeur      = ed.editeur_id ";
         $q .="LEFT JOIN histabo      AS ha ON a.histabo      = ha.histabo_id ";
@@ -774,13 +826,13 @@ class SearchComponent extends CComponent {
         $q .="LEFT JOIN licence      AS li ON a.licence      = li.licence_id ";
 
 
-        //
-        // Critère de recherche
-        //
+//
+// Critère de recherche
+//
         $q .="WHERE "; //j.perunilid = 53857 OR  j.perunilid = 54895; ";
-        // Colonnes de recherche
+// Colonnes de recherche
         $cols = array(
-            // Journal
+// Journal
             "j.perunilid",
             "j.titre",
             "j.soustitre",
@@ -819,12 +871,12 @@ class SearchComponent extends CComponent {
             "fo.format",
             "li.licence",
                 //Sujet
-                //"sj.nom_fr",
-                // Biblio
-                //"bib.biblio"
+//"sj.nom_fr",
+// Biblio
+//"bib.biblio"
         );
 
-        // Si admin on ajoute quelques champs
+// Si admin on ajoute quelques champs
         if (!Yii::app()->user->isGuest) {
             $cols[] = "j.DEPRECATED_sujetsfm";
             $cols[] = "j.DEPRECATED_fmid";
@@ -832,34 +884,34 @@ class SearchComponent extends CComponent {
             $cols[] = "a.commentaire_pro";
         }
 
-        // Boucle sur toutes les colonnes
+// Boucle sur toutes les colonnes
         foreach (explode(" ", $this->q) as $word) {
             if ($word != "") {
                 $q .= " (";
-                // Boucle sur touts les mots de la recherche
+// Boucle sur touts les mots de la recherche
                 foreach ($cols as $col) {
                     $q .= "$col LIKE " . Yii::app()->db->quoteValue("%$word%") . " OR ";
                 }
             }
-            // Suppression d'un OR surnuméraire
+// Suppression d'un OR surnuméraire
             $q = trim($q, "OR ");
             $q .= " ) AND ";
         }
 
-        // Suppression d'un AND surnuméraire
+// Suppression d'un AND surnuméraire
         $q = trim($q, "AND ");
 
         $q .= " ORDER BY j.titre ";
 
-        // Nombre maximum de résultats
+// Nombre maximum de résultats
         if ($this->maxresults > 0) {
             $q .= " LIMIT " . $this->maxresults;
         }
 
-        // Fin de la requête
+// Fin de la requête
         $q .= ";";
 
-        //$this->simple_sql_query_count = $count . $q;
+//$this->simple_sql_query_count = $count . $q;
         $this->simple_sql_query = $select . $q;
     }
 
@@ -899,7 +951,7 @@ class SearchComponent extends CComponent {
         $var = str_ireplace(". ", " ", $var);
         $var = str_ireplace(": ", " ", $var);
         $var = str_ireplace(":", " ", $var);
-        //$var = str_ireplace("-", " ", $var); // Pour les issn, il ne faut pas retirer le -
+//$var = str_ireplace("-", " ", $var); // Pour les issn, il ne faut pas retirer le -
         $var = str_ireplace(";", "", $var);
         $var = str_ireplace(" (the) ", " ", $var);
         $var = str_ireplace(" the ", " ", $var);
@@ -950,7 +1002,7 @@ class SearchComponent extends CComponent {
 
     public function setAdmin_query_tab($query_tab) {
         $this->admin_query_tab = $query_tab;
-        // $this->refreshAdminCriteria();
+// $this->refreshAdminCriteria();
     }
 
     public function setAdmin_affichage($affichage = 'abonnement') {
@@ -960,7 +1012,7 @@ class SearchComponent extends CComponent {
         } else {
             $this->admin_affichage = 'abonnement';
         }
-        // $this->refreshAdminCriteria();
+// $this->refreshAdminCriteria();
     }
 
     public function getAdmin_affichage() {
@@ -1104,20 +1156,19 @@ class SearchComponent extends CComponent {
             }
         }
 
-        if (isset($qt['corecollection'])){
+        if (isset($qt['corecollection'])) {
             if ($qt['corecollection'] == 'VRAI') { // Joindre la corecollection BiUM
                 $criteria->join .= 'INNER JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id = ' . self::BiUM_Corecollection;
                 $this->query_summary("avec la core collection BiUM");
-            }
-            elseif($qt['corecollection'] == 'FAUX'){ // Exclure la corecollection BiUM
-                $criteria->addCondition("t.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = ". self::BiUM_Corecollection .")");
+            } elseif ($qt['corecollection'] == 'FAUX') { // Exclure la corecollection BiUM
+                $criteria->addCondition("t.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = " . self::BiUM_Corecollection . ")");
                 $this->query_summary("sans la core collection BiUM");
-                //$criteria->join .= 'LEFT JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id != ' . self::BiUM_Corecollection;
+//$criteria->join .= 'LEFT JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id != ' . self::BiUM_Corecollection;
             }
         }
-        // Jointure pour corecollection
-        // $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
-        // $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
+// Jointure pour corecollection
+// $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
+// $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
 // Modifications : Si un champ concernant le modifications est rempli
 // 1. Création d'une requête pour la table modification
 // 2. Liste de Perunilid ou d'abonnement_id comme resultat de la requête
@@ -1270,7 +1321,7 @@ class SearchComponent extends CComponent {
 // Recherche exacte : "= $term"
         $exact_fields = @array(
             't.openaccess' => $qt['openaccess'],
-            't.publiunil'  => $qt['publiunil'],
+            't.publiunil' => $qt['publiunil'],
             't.parution_terminee' => $qt['parution_terminee'],
             'abonnements.licence' => $qt['licence'],
             'abonnements.statutabo' => $qt['statutabo'],
@@ -1293,7 +1344,7 @@ class SearchComponent extends CComponent {
             'abonnements.acces_elec_unil' => $qt['acces_elec_unil'],
         );
         foreach ($exact_fields as $column => $value) {
-            //$value = trim($value);
+//$value = trim($value);
             if (strlen(trim($value)) > 0) {
                 $criteria->addCondition("$column = '$value'");
                 $this->query_summary("$column = $value");
@@ -1351,7 +1402,7 @@ class SearchComponent extends CComponent {
         }
 
         if (isset($qt['corecollection']) && trim($qt['corecollection']) == '1') {
-            // FIXME : id biblio en dur !
+// FIXME : id biblio en dur !
             $criteria->join .= 'INNER JOIN corecollection AS cc ON j.perunilid = cc.perunilid AND cc.biblio_id = 6';
         }
 
