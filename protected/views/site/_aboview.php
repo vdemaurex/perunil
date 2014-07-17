@@ -26,10 +26,10 @@ $fields = array(
     //array('name' => 'url_site', 'value' => $url, 'type' => 'raw', 'label' => "URL du périodique"),
     //'url_site',
     'package',
-     array(
-        'name' => 'url_site', 
+    array(
+        'name' => 'url_site',
         'value' => CHtml::link($abo->url_site, $abo->url_site, array('target' => '_blank')), 'type' => 'raw', 'label' => "URL du périodique"
-     ),
+    ),
     'no_abo',
     'etatcoll',
     'cote',
@@ -54,25 +54,34 @@ if ($abo->support == 1) {
         array('name' => 'acces_elec_unil', 'label' => 'Accès depuis l\'UNIL', 'type' => 'boolean'),
         array('name' => 'acces_elec_chuv', 'label' => 'Accès depuis le CHUV', 'type' => 'boolean'),
         'embargo_mois',
-            ));
+    ));
 }
 
 
 
 // Ajout des détails réservés aux utilisateurs authentifiés
-if(!Yii::app()->user->isGuest){
-   
-    $fields = array_merge(
-            $fields, array(
-                array('name' => 'acces_user',  'label' => "Nom d'utilisateur"),
-                array('name' => 'acces_pwd',   'label' => "Mot de passe"),
-                'commentaire_pro',
-                array('name' => 'titreexclu',   'label' => 'Titre exclu', 'type' => 'boolean'),
-                array('name' => 'modification', 'label' => 'Dernière modification', 'value' => $abo->fieldToString('modification')),
-                array('name' => 'creation',     'label' => 'Date de création',      'value' => $abo->fieldToString('creation')),
-                ));
-}
+if (!Yii::app()->user->isGuest) {
 
+    $fields[] = array('name' => 'acces_user', 'label' => "Nom d'utilisateur");
+    $fields[] = array('name' => 'acces_pwd', 'label' => "Mot de passe");
+    $fields[] = 'commentaire_pro';
+    $fields[] = array('name' => 'titreexclu', 'label' => 'Titre exclu', 'type' => 'boolean');
+    
+    if (!empty($abo->perunilid_old)){
+    $fields[] = array(
+            'name' => 'url_site',
+            'value' => CHtml::link(
+                    $abo->perunilid_old ." (ouvrir dans Perunil 1)", 
+                    "http://www2.unil.ch/perunil/detail.php?id=" . $abo->perunilid_old, 
+                    array('target' => '_blank')), 
+                    'type' => 'raw', 
+                    'label' => "Ancien perunilid (version 1)"
+        );
+    }
+    
+    $fields[] = array('name' => 'modification', 'label' => 'Dernière modification', 'value' => $abo->fieldToString('modification'));
+    $fields[] = array('name' => 'creation', 'label' => 'Date de création', 'value' => $abo->fieldToString('creation'));
+}
 
 
 // Suppression des champs qui ne contiennent aucune information
