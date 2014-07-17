@@ -120,6 +120,7 @@ if ($data->soustitre):
                     $txthd .= '<small>';
                     $txtsj = "";
                     $txtft = '</small>';
+                    $i = 0;
                     foreach ($data->sujets as $s) {
                         $txtsj .= CHtml::link($s->nom_fr, array(
                                     'site/advSearchResults',
@@ -129,6 +130,11 @@ if ($data->soustitre):
                                     'sujet' => $s->sujet_id,
                                 ));
                         $txtsj .= ", ";
+                        $i++;
+                        if ($i > 8){
+                            $txtsj .= "... ";
+                            break;
+                        }
                     }
                     if (!empty($txtsj))
                         echo $txthd . trim($txtsj, ", ") . $txtft;
@@ -145,7 +151,7 @@ foreach ($abos as $i => $abo) {
 
             <td>
                 <div class="col-md-1 hidden-xs hidden-sm">&nbsp;</div>
-                <div class="col-md-3">
+                <div class="col-md-2">
     <?php
     echo $abo->htmlImgTag();
     echo $abo->htmlImgTitreExclu();
@@ -155,9 +161,12 @@ foreach ($abos as $i => $abo) {
                     $this->widget('AboUrlWidget', array('abo' => $abo, 'jrn' => $data));
                     ?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <?
                     // Etat de la collection
+                    if (!empty($abo->commentaire_etatcoll)){
+                        echo CHtml::encode($abo->commentaire_etatcoll) . " : ";
+                    }
                     echo CHtml::encode($abo->etatcoll);
                     ?>
                 </div>
