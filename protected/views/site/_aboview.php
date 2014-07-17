@@ -31,6 +31,7 @@ $fields = array(
         'value' => CHtml::link($abo->url_site, $abo->url_site, array('target' => '_blank')), 'type' => 'raw', 'label' => "URL du périodique"
     ),
     'no_abo',
+    'commentaire_etatcoll',
     'etatcoll',
     'cote',
     'editeur_code',
@@ -69,13 +70,13 @@ if (!Yii::app()->user->isGuest) {
     
     if (!empty($abo->perunilid_old)){
     $fields[] = array(
-            'name' => 'url_site',
+            'name' => 'perunilid_old',
             'value' => CHtml::link(
                     $abo->perunilid_old ." (ouvrir dans Perunil 1)", 
                     "http://www2.unil.ch/perunil/detail.php?id=" . $abo->perunilid_old, 
                     array('target' => '_blank')), 
                     'type' => 'raw', 
-                    'label' => "Ancien perunilid (version 1)"
+                    'label' => "Perunilid version 1"
         );
     }
     
