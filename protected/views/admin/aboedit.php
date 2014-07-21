@@ -29,7 +29,7 @@ echo "<h1>$jrn->titre</h1>";
        // Si le journal contient des abonnements, on les affiche
         if (isset($jrn->abonnements)) {
             
-            foreach ($jrn->abonnements as $abo) {
+            foreach (array_reverse($jrn->AllAbos) as $abo) {
                 // Affchage de l'icone du support
                 $abotitle = $abo->htmlImgTag();
                 $abotitle .= $abo->htmlImgTitreExclu(). "&nbsp;";

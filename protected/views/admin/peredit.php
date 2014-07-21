@@ -21,8 +21,8 @@ if ($model->getIsNewRecord()) {
     <ul class="nav nav-pills nav-stacked">
         <li class="active"><a href="#" rel="url1" ><strong>Fiche journal</strong></a></li> 
         <?php
-        if (isset($model->abonnements)) {
-            foreach ($model->abonnements as $abo) {
+        if (isset($model->AllAbos)) {
+            foreach (array_reverse($model->AllAbos) as $abo) {
                 // Affchage de l'icone du support
                 $abotitle = $abo->htmlImgTag();
                 $abotitle .= $abo->htmlImgTitreExclu() . "&nbsp;";
