@@ -23,7 +23,7 @@ if (Yii::app()->user->isGuest) {
 }
 
 // Classement des abonnement en fonction du support papier ou électronique
-usort($abos, array("Abonnement", "compare"));
+//usort($abos, array("Abonnement", "compare"));
 
 
 // On affiche pas les titre qui ne possèdent aucun abonnement actif.

@@ -36,7 +36,7 @@ foreach ($fields as $key => $field) {
 }
 
 echo '<ul class="ui-listview" data-role="listview">';
-foreach ($model->activeabos as $abo) {
+foreach ($model->activeAllAbos as $abo) {
     ?>
     <li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c" data-theme="c" data-iconpos="right" data-icon="arrow-r" data-wrapperels="div" data-iconshadow="true" data-shadow="false" data-corners="false">
         <div class="ui-btn-inner ui-li">

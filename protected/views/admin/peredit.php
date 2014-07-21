@@ -22,7 +22,7 @@ if ($model->getIsNewRecord()) {
         <li class="active"><a href="#" rel="url1" ><strong>Fiche journal</strong></a></li> 
         <?php
         if (isset($model->AllAbos)) {
-            foreach (array_reverse($model->AllAbos) as $abo) {
+            foreach ($model->AllAbos as $abo) {
                 // Affchage de l'icone du support
                 $abotitle = $abo->htmlImgTag();
                 $abotitle .= $abo->htmlImgTitreExclu() . "&nbsp;";

@@ -87,10 +87,10 @@ $tabviewparam = array();
 $i = 1;
 
 if (Yii::app()->user->isGuest) {
-    $abos = array_reverse($model->activeabos);
+    $abos = $model->activeAllAbos;
 } else {
     // Admin, inculre les abo exculs
-    $abos = array_reverse($model->AllAbos);
+    $abos = $model->AllAbos;
 }
 
 foreach ($abos as $abo) {

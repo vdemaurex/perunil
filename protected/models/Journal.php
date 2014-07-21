@@ -107,30 +107,45 @@ class Journal extends ModifModel {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         $relations = array(
-            'abonnements' => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
-            'activeabos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
-                'condition' => 'titreexclu != 1',
-                'order' => 'support'),
+            
             'corecollection' => array(self::MANY_MANY, 'Biblio', 'corecollection(perunilid, biblio_id)'),
             'sujets' => array(self::MANY_MANY, 'Sujet', 'journal_sujet(perunilid, sujet_id)'),
+            
+            
+            
+            //
             // Abonnements
+            //
+            
+            // Recherche simple
+            'abonnements' => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
+            
+            
+            //      Recherche avec tris SANS les titres exclus
             'activeAllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1',
-                'order' => 'support ASC, etatcoll_fina ASC'),
+                'order' => 'support ASC, etatcoll_fina DESC, etatcoll_deba ASC'),
+            
             'activePaperAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1 AND support = 2',
-                'order' => 'support ASC, etatcoll_fina ASC'),
+                'order' => 'etatcoll_fina DESC, etatcoll_deba ASC'),
+            
             'activeElecAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1 AND support = 1',
-                'order' => 'support ASC, etatcoll_fina ASC'),
+                'order' => 'etatcoll_fina DESC, etatcoll_deba ASC'),
+            
+            
+            //      Recherche avec tris AVEC les titre exclus
             'AllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
-                'order' => 'support ASC, etatcoll_fina ASC'),
+                'order' => 'support ASC, etatcoll_fina DESC, etatcoll_deba ASC'),
+            
             'PaperAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'support = 2',
-                'order' => 'support ASC, etatcoll_fina ASC'),
+                'order' => 'etatcoll_fina DESC, etatcoll_deba ASC'),
+            
             'ElecAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'support = 1',
-                'order' => 'support ASC, etatcoll_fina ASC'),
+                'order' => 'etatcoll_fina DESC, etatcoll_deba ASC'),
         );
 
         return array_merge($relations, parent::relations());
@@ -173,9 +188,9 @@ class Journal extends ModifModel {
     public function delete() {
 
         // La supression des abonnements doit se faire manuellement.
-        if (count($this->abonnements) > 0) {
+        if (count($this->AllAbos) > 0) {
             $listabos = "Liste des abonnement liés à ce journal : ";
-            foreach ($this->abonnements as $abo) {
+            foreach ($this->AllAbos as $abo) {
                 $listabos .= $abo->abonnement_id . "; ";
             }
             throw new CDbException("Impossible de supprimer ce journal (perunilid $this->perunilid) car des abonnements lui sont liés. \n<br/>$listabos");
