@@ -1,6 +1,6 @@
 <?php $this->pageTitle = Yii::app()->name; ?>
 
-<h2 style="font-weight: normal;">Recherche de périodiques disponibles sur les sites UNIL, CHUV et BCUL</h2>
+<h2 id="title-simplesearch">Recherche de périodiques disponibles sur les sites UNIL, CHUV et BCUL</h2>
 <br/>
 
 <p class="text-center">
