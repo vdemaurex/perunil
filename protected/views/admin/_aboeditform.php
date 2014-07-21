@@ -98,17 +98,17 @@
             <tr class="odd">
                 <th>Début de la collection</th>
                 <td colspan="3">
-                    Année <?php echo $form->textField($model, 'etatcoll_deba', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_deba'); ?> | 
-                    Volume <?php echo $form->textField($model, 'etatcoll_debv', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_debv'); ?> | 
-                    Numéro <?php echo $form->textField($model, 'etatcoll_debf', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_debf'); ?>
+                    Année <?php echo $form->textField($model, 'etatcoll_deba', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '6')); ?><?php echo $form->error($model, 'etatcoll_deba'); ?> | 
+                    Volume <?php echo $form->textField($model, 'etatcoll_debv', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '6')); ?><?php echo $form->error($model, 'etatcoll_debv'); ?> | 
+                    Numéro <?php echo $form->textField($model, 'etatcoll_debf', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '6')); ?><?php echo $form->error($model, 'etatcoll_debf'); ?>
                 </td>
             </tr>
             <tr class="even">
                 <th>Fin de la collection</th>
                 <td colspan="3">
-                    Année <?php echo $form->textField($model, 'etatcoll_fina', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_fina'); ?> | 
-                    Volume <?php echo $form->textField($model, 'etatcoll_finv', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_finv'); ?> | 
-                    Numéro <?php echo $form->textField($model, 'etatcoll_finf', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '4')); ?><?php echo $form->error($model, 'etatcoll_finf'); ?>
+                    Année <?php echo $form->textField($model, 'etatcoll_fina', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '6')); ?><?php echo $form->error($model, 'etatcoll_fina'); ?> | 
+                    Volume <?php echo $form->textField($model, 'etatcoll_finv', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '6')); ?><?php echo $form->error($model, 'etatcoll_finv'); ?> | 
+                    Numéro <?php echo $form->textField($model, 'etatcoll_finf', array('class' => "form-control input-sm", 'style' => "width : 100px; display: inline;", 'size' => '4', 'maxlength' => '6')); ?><?php echo $form->error($model, 'etatcoll_finf'); ?>
                 </td>
             </tr>
             <tr class="odd">
