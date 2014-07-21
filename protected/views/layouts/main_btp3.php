@@ -17,7 +17,7 @@
         <![endif]-->
 
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
-
+        <link rel="icon" type="image/png" href="<?php echo Yii::app()->request->baseUrl; ?>/favicon.ico" />
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
         <?php
@@ -141,9 +141,9 @@
                                             'links' => $this->breadcrumbs,
                                         ));
                                         ?><!-- breadcrumbs -->
-<?php endif ?>
+                                    <?php endif ?>
 
-<?php echo $content; ?>
+                                    <?php echo $content; ?>
 
                                     <div class="clear"></div>
 
@@ -173,13 +173,13 @@
                                             <?php echo CHtml::mailto('Contact', 'wwwperun@unil.ch'); ?> &nbsp;-&nbsp;
                                             <?php echo CHtml::link('Informations légales', 'http://www.unil.ch/central/home/legalinformation.html'); ?> &nbsp;-&nbsp;
                                             <?php echo CHtml::link('Impressum', 'http://www.unil.ch/central/home/impressum.html'); ?> &nbsp;-&nbsp;
-<?php
-if (Yii::app()->user->isGuest) {
-    echo CHtml::link('Login', array('/site/login'), array('visible' => Yii::app()->user->isGuest));
-} else {
-    echo CHtml::link('Logout (' . Yii::app()->user->name . ')', array('/site/logout'), array('visible' => !Yii::app()->user->isGuest));
-}
-?> &nbsp;
+                                            <?php
+                                            if (Yii::app()->user->isGuest) {
+                                                echo CHtml::link('Login', array('/site/login'), array('visible' => Yii::app()->user->isGuest));
+                                            } else {
+                                                echo CHtml::link('Logout (' . Yii::app()->user->name . ')', array('/site/logout'), array('visible' => !Yii::app()->user->isGuest));
+                                            }
+                                            ?> &nbsp;
                                         </div>
                                     </div><!-- footer -->
 
