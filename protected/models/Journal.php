@@ -116,20 +116,21 @@ class Journal extends ModifModel {
             // Abonnements
             'activeAllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1',
-                'order' => 'support'),
+                'order' => 'support ASC, etatcoll_fina ASC'),
             'activePaperAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1 AND support = 2',
-                'order' => 'support'),
+                'order' => 'support ASC, etatcoll_fina ASC'),
             'activeElecAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'titreexclu != 1 AND support = 1',
-                'order' => 'support'),
-            'AllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid'),
+                'order' => 'support ASC, etatcoll_fina ASC'),
+            'AllAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
+                'order' => 'support ASC, etatcoll_fina ASC'),
             'PaperAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'support = 2',
-                'order' => 'support'),
+                'order' => 'support ASC, etatcoll_fina ASC'),
             'ElecAbos' => array(self::HAS_MANY, 'Abonnement', 'perunilid',
                 'condition' => 'support = 1',
-                'order' => 'support'),
+                'order' => 'support ASC, etatcoll_fina ASC'),
         );
 
         return array_merge($relations, parent::relations());
