@@ -102,6 +102,15 @@ body
     right: 273px;
 }
 
+#title-simplesearch {
+    color: rgb(2, 99, 144);
+    font-family: sans-serif;
+    font-weight: bold;
+    margin: auto;
+    text-align: center;
+    width: 750px;
+    }
+
 /******************************************************************************
  ** BARRE DE NAVIGATION
 *******************************************************************************/
