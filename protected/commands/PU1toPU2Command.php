@@ -5,8 +5,6 @@ ini_set("memory_limit", "2400M");
 
 class PU1toPU2Command extends CConsoleCommand {
 
-    
-
     public function getHelp() {
         $out = "Effectue les tâches de migrations pour transformer la base PU1 en PU2. La base PU1 doit comporter le champs \n\n";
         return $out . parent::getHelp();
@@ -20,8 +18,8 @@ class PU1toPU2Command extends CConsoleCommand {
         echo "****************************************************************\n\n";
 
         print "Le script va réinitialiser la base. Tapez ENTER pour continuer.";
-        fgets(STDIN);  
-        
+        fgets(STDIN);
+
         echo "*******                 TACHES PREALABLES                *******\n\n";
 
         echo ">>>>  RECONSTRUCTION DE LA BASE PU2 \n\n";
@@ -92,42 +90,46 @@ class PU1toPU2Command extends CConsoleCommand {
      * 
      * -------------------------------------------------------------------------
      */
-    
+
     protected function buildJournal($rows) {
-        $rowNo= null; // ligne sélectionéée pour la notice
+        $rowNo = null; // ligne sélectionéée pour la notice
         // Les lignes sont calassée par deba
         foreach ($rows as $i => $candidate) {
-            if ($candidate['etatcolldeba'] < 9999 && $candidate['etatcolldeba'] > 0 
-                    && stripos($candidate['titre'], 'Supplement') === false){
+            $etatcolldeba = intval($candidate['etatcolldeba']);
+            
+            // Vrai si le mot supplément n'est pas dans le text
+            $pas_un_supplement = stripos($candidate['titre'], 'Suppl') === false;
+            
+            if ($etatcolldeba < 9999 && $etatcolldeba > 0 && $pas_un_supplement) {
                 $rowNo = $i;
-                
+
                 break;
             }
         }
-        
+
         // Aucune ligne trouvée, on choisi d'après la date de modif
-        
-        if ($rowNo == null){
+
+        if ($rowNo == null) {
             $rowNo = 0;
-            foreach ($rows as $i => $candidate){
+            foreach ($rows as $i => $candidate) {
                 $tref = strtotime($rows[$rowNo]['datemodif']);
                 $tcdt = strtotime($candidate['datemodif']);
-                if ( $tcdt > $tref  && 
-                        stripos($candidate['titre'], 'Supplement') === false){
+                if ($tcdt > $tref &&
+                        stripos($candidate['titre'], 'Supplement') === false && stripos($candidate['titre'], 'Suppl.') === false) {
                     $rowNo = $i;
                 }
             }
         }
 
         // Sélection du journal le plus récent
-        
+
         $row = $rows[$rowNo];
-        $titleRowNo = $this->findBestTitleJournalRow($rows, $rowNo);
+        //$titleRowNo = $this->findBestTitleJournalRow($rows, $rowNo);
 
         $jrn = new Journal();
         $jrn->perunilid = $row['perunilid_fusion'];
-        $jrn->titre = $rows[$titleRowNo]['titre'];
-        $jrn->soustitre = $rows[$titleRowNo]['soustitre'];
+        $jrn->titre = $row['titre']; //$rows[$titleRowNo]['titre'];
+        $jrn->soustitre = $row['soustitre']; //$rows[$titleRowNo]['soustitre'];
 
         $jrn->titre_abrege = $row['titreabrege'];
         $jrn->titre_variante = $row['variantetitre'];
@@ -138,9 +140,9 @@ class PU1toPU2Command extends CConsoleCommand {
         $jrn->nlmid = $row['nlmid'];
         $jrn->reroid = $row['reroid'];
         $jrn->doi = $row['doi'];
-        $jrn->coden = $row['coden'];
+        //$jrn->coden = $row['coden'];
         $jrn->urn = $row['urn'];
-        $jrn->publiunil = $this->findPubliUnil($rows,$rowNo);
+        $jrn->publiunil = $this->findPubliUnil($rows, $rowNo);
         $jrn->url_rss = $row['rss'];
         $jrn->commentaire_pub = $this->findLastNonEmpty($rows, 'commentairepub');
         $jrn->parution_terminee = 0;
@@ -203,7 +205,10 @@ class PU1toPU2Command extends CConsoleCommand {
 
         $abo->titreexclu = $row['titreexclu'];
         $abo->package = $row['package'];
-        // ? $abo->no_abo = $row[''];
+        $abo->no_abo = $row['idediteur'];
+        if (!empty($row['coden'])) {
+            $abo->no_abo .= "| reroholdid:" . $row['coden'];
+        }
         $abo->url_site = $row['url'];
         $abo->acces_elec_gratuit = $row['acceseleclibre'];
         $abo->acces_elec_unil = $row['acceselecunil'];
@@ -211,6 +216,7 @@ class PU1toPU2Command extends CConsoleCommand {
         $abo->embargo_mois = $row['embargo'];
         $abo->acces_user = $row['user'];
         $abo->acces_pwd = $row['pwd'];
+        $abo->commentaire_etatcoll = $this->cometatcoll($journal, $row);
         $abo->etatcoll = $row['etatcoll'];
         $abo->etatcoll_deba = $row['etatcolldeba'];
         $abo->etatcoll_debv = $row['etatcolldebv'];
@@ -224,6 +230,7 @@ class PU1toPU2Command extends CConsoleCommand {
         $abo->commentaire_pro = $row['commentairepro'];
         $abo->commentaire_pub = $row['commentairepub'];
         $abo->perunilid = $journal->perunilid;
+        $abo->perunilid_old = $row['perunilid'];
         $abo->statutabo = $row['statutabo'];
 
         $abo->plateforme = $this->findConstTableId($row['plateforme'], 'plateforme');
@@ -241,8 +248,8 @@ class PU1toPU2Command extends CConsoleCommand {
         $abo->format = $this->findConstTableId($row['format'], 'format');
         $abo->licence = $this->findConstTableId($row['licence'], 'licence');
 
-        // Ajout des anciennes donnée du journal dans le commentaire pro
-        $abo->commentaire_pro .= $this->addPU1Data($row);
+        // Remplacé par perunilid_old : Ajout des anciennes donnée du journal dans le commentaire pro
+        //$abo->commentaire_pro .= $this->addPU1Data($row);
 
         if ($abo->save(false)) {
             echo "   > :-) abonnement $abo->abonnement_id enregistré \n";
@@ -254,6 +261,21 @@ class PU1toPU2Command extends CConsoleCommand {
         $this->setModification($row, $abo, 'Création');
         echo "   > Mise à jour de la dernière modification \n";
         $this->setModification($row, $abo, 'Modification');
+    }
+
+    protected function cometatcoll($jrn, $row) {
+
+        $titre_selectionne = $jrn->titre;
+        $titre_abo_pu1 = $row['titre'];
+
+        // Comparaison    
+        similar_text($titre_selectionne, $titre_abo_pu1, $percent);
+
+        if ($percent < 85) {
+            return $titre_abo_pu1;
+        } else {
+            return null;
+        }
     }
 
     /* -------------------------------------------------------------------------
@@ -350,8 +372,8 @@ class PU1toPU2Command extends CConsoleCommand {
         } else {
             echo "      - ERREUR lors de l'enregistrement de la $action du journal {$row['perunilid_fusion']} enregistré \n";
         }
-        
-        
+
+
         // Création du lien vers la dernière modification
         if ($action == "Création") {
             $model->creation = $modif->id;
@@ -361,7 +383,6 @@ class PU1toPU2Command extends CConsoleCommand {
             throw new Exception("$action n'est pas admis comme action de modification.");
         }
         $model->save(false);
-        
     }
 
     protected function findConstTableId($value, $field) {
@@ -374,7 +395,7 @@ class PU1toPU2Command extends CConsoleCommand {
 
         $criteria = new CDbCriteria;
         $criteria->condition = $field . '=:field';
-        $criteria->params = array(':field'=>$value);
+        $criteria->params = array(':field' => $value);
         //$criteria->addSearchCondition($field, $value);
         $model = $class::model()->find($criteria);
 
@@ -606,41 +627,43 @@ EOT;
 
         $sql[] = <<<EOT
 CREATE TABLE IF NOT EXISTS `abonnement` (
-  `abonnement_id`      SERIAL,
-  `titreexclu`         BOOLEAN       DEFAULT FALSE NOT NULL,
-  `package`            varchar(250)  DEFAULT NULL,
-  `no_abo`             varchar(50)   DEFAULT NULL,
-  `url_site`           varchar(2083) DEFAULT NULL,
-  `acces_elec_gratuit` BOOLEAN       DEFAULT FALSE,
-  `acces_elec_unil`    BOOLEAN       DEFAULT FALSE,
-  `acces_elec_chuv`    BOOLEAN       DEFAULT FALSE,
-  `embargo_mois`       TINYINT       DEFAULT NULL COMMENT 'Chiffre donné en mois',
-  `acces_user`         varchar(50)   DEFAULT NULL,
-  `acces_pwd`          varchar(50)   DEFAULT NULL,
-  `etatcoll`           varchar(250)  DEFAULT NULL,
-  `etatcoll_deba`      MEDIUMINT     DEFAULT NULL,
-  `etatcoll_debv`      MEDIUMINT     DEFAULT NULL,
-  `etatcoll_debf`      MEDIUMINT     DEFAULT NULL,
-  `etatcoll_fina`      MEDIUMINT     DEFAULT NULL,
-  `etatcoll_finv`      MEDIUMINT     DEFAULT NULL,
-  `etatcoll_finf`      MEDIUMINT     DEFAULT NULL,
-  `cote`               varchar(250)  DEFAULT NULL,
-  `editeur_code`       varchar(100)  DEFAULT NULL COMMENT 'Code de la revue chez l\'éditeur',
-  `editeur_sujet`      varchar(250)  DEFAULT NULL COMMENT 'Sujet chez l\'éditeur, anc. "keywords"',
-  `commentaire_pro`    varchar(500)  DEFAULT NULL,
-  `commentaire_pub`    varchar(500)  DEFAULT NULL,
-  `perunilid`          BIGINT unsigned,            -- FK journal
-  `plateforme`         SMALLINT,                   -- FK plateforme
-  `editeur`            SMALLINT      DEFAULT NULL, -- FK table éditeur
-  `histabo`	           SMALLINT      DEFAULT NULL, -- FK table abo_hist
-  `statutabo`          SMALLINT      DEFAULT 0 NOT NULL , -- FK table abo_statut
-  `localisation`       SMALLINT      DEFAULT NULL, -- FK
-  `gestion`	           SMALLINT      DEFAULT NULL, -- FK
-  `format`	           SMALLINT      DEFAULT NULL, -- FK
-  `support`	           SMALLINT      DEFAULT NULL, -- FK
-  `licence`	           SMALLINT      DEFAULT NULL, -- FK
-  `creation`           bigint(20)    DEFAULT NULL,
-  `modification`       bigint(20)    DEFAULT NULL,
+  `abonnement_id`        SERIAL,
+  `titreexclu`           BOOLEAN       DEFAULT FALSE NOT NULL,
+  `package`              varchar(250)  DEFAULT NULL,
+  `no_abo`               varchar(50)   DEFAULT NULL,
+  `url_site`             varchar(2083) DEFAULT NULL,
+  `acces_elec_gratuit`   BOOLEAN       DEFAULT FALSE,
+  `acces_elec_unil`      BOOLEAN       DEFAULT FALSE,
+  `acces_elec_chuv`      BOOLEAN       DEFAULT FALSE,
+  `embargo_mois`         TINYINT       DEFAULT NULL COMMENT 'Chiffre donné en mois',
+  `acces_user`           varchar(50)   DEFAULT NULL,
+  `acces_pwd`            varchar(50)   DEFAULT NULL,
+  `commentaire_etatcoll` varchar(500)  DEFAULT NULL,
+  `etatcoll`             varchar(250)  DEFAULT NULL,
+  `etatcoll_deba`        MEDIUMINT     DEFAULT NULL,
+  `etatcoll_debv`        MEDIUMINT     DEFAULT NULL,
+  `etatcoll_debf`        MEDIUMINT     DEFAULT NULL,
+  `etatcoll_fina`        MEDIUMINT     DEFAULT NULL,
+  `etatcoll_finv`        MEDIUMINT     DEFAULT NULL,
+  `etatcoll_finf`        MEDIUMINT     DEFAULT NULL,
+  `cote`                 varchar(250)  DEFAULT NULL,
+  `editeur_code`         varchar(100)  DEFAULT NULL COMMENT 'Code de la revue chez l\'éditeur',
+  `editeur_sujet`        varchar(250)  DEFAULT NULL COMMENT 'Sujet chez l\'éditeur, anc. "keywords"',
+  `commentaire_pro`      varchar(500)  DEFAULT NULL,
+  `commentaire_pub`      varchar(500)  DEFAULT NULL,
+  `perunilid`            BIGINT unsigned,            -- FK journal
+  `perunilid_old`        BIGINT unsigned,
+  `plateforme`           SMALLINT,                   -- FK plateforme
+  `editeur`              SMALLINT      DEFAULT NULL, -- FK table éditeur
+  `histabo`	         SMALLINT      DEFAULT NULL, -- FK table abo_hist
+  `statutabo`            SMALLINT      DEFAULT 0 NOT NULL , -- FK table abo_statut
+  `localisation`         SMALLINT      DEFAULT NULL, -- FK
+  `gestion`	         SMALLINT      DEFAULT NULL, -- FK
+  `format`	         SMALLINT      DEFAULT NULL, -- FK
+  `support`	         SMALLINT      DEFAULT NULL, -- FK
+  `licence`	         SMALLINT      DEFAULT NULL, -- FK
+  `creation`             bigint(20)    DEFAULT NULL,
+  `modification`         bigint(20)    DEFAULT NULL,
   CONSTRAINT fk_creation      FOREIGN KEY (modification)   REFERENCES modifications(id),
   CONSTRAINT fk_modification  FOREIGN KEY (modification)   REFERENCES modifications(id),
   CONSTRAINT fk_editeur       FOREIGN KEY (editeur)         REFERENCES editeur(editeur_id),
