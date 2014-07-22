@@ -33,7 +33,7 @@ class SiteController extends Controller {
         $this->render('simpleSearch');
     }
 
-    public function actionSimpleSearchResults($typeAffichage = NULL) {
+    public function actionSimpleSearchResults() {
         Yii::app()->session['searchtype'] = 'simple';
         $this->activate_session_search_component();
 
