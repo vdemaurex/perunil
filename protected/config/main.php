@@ -19,12 +19,12 @@ return array(
     'modules' => array(
         // uncomment the following to enable the Gii tool
 
-        'gii' => array(
-            'class' => 'system.gii.GiiModule',
-            'password' => 'jvbcdb',
-            // If removed, Gii defaults to localhost only. Edit carefully to taste.
-            'ipFilters' => array('127.0.0.1', '::1'),
-        ),
+//        'gii' => array(
+//            'class' => 'system.gii.GiiModule',
+//            'password' => 'jvbcdb',
+//            // If removed, Gii defaults to localhost only. Edit carefully to taste.
+//            'ipFilters' => array('127.0.0.1', '::1'),
+//        ),
         'auditTrail' => array(
             'userClass' => 'Utilisateur', // the class name for the user object
             'userIdColumn' => 'utilisateur_id', // the column name of the primary key for the user
@@ -58,8 +58,8 @@ return array(
             'username' => 'root',
             'password' => 'jvbcdb',
             'charset' => 'utf8',
-            'schemaCachingDuration' => 3600,
-            'enableParamLogging'=>true
+            //'schemaCachingDuration' => 3600,
+            //'enableParamLogging'=>true
 
         ),
         'errorHandler' => array(
@@ -69,15 +69,20 @@ return array(
         'log' => array(
             'class' => 'CLogRouter',
             'routes' => array(
-                'web' => array(
-                    'class' => 'CWebLogRoute',
-                    'levels' => 'trace, info, error, warning, application',
-                    'categories' => 'system.db.*, application',
-                    'showInFireBug' => true //firebug only - turn off otherwise
-                ),
+//                'web' => array(
+//                    'class' => 'CWebLogRoute',
+//                    'levels' => 'trace, info, error, warning, application',
+//                    'categories' => 'system.db.*, application',
+//                    'showInFireBug' => true //firebug only - turn off otherwise
+//                ),
                 array(
                     'class' => 'CFileLogRoute',
                     'levels' => 'error, warning',
+                ),
+                array(
+                    'class' => 'CEmailLogRoute',
+                    'levels' => 'error',
+                    'emails' => 'vincent.demaurex@chuv.ch',
                 ),
             // uncomment the following to show log messages on web pages
             /*
