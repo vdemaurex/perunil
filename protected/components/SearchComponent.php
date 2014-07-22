@@ -944,8 +944,13 @@ class SearchComponent extends CComponent {
      * @param string $original
      * @return string 
      */
-    private function clean_search($original) {
+    private function clean_search($original) {      
         $var = trim($original);
+        
+        // Suppression de guillemet et apostrophes
+        $var = str_replace('"', "", $var);
+        $var = str_replace("'", "", $var);
+        
         $var = " " . $var . " ";
         $var = str_ireplace(",", "", $var);
         $var = str_ireplace(". ", " ", $var);
