@@ -104,7 +104,7 @@ if ($data->soustitre):
     <?php
     if ($data->soustitre != "") {
         if (strlen($data->soustitre) >= 80) {
-            echo CHtml::encode(substr($data->soustitre, 0, 80) . " ... ");
+            echo substr($data->soustitre, 0, 80) . " ... ";
         } else {
             echo CHtml::encode($data->soustitre);
         }    

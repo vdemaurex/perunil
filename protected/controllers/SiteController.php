@@ -10,6 +10,7 @@ class SiteController extends Controller {
      */
     public function actions() {
         return array(
+            'returnToSearchResults' => 'application.controllers.universal.ReturnToSearchResultsAction',
             // captcha action renders the CAPTCHA image displayed on the contact page
             'captcha' => array(
                 'class' => 'CCaptchaAction',

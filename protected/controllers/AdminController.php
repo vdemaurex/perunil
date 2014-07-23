@@ -52,6 +52,7 @@ class AdminController extends Controller {
      */
     public function actions() {
         return array(
+            'returnToSearchResults' => 'application.controllers.universal.ReturnToSearchResultsAction',
 //            'csvexport' => 'application.controllers.admin.CsvexportAction',
 //            'csvimport' => 'application.controllers.admin.CsvimportAction',
 //            'csvimportprocess' => 'application.controllers.admin.CsvimportprocessAction',

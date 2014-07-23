@@ -7,16 +7,20 @@ if (!isset($dialogue)) {
 
 if (!$dialogue) {
     echo"<p>";
-    echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour aux résultats de la recherche', array(
+    /*echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour aux résultats de la recherche', array(
         'onclick' => 'history.go(-1);return false;',
-        'class' => "btn btn-default  btn-xs"));
+        'class' => "btn btn-default  btn-xs"));*/
 
+        echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour au résultat de la recherche', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/returnToSearchResults") . '"',
+        'class' => "btn btn-default  btn-sm"));
+    
     if (!Yii::app()->user->isGuest) {
         //echo"<p>";
         //echo CHtml::link('Editer le journal', array('admin/peredit/perunilid/' . $model->perunilid));
         echo " " . CHtml::htmlButton('Editer le journal', array(
             'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("admin/peredit", array('perunilid' => $model->perunilid)) . '"',
-            'class' => "btn btn-primary  btn-xs"));
+            'class' => "btn btn-primary  btn-sm"));
         //echo"</p>";
     }
     ?></p>

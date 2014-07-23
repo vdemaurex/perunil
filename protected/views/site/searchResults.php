@@ -74,7 +74,7 @@ if ($search_done) {
             // Affichage par abonnement
             $this->renderPartial('/admin/_aboSearchResults', array('dataProvider' => Yii::app()->session['search']->$adp));
         } else {
-            // affichage par journaux
+            // affichage par journaux        
             $this->widget('AdminCListView', array(
                 'dataProvider' => Yii::app()->session['search']->$dp,
                 'itemView' => '/site/_view',

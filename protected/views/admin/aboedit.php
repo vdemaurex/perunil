@@ -4,6 +4,14 @@ $this->breadcrumbs=array(
 	'Aboedit',
 );
 
+    echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour au résultat de la recherche', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("admin/returnToSearchResults") . '"',
+        'class' => "btn btn-default  btn-sm"));
+    echo " ";
+    echo CHtml::htmlButton('<span class="glyphicon glyphicon-search"></span> Détail', array(
+                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/detail", array("id" => $model->perunilid)) . '"',
+                'class' => "btn btn-default  btn-sm"));
+
 //
 // Affichage du titre de la page
 //

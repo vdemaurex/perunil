@@ -113,7 +113,7 @@ class SearchComponent extends CComponent {
 
         $this->adv_query_tab = $query_tab;
 //$this->adv_criteria = $this->advancedSearch();
-        $this->advancedSearch(); // => $this->adv_sql_command
+        //$this->advancedSearch(); // => $this->adv_sql_command
     }
 
     public function getAdv_query_tab() {
@@ -125,7 +125,8 @@ class SearchComponent extends CComponent {
     }
 
     public function getAdv_dp() {
-        if (isset($this->adv_sql_command)) {
+        if (isset($this->adv_query_tab)) {
+            $this->advancedSearch();
             $rawData = $this->adv_sql_command->queryAll();
             $this->adv_count = count($rawData);
             $this->adv_dp = new CArrayDataProvider($rawData, array(
@@ -143,7 +144,8 @@ class SearchComponent extends CComponent {
 
     public function getAdv_adp() {
 
-        if (isset($this->adv_sql_command)) {
+        if (isset($this->adv_query_tab)) {
+            $this->advancedSearch();
             $rawData = $this->adv_sql_command->queryAll();
             $this->adv_count = count($rawData);
             $idlist = array_map('current', $rawData);
@@ -159,7 +161,7 @@ class SearchComponent extends CComponent {
                 ),
             ));
         } else {
-            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
+            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche avancée.");
         }
         return $adp;
     }
@@ -295,7 +297,7 @@ class SearchComponent extends CComponent {
                         if (strpos($issn, '-') === FALSE) {
                             $issn = substr_replace($issn, '-', 4, 0);
                         }
-                        $Cwhere .= " j.issn $like '%$issn%' OR j.issnl $like '%$issn%' ";
+                        $Cwhere .= " (j.issn $like '%$issn%' OR j.issnl $like '%$issn%') ";
                         $this->query_summary("issn = $this->simple_query_str");
                         break;
 
