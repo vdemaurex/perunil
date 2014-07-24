@@ -41,6 +41,20 @@ class AjaxPublicController extends Controller {
         if (count($results) == 0) {
             $results = $this->searchTitleWordBeginingAllTerms($term);
         }
+
+        // Tris des résultat par ordre alphabéthique
+        
+        // Obtient une liste de colonnes
+        foreach ($results as $key => $row) {
+            $id[$key] = $row['id'];
+            $titre[$key] = $row['label'];
+        }
+
+        // Trie les données par titre croissant, id décroissant
+        // Ajoute $results en tant que dernier paramètre, pour trier par la clé commune
+        array_multisort($titre, SORT_ASC, $id, SORT_DESC, $results);
+
+        
         echo CJSON::encode($results);
     }
 
