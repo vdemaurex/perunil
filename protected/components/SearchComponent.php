@@ -24,35 +24,36 @@ class SearchComponent extends CComponent {
      * Requête de la recherche avancée
      * @var array 
      */
-    private $adv_query_tab;
-    private $adv_sql_command;
-    private $adv_count;
-    private $adv_dp;
+    protected $adv_query_tab;
+    protected $adv_sql_command;
+    protected $adv_count;
+    protected $adv_dp;
 
     /**
      * Requête de la recherche simple
      * @var type 
      */
-    private $simple_query_str;
-    private $simple_sql_query;
-    private $simple_sql_query_count;
-    private $simple_dp;
+    protected $simple_query_str;
+    /* @var $simple_sql_cmd CDbCommand */
+    protected $simple_sql_cmd;
+    protected $simple_sql_query_count;
+    protected $simple_dp;
 
     /**
      * Requête de la recherche admin
      * @var type 
      */
-    private $admin_query_tab;
-    private $admin_criteria;
-    private $admin_affichage;
-    private $admin_count;
-    private $admin_dp;
+    protected $admin_query_tab;
+    protected $admin_criteria;
+    protected $admin_affichage;
+    protected $admin_count;
+    protected $admin_dp;
 
     /**
      * $query après les traitements de base
      * @var string 
      */
-    private $q;
+    protected $q;
 
     /**
      * Option pour la recherche simple. Définie en constante de classe.
@@ -400,357 +401,70 @@ class SearchComponent extends CComponent {
     public function setSimple_query_str($query_str) {
 
         $this->simple_query_str = $query_str;
-//Remplissage, selon le critère choisi de $this->simple_criteria ou de this->simple_sql_query
-        $this->simplesearch();
+        
+        $simpleSearch = new SimpleSearchComponent;
+        $this->simple_sql_cmd = $simpleSearch->getSimpleCdbCommand($query_str, $this->search_type);
     }
 
     public function getSimple_query_str() {
         if (isset($this->simple_query_str)) {
             return $this->simple_query_str;
         } else {
-            http://www.yiiframework.com/doc/api/1.1/CActiveRecord#save-detail  return null;
+            return null;
         }
     }
 
     public function getSimple_dp() {
-// Recherche basée sur les active records
-        /* if (isset($this->simple_criteria)) {
-
-          $this->simple_dp = new CActiveDataProvider(
-          Journal::model(),
-          array('criteria' => $this->simple_criteria,
-          'pagination' => array('pageSize' => $this->pagesize))
-          );
-          // Recherche basée sur une requête sql
-          } else */
-        if (isset($this->simple_sql_query)) {
-            $rawData = Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
+        if (isset($this->simple_sql_cmd)) {
+            $rawData = $this->simple_sql_cmd->queryAll();
             $this->simple_sql_query_count = count($rawData);
             $this->simple_dp = new CArrayDataProvider($rawData, array(
                 'keyField' => 'perunilid',
                 //'sort' => array(
-//    'attributes' => array(
-//        'id', 'username', 'email',
-//    ),
-//),
+                //    'attributes' => array(
+                //        'id', 'username', 'email',
+                //    ),
+                //),
                 'pagination' => array(
                     'pageSize' => $this->pagesize,
                 ),
             ));
-
-
-
-
-            /* $count = Yii::app()->db->createCommand($this->simple_sql_query_count)->queryScalar();
-              $this->simple_dp = new CSqlDataProvider(
-              $this->simple_sql_query,
-              array(
-              'totalItemCount' => $count,
-              'keyField' => 'perunilid',
-              )
-              ); */
         } else {
             throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
         }
         return $this->simple_dp;
     }
 
-    public function getSimple_adp() {
-
-        if (isset($this->simple_sql_query)) {
-            $rawData = Yii::app()->db->createCommand($this->simple_sql_query)->queryAll();
-            $this->simple_sql_query_count = count($rawData);
-
-            $idlist = array_map('current', $rawData);
-
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('perunilid', $idlist);
-
-
-            $adp = new CActiveDataProvider('Abonnement', array(
-                'criteria' => $criteria,
-                'pagination' => array(
-                    'pageSize' => $this->pagesize,
-                ),
-            ));
-        } else {
-            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
-        }
-        return $adp;
-    }
+//    public function getSimple_adp() {
+//
+//        if (isset($this->simple_sql_cmd)) {
+//            $rawData = Yii::app()->db->createCommand($this->simple_sql_cmd)->queryAll();
+//            $this->simple_sql_query_count = count($rawData);
+//
+//            $idlist = array_map('current', $rawData);
+//
+//            $criteria = new CDbCriteria();
+//            $criteria->addInCondition('perunilid', $idlist);
+//
+//
+//            $adp = new CActiveDataProvider('Abonnement', array(
+//                'criteria' => $criteria,
+//                'pagination' => array(
+//                    'pageSize' => $this->pagesize,
+//                ),
+//            ));
+//        } else {
+//            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
+//        }
+//        return $adp;
+//    }
 
     public function getSimple_sql_query_count() {
         return $this->simple_sql_query_count;
     }
 
     public function getSimple_sql_query() {
-        return $this->simple_sql_query;
-    }
-
-    /*  public function setSimple_dp($dp) {
-      $this->simple_dp = $dp;
-      } */
-
-// Méthode privées
-//================
-
-    /**
-     * Effectue un recherche sur une seul critère définit par
-     * $support.
-     * @param string $query
-     * @return CActiveDataProvider 
-     */
-    private function simplesearch() {
-        $this->q_summary = "";
-        $this->q = $this->clean_search($this->simple_query_str);
-// Si q ne contient qu'une seule lettre, on cherche TBEGIN
-        if (strlen($this->q) == 1)
-            $this->search_type = self::TBEGIN;
-
-// Suppression des anciennes requêtes
-//$this->simple_criteria = null;
-//$this->simple_sql_query = null;
-// Création des requêtes.
-        switch ($this->search_type) {
-            case self::TBEGIN:
-                $this->query_summary("Recherche d'un titre commençant par '$this->q'");
-            case self::TEXACT:
-                if ($this->q_summary == "")
-                    $this->query_summary("Recherche d'un titre correspondant exactement à '$this->simple_query_str'");
-            case self::TWORDS:
-                if ($this->q_summary == "")
-                    $this->query_summary("Recherche d'un titre contenant au moins un de ces mots : '$this->q'");
-//$criteria = new CDbCriteria();
-//$this->joinAbo($criteria);
-                $this->simpletitleSearch();
-//$this->simple_criteria = $criteria;
-                break;
-            case self::JRNALL:
-                $this->query_summary("Recherche dans l'ensemble des champs de la base Pérunil des mots '$this->q'");
-                $this->allSearch();
-                break;
-            default:
-                throw new CException("Ce type de recherche ($this->search_type) n'est pas pris en charge.");
-                break;
-        }
-    }
-
-    /**
-     * La fonction joinAbo ajoute les critères communs a beaucoup de recherches
-     * dans la base PerUNIL : 
-     *  - Jointure avec la table abonnement
-     *  - Ajouter les titres exclu seulement si l'utilisateur est authentifié
-     *  - Ajouter le critère du support désiré
-     *  - Trier par titre
-     * @param CDbCriteria $criteria Requête en cours de construction, passage par référence  
-     */
-    private function joinAbo($criteria) {
-        $criteria->join .= 'INNER JOIN `abonnement` `abonnements` ON `abonnements`.`perunilid`=`t`.`perunilid` AND abonnements.perunilid IS NOT NULL ';
-
-//$criteria->addCondition("abonnements.perunilid IS NOT NULL");
-        if (Yii::app()->user->isGuest) {
-// Si l'utilisateur n'est pas authentifié, on ne prend pas en compte 
-// les abonnements de titre exculs
-//$criteria->addCondition("abonnements.titreexclu=0");
-            $criteria->join .= " AND abonnements.titreexclu=0 ";
-        } else {
-// Si l'utilisateur est authentifié, on recherche si titreexcul n'est
-// pas null 
-            if (isset($this->titreexclu)) {
-//$criteria->addCondition("abonnements.titreexclu=$this->titreexclu");
-                $criteria->join .= " AND abonnements.titreexclu=$this->titreexclu ";
-            }
-        }
-        if ($this->support > 0) {
-//$criteria->addCondition("abonnements.support=$this->support");
-            $criteria->join .= " AND abonnements.support=$this->support ";
-        }
-        $criteria->order = "titre";
-        $criteria->distinct = true;
-    }
-
-    
-    
-    
-    
-    /**
-     * Recherche dans les champs titre de la table journal : titre, 
-     * titre_abrege, titre_variante, soustitre.
-     * @param CDbCriteria $criteria Requête en cours de construction, passage par référence
-     * @param boolean $not_like false par défaut. Si true, la requête est construite
-     *                          avec des "NOT LIKE". 
-     */
-    private function simpletitleSearch() {
-
-        $select = "SELECT DISTINCT j.perunilid ";
-//$count = "SELECT DISTINCT COUNT(*) ";
-        $q = "FROM  journal AS j ";
-
-// Jointure de l'abonnement pour la sélection du support
-// La sélection du dépot legal impose de faire la jointure avec les abonnements dans tous les cas.
-//        if ($this->support > 0 || $this->depotlegal) {
-        if (Yii::app()->user->isGuest) {
-            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid AND a.titreexclu = 0 ";
-        }
-// Si admin, tous les journaux, même sans abonnement
-        else {
-            $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-        }
-
-// Limitation au support
-        if ($this->support > 0) {
-            $q .= "AND a.support = $this->support ";
-            $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
-        }
-// Ajout des abonnements du dépot légal
-        if ($this->depotlegal) {
-
-            $this->query_summary("avec les périodiques du dépot légal BCU");
-        } else {
-
-            $q .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
-        }
-//        }
-// Condition
-
-        $q .= "WHERE ";
-
-        $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
-        //$cols = array('titre');
-
-
-        if ($this->search_type == self::TEXACT || $this->search_type == self::TBEGIN) {
-            if ($this->search_type == self::TEXACT) {
-                $word = "$this->simple_query_str"; //"$this->q"; //"$this->simple_query_str";
-            } elseif ($this->search_type == self::TBEGIN) {
-                $word = "$this->simple_query_str%";
-                $cols = array('titre');
-            }
-            // Boucle sur toutes les colonnes
-            foreach ($cols as $col) {
-                if (!empty($word)) {
-                    $q .= " $col LIKE " . Yii::app()->db->quoteValue($word) . " OR ";
-                }
-            }
-            $q = trim($q, "OR ");
-            
-        } else { // Recherche de chaque mot indépendamment.
-            $words = explode(" ", $this->q);
-            foreach ($words as $word) {
-                if (empty($word)) {
-                    continue;
-                }
-                $wq = "";
-                
-                // Pour chaque colone, on cherche les mots
-                foreach ($cols as $col) {
-                    //$cq = "$col LIKE '%$word%'";
-                    $cq = ' `' . $col . '` LIKE "' . $word . '%" OR ';
-                    $cq .= ' `' . $col . '` LIKE "% ' . $word . '%"  ';
-
-                    $wq .= " $cq OR ";
-//                    
-                }// Fin boucle mots
-                $wq = trim($wq, "OR ");
-                $q .= " ( $wq ) AND";
-            } // Fin boucle colonne
-        }
-        
-
-
-/*       ANCIENNE RECHERCHE AVEC LES REGEXP
-        $tokens = array();
-        if ($this->search_type == self::TEXACT) {
-            $tokens[] = "$this->simple_query_str"; //"$this->q"; //"$this->simple_query_str";
-        } elseif ($this->search_type == self::TBEGIN) {
-            $tokens[] = "$this->simple_query_str%";
-            $cols = array('titre');
-        } else { // Recherche de chaque mot indépendamment.
-            foreach (explode(" ", $this->q) as $word) {
-                if ($word != "" || $word != "") {
-                    //$tokens[] = "%$word%"; //Recherche en milieu de mots
-                    $tokens[] = "wine_name = 'Faugères'
-   OR wine_name LIKE 'Faugères %'
-   OR wine_name LIKE '% Faugères'$word%"; // Recherche en début de mots
-                     //$tokens[] ='"[[:<:]]' . addslashes(quotemeta($word)) . '"';
-                }
-            }
-        }
-
-        // Boucle sur toutes les colonnes
-        foreach ($cols as $col) {
-            $wq = "";
-            // Boucle sur touts les mots de la recherche
-            foreach ($tokens as $word) {
-                if ($word != "") {
-                    if ($this->search_type == self::TEXACT || $this->search_type == self::TBEGIN){
-                    $wq .= "$col LIKE " . Yii::app()->db->quoteValue($word) . " AND ";
-                    }
-                    else{
-                    $wq .= ' `'.$col.'` REGEXP ' . $word . ' AND ';
-                    }
-                }
-            }
-            // Suppression d'un OR surnuméraire
-            $wq = trim($wq, "AND ");
-            if ($wq != "") {
-                $q .= " ( $wq ) OR ";
-            }
-        }
-
- *  */
-        
-        
-        
-// Suppression d'un OR surnuméraire
-        $q = trim($q, "AND ");
-
-        $q .= " ORDER BY titre ";
-// Nombre maximum de résultats
-        if ($this->maxresults > 0) {
-            $q .= " LIMIT " . $this->maxresults;
-        }
-
-// Fin de la requête
-        $q .= ";";
-
-//$this->simple_sql_query_count = $count . $q;
-        $this->simple_sql_query = $select . $q;
-    }
-
-    
-    
-    
-    
-    
-    private function titleSearch($criteria, $not_like = false) {
-        $like = $not_like ? "NOT LIKE" : "LIKE";
-
-        $tokens = array();
-        if ($this->search_type == self::TEXACT) {
-            $tokens[] = "$this->simple_query_str";
-        } elseif ($this->search_type == self::TBEGIN) {
-            $tokens[] = "$this->q%";
-        } else { // Recherche de chaque mot indépendamment.
-            foreach (explode(" ", $this->q) as $word) {
-                if ($word != "" || $word != "") {
-                    $tokens[] = "%$word%";
-                }
-            }
-        }
-
-        $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
-// Boucle sur toutes les colonnes
-        foreach ($tokens as $word) {
-            $q = "";
-            if ($word != "") {
-// Boucle sur touts les mots de la recherche
-                foreach ($cols as $col) {
-                    $q .= "$col $like " . Yii::app()->db->quoteValue($word) . " OR ";
-                }
-            }
-            $criteria->addCondition($q, 'AND');
-        }
+        return $this->simple_sql_cmd;
     }
 
     /**
@@ -779,143 +493,7 @@ class SearchComponent extends CComponent {
         $this->query_summary("'$this->q' dans tous les champs de la table journal.");
     }
 
-    private function allSearch() {
-
-//
-// Jointure de tous les tables liées au journal
-//
-        $select = "SELECT DISTINCT j.perunilid ";
-//$count = "SELECT DISTINCT COUNT(*) ";
-        $q = "FROM  journal AS j ";
-
-// Jointure pour corecollection
-// $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
-// $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
-// Jointure pour les sujets
-// $q .="LEFT JOIN journal_sujet AS js ON j.perunilid = js.perunilid ";
-// $q .="LEFT JOIN sujet AS sj ON js.sujet_id = sj.sujet_id ";
-// Jointure des abonnements
-// Si public, seulement les journaux qui ont un abonnement
-        if (Yii::app()->user->isGuest) {
-            $q .="INNER JOIN abonnement AS a ON j.perunilid = a.perunilid  AND a.titreexclu = 0 ";
-        }
-// Si admin, tous les journaux, même sans abonnement
-        else {
-            $q .="LEFT JOIN abonnement AS a ON j.perunilid = a.perunilid ";
-        }
-
-// Limitation au support
-        if ($this->support > 0) {
-            $q .= "AND a.support = $this->support ";
-            $this->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
-        }
-
-// Ajout des abonnements du dépot légal
-        if ($this->depotlegal) {
-            $this->query_summary("avec les périodiques du dépot légal BCU");
-        } else {
-            $q .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
-        }
-
-// Jointure des tables liées à abonnement
-        $q .="LEFT JOIN plateforme   AS pl ON a.plateforme   = pl.plateforme_id ";
-        $q .="LEFT JOIN editeur      AS ed ON a.editeur      = ed.editeur_id ";
-        $q .="LEFT JOIN histabo      AS ha ON a.histabo      = ha.histabo_id ";
-        $q .="LEFT JOIN statutabo    AS st ON a.statutabo    = st.statutabo_id ";
-        $q .="LEFT JOIN localisation AS lo ON a.localisation = lo.localisation_id ";
-        $q .="LEFT JOIN gestion      AS ge ON a.gestion      = ge.gestion_id ";
-        $q .="LEFT JOIN format       AS fo ON a.format       = fo.format_id ";
-        $q .="LEFT JOIN licence      AS li ON a.licence      = li.licence_id ";
-
-
-//
-// Critère de recherche
-//
-        $q .="WHERE "; //j.perunilid = 53857 OR  j.perunilid = 54895; ";
-// Colonnes de recherche
-        $cols = array(
-// Journal
-            "j.perunilid",
-            "j.titre",
-            "j.soustitre",
-            "j.titre_abrege",
-            "j.titre_variante",
-            "j.faitsuitea",
-            "j.devient",
-            "j.issn",
-            "j.issnl",
-            "j.nlmid",
-            "j.reroid",
-            "j.doi",
-            "j.coden",
-            "j.urn",
-            "j.url_rss",
-            "j.commentaire_pub",
-            // Abonnement
-            "a.package",
-            "a.no_abo",
-            "a.url_site",
-            "a.embargo_mois",
-            "a.acces_user",
-            "a.acces_pwd",
-            "a.etatcoll",
-            "a.cote",
-            "a.editeur_code",
-            "a.editeur_sujet",
-            "a.commentaire_pub",
-            //Tables associées à Abonnement
-            "pl.plateforme",
-            "ed.editeur",
-            "ha.histabo",
-            "st.statutabo",
-            "lo.localisation",
-            "ge.gestion",
-            "fo.format",
-            "li.licence",
-                //Sujet
-//"sj.nom_fr",
-// Biblio
-//"bib.biblio"
-        );
-
-// Si admin on ajoute quelques champs
-        if (!Yii::app()->user->isGuest) {
-            $cols[] = "j.DEPRECATED_sujetsfm";
-            $cols[] = "j.DEPRECATED_fmid";
-            $cols[] = "j.DEPRECATED_historique";
-            $cols[] = "a.commentaire_pro";
-        }
-
-// Boucle sur toutes les colonnes
-        foreach (explode(" ", $this->q) as $word) {
-            if ($word != "") {
-                $q .= " (";
-// Boucle sur touts les mots de la recherche
-                foreach ($cols as $col) {
-                    $q .= "$col LIKE " . Yii::app()->db->quoteValue("%$word%") . " OR ";
-                }
-            }
-// Suppression d'un OR surnuméraire
-            $q = trim($q, "OR ");
-            $q .= " ) AND ";
-        }
-
-// Suppression d'un AND surnuméraire
-        $q = trim($q, "AND ");
-
-        $q .= " ORDER BY j.titre ";
-
-// Nombre maximum de résultats
-        if ($this->maxresults > 0) {
-            $q .= " LIMIT " . $this->maxresults;
-        }
-
-// Fin de la requête
-        $q .= ";";
-
-//$this->simple_sql_query_count = $count . $q;
-        $this->simple_sql_query = $select . $q;
-    }
+   
 
     /* private function aboSearch($criteria, $not_like = false) {
       $like = $not_like ? "NOT LIKE" : "LIKE";
@@ -946,12 +524,12 @@ class SearchComponent extends CComponent {
      * @param string $original
      * @return string 
      */
-    private function clean_search($original) {      
+    protected function clean_search($original) {      
         $var = trim($original);
         
         // Suppression de guillemet et apostrophes
-        $var = str_replace('"', "", $var);
-        $var = str_replace("'", "", $var);
+        $var = str_replace('"', " ", $var);
+        $var = str_replace("'", " ", $var);
         
         $var = " " . $var . " ";
         $var = str_ireplace(",", "", $var);
@@ -1612,7 +1190,7 @@ class SearchComponent extends CComponent {
          */
     }
 
-    private function query_summary($log) {
+    public function query_summary($log) {
         if ($this->q_summary == "") {
             $this->q_summary = $log;
         } else {
@@ -1620,6 +1198,10 @@ class SearchComponent extends CComponent {
         }
     }
 
+    public function emptyQuerySummary() {
+        $this->q_summary ="";
+    }
+    
     public function getQuerySummary() {
         return $this->q_summary;
     }
