@@ -435,7 +435,9 @@ class AdminController extends Controller {
 //  Supprimer ce sujet de journal
                     $key = array_search($sujet->sujet_id, $nouvsujets);
                     if ($key === false) {
-                        $sujet->delete();
+                        $js = JournalSujet::model()->findByPk(array('perunilid' => $model->perunilid, 'sujet_id' => $sujet->sujet_id));
+                        $js->delete();
+                        //$sujet->delete();
                     } else {
 // Si le sujet existe dans la liste des nouveaux sujets
 //    Supprimer le sujet de liste des nouveaux sujets
