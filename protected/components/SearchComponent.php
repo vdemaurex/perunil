@@ -399,11 +399,7 @@ class SearchComponent extends CComponent {
 
 
     public function setSimple_query_str($query_str) {
-
         $this->simple_query_str = $query_str;
-        
-        $simpleSearch = new SimpleSearchComponent;
-        $this->simple_sql_cmd = $simpleSearch->getSimpleCdbCommand($query_str, $this->search_type);
     }
 
     public function getSimple_query_str() {
@@ -415,23 +411,28 @@ class SearchComponent extends CComponent {
     }
 
     public function getSimple_dp() {
-        if (isset($this->simple_sql_cmd)) {
-            $rawData = $this->simple_sql_cmd->queryAll();
-            $this->simple_sql_query_count = count($rawData);
-            $this->simple_dp = new CArrayDataProvider($rawData, array(
-                'keyField' => 'perunilid',
-                //'sort' => array(
-                //    'attributes' => array(
-                //        'id', 'username', 'email',
-                //    ),
-                //),
-                'pagination' => array(
-                    'pageSize' => $this->pagesize,
-                ),
-            ));
-        } else {
+        $query_str = $this->getSimple_query_str();
+        if (empty($query_str)) {
             throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
         }
+        $simpleSearch = new SimpleSearchComponent;
+        $this->simple_sql_cmd = $simpleSearch->getSimpleCdbCommand($query_str, $this->search_type);
+
+
+        $rawData = $this->simple_sql_cmd->queryAll();
+        $this->simple_sql_query_count = count($rawData);
+        $this->simple_dp = new CArrayDataProvider($rawData, array(
+            'keyField' => 'perunilid',
+            //'sort' => array(
+            //    'attributes' => array(
+            //        'id', 'username', 'email',
+            //    ),
+            //),
+            'pagination' => array(
+                'pageSize' => $this->pagesize,
+            ),
+        ));
+
         return $this->simple_dp;
     }
 
@@ -493,8 +494,6 @@ class SearchComponent extends CComponent {
         $this->query_summary("'$this->q' dans tous les champs de la table journal.");
     }
 
-   
-
     /* private function aboSearch($criteria, $not_like = false) {
       $like = $not_like ? "NOT LIKE" : "LIKE";
       foreach (explode(" ", $this->q) as $word) {
@@ -524,13 +523,13 @@ class SearchComponent extends CComponent {
      * @param string $original
      * @return string 
      */
-    protected function clean_search($original) {      
+    protected function clean_search($original) {
         $var = trim($original);
-        
+
         // Suppression de guillemet et apostrophes
         $var = str_replace('"', " ", $var);
         $var = str_replace("'", " ", $var);
-        
+
         $var = " " . $var . " ";
         $var = str_ireplace(",", "", $var);
         $var = str_ireplace(". ", " ", $var);
@@ -1199,11 +1198,45 @@ class SearchComponent extends CComponent {
     }
 
     public function emptyQuerySummary() {
-        $this->q_summary ="";
+        $this->q_summary = "";
     }
-    
+
     public function getQuerySummary() {
         return $this->q_summary;
+    }
+
+    /**
+     * La fonction joinAbo ajoute les critères communs a beaucoup de recherches
+     * dans la base PerUNIL :
+     * - Jointure avec la table abonnement
+     * - Ajouter les titres exclu seulement si l'utilisateur est authentifié
+     * - Ajouter le critère du support désiré
+     * - Trier par titre
+     * @param CDbCriteria $criteria Requête en cours de construction, passage par référence
+     */
+    private function joinAbo($criteria) {
+        $criteria->join .= 'INNER JOIN `abonnement` `abonnements` ON `abonnements`.`perunilid`=`t`.`perunilid` AND abonnements.perunilid IS NOT NULL ';
+
+//$criteria->addCondition("abonnements.perunilid IS NOT NULL");
+        if (Yii::app()->user->isGuest) {
+// Si l'utilisateur n'est pas authentifié, on ne prend pas en compte
+// les abonnements de titre exculs
+//$criteria->addCondition("abonnements.titreexclu=0");
+            $criteria->join .= " AND abonnements.titreexclu=0 ";
+        } else {
+// Si l'utilisateur est authentifié, on recherche si titreexcul n'est
+// pas null
+            if (isset($this->titreexclu)) {
+//$criteria->addCondition("abonnements.titreexclu=$this->titreexclu");
+                $criteria->join .= " AND abonnements.titreexclu=$this->titreexclu ";
+            }
+        }
+        if ($this->support > 0) {
+//$criteria->addCondition("abonnements.support=$this->support");
+            $criteria->join .= " AND abonnements.support=$this->support ";
+        }
+        $criteria->order = "titre";
+        $criteria->distinct = true;
     }
 
 }
