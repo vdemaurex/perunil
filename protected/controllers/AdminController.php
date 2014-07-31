@@ -411,7 +411,6 @@ class AdminController extends Controller {
      */
     public function actionPeredit($perunilid = null) {
 
-//$this->layout = 'rightSidebar';
         if (isset($perunilid)) {
             $model = Journal::model()->findByPk($perunilid);
         }
@@ -419,59 +418,59 @@ class AdminController extends Controller {
             $model = new Journal;
         }
 
-// Soumission du formulaire pour sauvegarde.
+        // Soumission du formulaire pour sauvegarde.
         if (isset($_POST['Journal'])) {
             $model->attributes = $_POST['Journal'];
             if ($model->validate()) {
-// Le formulaire est valide
-//
+                // Le formulaire est valide
+                //
                 // GESTION DES SUJETS
-//
+                //
                 // Ne conserver que les sujet avec un nombre
                 $nouvsujets = array_filter($_POST['Journal']['sujet']);
-// Pour chacun des sujet du journal :
+                // Pour chacun des sujet du journal :
                 foreach ($model->sujets as $sujet) {
-// Si le sujet n'existe pas dans la liste des nouveaux sujets
-//  Supprimer ce sujet de journal
+                    // Si le sujet n'existe pas dans la liste des nouveaux sujets
+                    //  Supprimer ce sujet de journal
                     $key = array_search($sujet->sujet_id, $nouvsujets);
                     if ($key === false) {
                         $js = JournalSujet::model()->findByPk(array('perunilid' => $model->perunilid, 'sujet_id' => $sujet->sujet_id));
                         $js->delete();
                         //$sujet->delete();
                     } else {
-// Si le sujet existe dans la liste des nouveaux sujets
-//    Supprimer le sujet de liste des nouveaux sujets
+                        // Si le sujet existe dans la liste des nouveaux sujets
+                        //    Supprimer le sujet de liste des nouveaux sujets
                         unset($nouvsujets[$key]);
                     }
                 }
-// Pour tous les sujets restant dans la liste des nouveaux sujets
-//  Ajouter ces sujet à journal
+                // Pour tous les sujets restant dans la liste des nouveaux sujets
+                //  Ajouter ces sujet à journal
                 foreach ($nouvsujets as $sujet_id) {
                     $js = new JournalSujet();
                     $js->perunilid = $model->perunilid;
                     $js->sujet_id = $sujet_id;
                     $js->save();
                 }
-//
-// GESTION DES CORE COLLECTION
-//
+                //
+                // GESTION DES CORE COLLECTION
+                //
                 // Ne conserver que les corecollection avec un nombre
                 $nouvcc = array_filter($_POST['Journal']['corecollection']);
-// Pour chacun des sujet du journal :
+                // Pour chacun des sujet du journal :
                 foreach ($model->corecollection as $cc) {
-// Si le sujet n'existe pas dans la liste des nouveaux sujets
-//  Supprimer ce sujet de journal
+                // Si le sujet n'existe pas dans la liste des nouveaux sujets
+                //  Supprimer ce sujet de journal
                     $key = array_search($cc->biblio_id, $nouvcc);
                     if ($key === false) {
                         $cc->delete();
                     } else {
-// Si le sujet existe dans la liste des nouveaux sujets
-//    Supprimer le sujet de liste des nouveaux sujets
+                        // Si le sujet existe dans la liste des nouveaux sujets
+                        //    Supprimer le sujet de liste des nouveaux sujets
                         unset($nouvcc[$key]);
                     }
                 }
-// Pour tous les sujets restant dans la liste des nouveaux sujets
-//  Ajouter ces sujet à journal
+                // Pour tous les sujets restant dans la liste des nouveaux sujets
+                //  Ajouter ces sujet à journal
                 foreach ($nouvcc as $biblio_id) {
                     $cc = new Corecollection();
                     $cc->perunilid = $model->perunilid;
@@ -479,10 +478,9 @@ class AdminController extends Controller {
                     $cc->save();
                 }
 
-// Enregistrement des changements des attributs du journal.
+                // Enregistrement des changements des attributs du journal.
                 if ($model->save()) {
                     $model->refresh();
-// $jrn = Journal::model()->findByPk($model->perunilid);
                     $str = "Le périodique «" . CHtml::link($model->titre, array("site/detail/" . $model->perunilid)) . "» a bien été enregistré.";
                     Yii::app()->user->setFlash('success', $str);
                 } else { // L'enregistrement à échoué.
