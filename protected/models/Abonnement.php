@@ -89,7 +89,7 @@ class Abonnement extends ModifModel {
         // will receive user inputs.
         return array(
             array('titreexclu, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'numerical', 'integerOnly' => true),
-            array('package, etatcoll, cote, editeur_sujet', 'length', 'max' => 250),
+            array('package,commentaire_etatcoll, etatcoll, cote, editeur_sujet', 'length', 'max' => 250),
             array('no_abo, acces_user, acces_pwd', 'length', 'max' => 50),
             array('url_site', 'length', 'max' => 2083),
             array('editeur_code', 'length', 'max' => 100),
@@ -98,7 +98,7 @@ class Abonnement extends ModifModel {
             array('titre, issn,perunilid, journal_titre', 'safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
-            array('journal_titre, abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
+            array('journal_titre, abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd,commentaire_etatcoll, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
         );
     }
 
@@ -149,6 +149,7 @@ class Abonnement extends ModifModel {
             'embargo_mois' => 'Embargo',
             'acces_user' => 'Acces User',
             'acces_pwd' => 'Acces Pwd',
+            'commentaire_etatcoll' => "Commentaire de l'état de la collection",
             'etatcoll' => 'Etat de la collection',
             'etatcoll_deba' => 'Année de début',
             'etatcoll_debv' => 'Permier volume',

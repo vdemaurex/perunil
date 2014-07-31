@@ -100,6 +100,10 @@
                 <td colspan="3"><?php echo $form->textField($model, 'no_abo', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'no_abo'); ?></td>
             </tr> 
             <tr class="odd">
+                <th><?php echo $form->labelEx($model, 'commentaire_etatcoll', array('class' => "control-label")); ?></th>
+                <td colspan="3"><?php echo $form->textField($model, 'commentaire_etatcoll', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'commentaire_etatcoll'); ?></td>               
+            </tr>
+            <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'etatcoll', array('class' => "control-label")); ?></th>
                 <td colspan="3"><?php echo $form->textField($model, 'etatcoll', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'etatcoll'); ?></td>               
             </tr>
