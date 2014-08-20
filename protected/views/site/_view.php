@@ -163,11 +163,14 @@ foreach ($abos as $i => $abo) {
                 </div>
                 <div class="col-md-4">
                     <?
-                    // Etat de la collection
+                    // Etat de la collection                    
                     if (!empty($abo->commentaire_etatcoll)){
                         echo CHtml::encode($abo->commentaire_etatcoll) . " : ";
                     }
                     echo CHtml::encode($abo->etatcoll);
+                    if ($abo->statutabo == 4){
+                        echo " [Négociation en cours]";
+                    }
                     ?>
                 </div>
 
