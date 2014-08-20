@@ -72,13 +72,14 @@ class SimpleSearchComponent extends SearchComponent {
         }
 
         // Limitation au support
-        if ($this->support > 0) {
-            $joinCondition .= " AND a.support = $this->support ";
-            Yii::app()->session['search']->query_summary(" au format " . Support::model()->findByPk($this->support)->support);
+        if (Yii::app()->session['search']->support > 0) {
+            $support = Yii::app()->session['search']->support;
+            $joinCondition .= " AND a.support = $support ";
+            Yii::app()->session['search']->query_summary(" au format " . Support::model()->findByPk($support)->support);
         }
 
         // Ajout ou exculsion des abonnements du dépot légal
-        if ($this->depotlegal) {
+        if (Yii::app()->session['search']->depotlegal) {
             Yii::app()->session['search']->query_summary("avec les périodiques du dépot légal BCU");
         } else {
             $joinCondition .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
@@ -89,7 +90,7 @@ class SimpleSearchComponent extends SearchComponent {
 
     private function cmdOrderLimit() {
         $this->cmd->order('titre');
-        if ($this->maxresults > 0) {
+        if (Yii::app()->session['search']->maxresults > 0) {
             $this->cmd->limit($this->maxresults);
         }
     }
