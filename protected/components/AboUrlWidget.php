@@ -121,6 +121,13 @@ class AboUrlWidget extends CWidget {
             $this->endWidget('zii.widgets.jui.CJuiDialog');
         } else {
             // Aucun mot de passe n'est requis
+            
+            // Si l'état de l'abonnement est à "Problème d'accès"
+            if($this->abo->statutabo == 4){
+                $this->link_title = "L'accès online à cette publication est momentanément impossible.";
+                echo '<span class="glyphicon glyphicon-warning-sign"></span>&nbsp;';
+            }
+            
             echo CHtml::link(
                     //CHtml::encode($this->link_text), 
                     CHtml::encode("Accéder en ligne $this->link_text"), $this->url, array('target' => '_blank', 'title' => $this->link_title));
