@@ -85,7 +85,14 @@ class SimpleSearchComponent extends SearchComponent {
             $joinCondition .= " AND (a.localisation NOT IN (" . self::depotlegal_idlocalisation . ") OR a.localisation IS NULL) ";
         }
 
-        $this->cmd->join('abonnement AS a', $joinCondition);
+        // Jointure exculant les journaux sans abonnement pour les visiteur
+        if (Yii::app()->user->isGuest) {
+            $this->cmd->join('abonnement AS a', $joinCondition);
+        }
+        // Pour les administrateur, jointure yc des journaux sans abonnement
+        else {
+            $this->cmd->leftJoin('abonnement AS a', $joinCondition);
+        }
     }
 
     private function cmdOrderLimit() {
