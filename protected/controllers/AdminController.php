@@ -411,10 +411,12 @@ class AdminController extends Controller {
      */
     public function actionPeredit($perunilid = null) {
 
+        $isnew = FALSE;
         if (isset($perunilid)) {
             $model = Journal::model()->findByPk($perunilid);
         }
         if (!isset($model)) {
+            
             $model = new Journal;
         }
 
@@ -423,6 +425,18 @@ class AdminController extends Controller {
             $model->attributes = $_POST['Journal'];
             if ($model->validate()) {
                 // Le formulaire est valide
+                // Enregistrement des changements des attributs du journal.
+               
+                if ($model->save()) {
+                    $model->refresh();
+                    $str = "Le périodique «" . CHtml::link($model->titre, array("site/detail/" . $model->perunilid)) . "» a bien été enregistré.";
+                    Yii::app()->user->setFlash('success', $str);
+                    $isnew = true;
+                } else { // L'enregistrement à échoué.
+                    Yii::app()->user->setFlash('error', "Le périodique «{$_POST['Journal']['titre']}» n'a pas été enregistré.");
+                } 
+                 
+                
                 //
                 // GESTION DES SUJETS
                 //
@@ -478,20 +492,18 @@ class AdminController extends Controller {
                     $cc->save();
                 }
 
-                // Enregistrement des changements des attributs du journal.
-                if ($model->save()) {
-                    $model->refresh();
-                    $str = "Le périodique «" . CHtml::link($model->titre, array("site/detail/" . $model->perunilid)) . "» a bien été enregistré.";
-                    Yii::app()->user->setFlash('success', $str);
-                } else { // L'enregistrement à échoué.
-                    Yii::app()->user->setFlash('error', "Le périodique «{$_POST['Journal']['titre']}» n'a pas été enregistré.");
-                }
+                
             } else { // La validation n'a pas passé
                 Yii::app()->user->setFlash('notice', "Le formulaire contient des erreurs");
             }
         }
 
-        $this->render('peredit', array('model' => $model));
+        if ($isnew){
+        $this->redirect(CController::createUrl('/admin/peredit/perunilid/' . $model->perunilid));
+        }
+        else{
+            $this->render('peredit', array('model' => $model));
+        }
     }
 
     /**
