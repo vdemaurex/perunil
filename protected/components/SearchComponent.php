@@ -410,13 +410,17 @@ class SearchComponent extends CComponent {
         }
     }
 
-    public function getSimple_dp() {
+    private function generateSimpleSqlCmd() {
         $query_str = $this->getSimple_query_str();
         if (empty($query_str)) {
             throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
         }
         $simpleSearch = new SimpleSearchComponent;
         $this->simple_sql_cmd = $simpleSearch->getSimpleCdbCommand($query_str, $this->search_type);
+    }
+
+    public function getSimple_dp() {
+        $this->generateSimpleSqlCmd();
 
 
         $rawData = $this->simple_sql_cmd->queryAll();
@@ -436,29 +440,32 @@ class SearchComponent extends CComponent {
         return $this->simple_dp;
     }
 
-//    public function getSimple_adp() {
-//
-//        if (isset($this->simple_sql_cmd)) {
-//            $rawData = Yii::app()->db->createCommand($this->simple_sql_cmd)->queryAll();
-//            $this->simple_sql_query_count = count($rawData);
-//
-//            $idlist = array_map('current', $rawData);
-//
-//            $criteria = new CDbCriteria();
-//            $criteria->addInCondition('perunilid', $idlist);
-//
-//
-//            $adp = new CActiveDataProvider('Abonnement', array(
-//                'criteria' => $criteria,
-//                'pagination' => array(
-//                    'pageSize' => $this->pagesize,
-//                ),
-//            ));
-//        } else {
-//            throw new CException("Il n'existe aucune requête en mémoire pour afficher les résultats de la recherche simple.");
-//        }
-//        return $adp;
-//    }
+    /**
+     *  Crée un ActiveDataProvider a partir de la liste des perunilid issus de
+     * la requête. Utilisé pour l'affichage par abonnements.
+     * @return \CActiveDataProvider
+     */
+    public function getSimple_adp() {
+        $this->generateSimpleSqlCmd();
+
+        $rawData = $this->simple_sql_cmd->queryAll();
+        $this->simple_sql_query_count = count($rawData);
+
+        $idlist = array_map('current', $rawData);
+
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('perunilid', $idlist);
+
+
+        $adp = new CActiveDataProvider('Abonnement', array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => $this->pagesize,
+            ),
+        ));
+
+        return $adp;
+    }
 
     public function getSimple_sql_query_count() {
         return $this->simple_sql_query_count;
@@ -876,7 +883,7 @@ class SearchComponent extends CComponent {
             't.commentaire_pub' => $qt['commentairepub'],
             't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
             't.DEPRECATED_fmid' => $qt['fmid'],
-            't.DEPRECATED_historique' => $sm_name,
+            //'t.DEPRECATED_historique' => $sm_name,
             't.DEPRECATED_historique' => $qt['historique'],
         );
         foreach ($textfield as $column => $value) {
@@ -985,9 +992,14 @@ class SearchComponent extends CComponent {
             }
         }
 
-        if (isset($qt['corecollection']) && trim($qt['corecollection']) == '1') {
-// FIXME : id biblio en dur !
-            $criteria->join .= 'INNER JOIN corecollection AS cc ON j.perunilid = cc.perunilid AND cc.biblio_id = 6';
+        if (isset($qt['corecollection'])) {
+            if ($qt['corecollection'] == 'VRAI') { // Joindre la corecollection BiUM
+                $criteria->join .= 'INNER JOIN corecollection AS cc ON j.perunilid = cc.perunilid AND cc.biblio_id = ' . self::BiUM_Corecollection;
+                $this->query_summary("avec la core collection BiUM");
+            } elseif ($qt['corecollection'] == 'FAUX') { // Exclure la corecollection BiUM
+                $criteria->addCondition("j.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = " . self::BiUM_Corecollection . ")");
+                $this->query_summary("sans la core collection BiUM");
+            }
         }
 
 // Modifications : Si un champ concernant le modifications est rempli
@@ -1108,7 +1120,7 @@ class SearchComponent extends CComponent {
             't.cote' => $qt['cote'],
             't.commentaire_pro' => $qt['commentairepro'],
             't.commentaire_pub' => $qt['commentairepub'],
-            't.commentaire_pub' => $qt['commentairepub'],
+            'j.commentaire_pub' => $qt['commentairepub'],
             't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
             't.DEPRECATED_fmid' => $qt['fmid'],
             //'t.DEPRECATED_historique' => $sm_name,
