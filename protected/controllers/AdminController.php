@@ -411,7 +411,7 @@ class AdminController extends Controller {
      */
     public function actionPeredit($perunilid = null) {
 
-        $isnew = FALSE;
+        $asBeenSaved = FALSE;
         if (isset($perunilid)) {
             $model = Journal::model()->findByPk($perunilid);
         }
@@ -431,7 +431,7 @@ class AdminController extends Controller {
                     $model->refresh();
                     $str = "Le périodique «" . CHtml::link($model->titre, array("site/detail/" . $model->perunilid)) . "» a bien été enregistré.";
                     Yii::app()->user->setFlash('success', $str);
-                    $isnew = true;
+                    $asBeenSaved = true;
                 } else { // L'enregistrement à échoué.
                     Yii::app()->user->setFlash('error', "Le périodique «{$_POST['Journal']['titre']}» n'a pas été enregistré.");
                 } 
@@ -498,8 +498,9 @@ class AdminController extends Controller {
             }
         }
 
-        if ($isnew){
-        $this->redirect(CController::createUrl('/admin/peredit/perunilid/' . $model->perunilid));
+        if ($asBeenSaved){
+            //$this->redirect(CController::createUrl('/admin/peredit/perunilid/' . $model->perunilid));
+            $this->redirect($this->createUrl("site/detail/" . $model->perunilid));
         }
         else{
             $this->render('peredit', array('model' => $model));
@@ -514,6 +515,7 @@ class AdminController extends Controller {
      */
     public function actionAboedit($perunilid, $aboid = NULL) {
 //$this->layout = 'rightSidebar';
+        $asBeenSaved = FALSE;
         $jrn = Journal::model()->findByPk($perunilid);
         if (!isset($perunilid) || !isset($jrn)) {
             throw new CException("L'ajout d'un abonnement ne peut se faire que sur périodique existant (perunilid = $perunilid )");
@@ -542,6 +544,7 @@ class AdminController extends Controller {
                 if ($abo->save()) {
                     $abo->refresh();
                     Yii::app()->user->setFlash('success', "L'abonnement n° {$abo->abonnement_id} a bien été enregistré.");
+                    $asBeenSaved = true;
                 } else { // L'enregistrement à échoué.
                     Yii::app()->user->setFlash('error', "L'abonnement n° {$_POST['Abonnement']['abonnement_id']}» n'a pas été enregistré.");
                 }
@@ -553,7 +556,12 @@ class AdminController extends Controller {
         // Ajout du script jquery Select2 pour charger les select avec Ajax
         $this->addSelect2();
         
-        $this->render('aboedit', array('jrn' => $jrn, 'model' => $abo));
+        if ($asBeenSaved){
+            $this->redirect($this->createUrl("site/detail/$abo->perunilid#$abo->abonnement_id"));
+        }
+        else{
+            $this->render('aboedit', array('jrn' => $jrn, 'model' => $abo));
+        }
     }
 
     public function actionAbodelete($perunilid, $aboid) {
