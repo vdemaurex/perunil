@@ -307,7 +307,7 @@ class Abonnement extends ModifModel {
             else {
                 //$src = Yii::app()->baseUrl . "/images/www.png";
                 //return CHtml::image($src, "Electronique", array('title' => "Support éléctronique", 'style' => self::imgstyle));
-                return '<span class="glyphicon glyphicon-new-window"></span>&nbsp;';
+                return '<span class="glyphicon glyphicon-new-window" style="color:green;" ></span>&nbsp;';
             }
         }
     }
@@ -317,7 +317,7 @@ class Abonnement extends ModifModel {
         if ($this->titreexclu) {
             //$src = Yii::app()->baseUrl . "/images/interdit.png";
             //return CHtml::image($src, "Titre exclu", array('title' => "Titre exclu", 'style' => self::imgstyle));
-            return '<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;';
+            return '<span class="glyphicon glyphicon-ban-circle" style="color:red;"></span>&nbsp;';
         }
     }
 

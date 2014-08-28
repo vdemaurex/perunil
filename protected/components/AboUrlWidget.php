@@ -125,7 +125,7 @@ class AboUrlWidget extends CWidget {
             // Si l'état de l'abonnement est à "Problème d'accès"
             if($this->abo->statutabo == 4){
                 $this->link_title = "L'accès online à cette publication est momentanément impossible.";
-                echo '<span class="glyphicon glyphicon-warning-sign"></span>&nbsp;';
+                echo '<span class="glyphicon glyphicon-warning-sign" style="color:orange;"></span>&nbsp;';
             }
             
             echo CHtml::link(
