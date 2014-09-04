@@ -312,7 +312,7 @@ class SearchComponent extends CComponent {
                             }
                         }
 
-                        $cols = array('j.titre', 'j.titre_abrege', 'j.titre_variante', 'j.soustitre', 'j.faitsuitea', 'j.devient');
+                        $cols = array('j.titre', 'j.titre_abrege', 'j.titre_variante', 'j.soustitre', 'j.faitsuitea', 'j.devient', 'a.commentaire_etatcoll');
 // Boucle sur toutes les colonnes
                         foreach ($cols as $col) {
                             $Twhere .= " (";

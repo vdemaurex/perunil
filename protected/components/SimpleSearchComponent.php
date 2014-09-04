@@ -9,7 +9,7 @@ class SimpleSearchComponent extends SearchComponent {
 
     private $cmd;
     private $params;
-    private $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient');
+    private $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient', 'a.commentaire_etatcoll');
 
     public function __construct() {
         $this->cmd = $cmd = Yii::app()->db->createCommand();
@@ -109,7 +109,8 @@ class SimpleSearchComponent extends SearchComponent {
         // Boucle sur toutes les colonnes
         foreach ($cols as $col) {
             if (!empty($str)) {
-                $this->cmd->orWhere(" $col LIKE :{$col}word", array(":{$col}word" => $str));
+                $rand = rand (1000 , 9999 );
+                $this->cmd->orWhere(" $col LIKE :word$rand", array(":word$rand" => $str));
             }
         }
     }
@@ -131,8 +132,9 @@ class SimpleSearchComponent extends SearchComponent {
 //                $filter_where_data[":{$col}trunk{$i}A"] = "$word%";
 //                $filter_where_data[":{$col}trunk{$i}B"] = "% $word%";
                 // Avec recherche en milieu de mot
-                $filter_where[] = "$col LIKE :{$col}trunk{$i}";
-                $filter_where_data[":{$col}trunk{$i}"] = "%$word%";
+                $rand = rand (1000 , 9999 );
+                $filter_where[] = "$col LIKE :trunk{$rand}";
+                $filter_where_data[":trunk{$rand}"] = "%$word%";
             }// Fin boucle mots
             $this->cmd->andWhere($filter_where, $filter_where_data);
         } // Fin boucle colonne
