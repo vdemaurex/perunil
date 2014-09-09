@@ -255,30 +255,17 @@ class CsvController extends Controller {
         $this->render('savereport');
     }
 
+    /**
+     * Exportation des résultats de la recherche admin au format CSV.
+     */
     public function actionExport() {
         if (Yii::app()->session['searchtype'] != 'admin') {
             Yii::app()->user->setFlash('error', "Merci d'utiliser l'exporation CSV depuis les résultats de la recherche admin uniquement.");
             return;
         }
 
-        // Sauvegarde de l'état de l'affichage : 
-        $affichage = Yii::app()->session['search']->admin_affichage;
-        // Récupération du Criteria avec Journal comme modèle.
-        Yii::app()->session['search']->admin_affichage = 'journal';
-        $criteria = Yii::app()->session['search']->admin_criteria;
-        // Restauration de l'état d'affichage
-        Yii::app()->session['search']->admin_affichage = $affichage;
-
-
-        // 
-        $criteria->select = 't.perunilid';
-
-
-        // Récupération des perunilid
-        $builder = new CDbCommandBuilder(Yii::app()->db->getSchema());
-        $command = $builder->createFindCommand('journal', $criteria);
-        $perunilids = $command->queryColumn();
-        $perunilids_comma_separated = implode(",", $perunilids);
+        $ids = Yii::app()->session['search']->getAdminIds();
+        $ids_comma_separated = implode(",", $ids);
 
 
         $command = Yii::app()->db->createCommand();
@@ -337,9 +324,23 @@ class CsvController extends Controller {
             "am.stamp             AS modification"
         ));
 
-        $command->from("journal j");
-        $command->join("abonnement a", "j.perunilid = a.perunilid");
-
+        // Traitement différent selon le type d'affichage actuel
+        if (Yii::app()->session['search']->getAdmin_affichage() == 'abonnement') {
+            $command->from("abonnement a");
+            $command->join("journal j", "j.perunilid = a.perunilid");
+            $command->where("a.abonnement_id in ($ids_comma_separated)");
+ 
+        } else {
+            $command->from("journal j");
+            $command->join("abonnement a", "j.perunilid = a.perunilid");
+            $command->where = "j.perunilid in ($ids_comma_separated)";
+            // Pour les journaux, il faut encore supprimer les abonnement qui ne sont pas au bon format
+            if (Yii::app()->session['search']->support > 0) {
+                $command->where .= " AND a.support = " . Yii::app()->session['search']->support;
+            }
+            
+      }
+        
         $command->leftJoin("plateforme plt", "a.plateforme = plt.plateforme_id");
         $command->leftJoin("editeur ed", "a.editeur    = ed.editeur_id");
         $command->leftJoin("histabo ha", "a.histabo    = ha.histabo_id");
@@ -356,12 +357,6 @@ class CsvController extends Controller {
         $command->leftJoin("modifications am", "a.modification = am.id");
         $command->leftJoin("modifications ac", "a.creation     = ac.id");
 
-        if (empty(Yii::app()->session['search']->support) || Yii::app()->session['search']->support == 0){
-            $command->where("j.perunilid in ($perunilids_comma_separated)");
-        }
-        else{
-            $command->where("j.perunilid in ($perunilids_comma_separated) AND a.support = " . Yii::app()->session['search']->support);
-        }
 
         // Génération du fichier CSV
         // Extension ECSVExport : http://www.yiiframework.com/extension/csvexport
