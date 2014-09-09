@@ -72,7 +72,7 @@
             //'licence',
             $columns[] = array(
                 'name' => 'licence',
-                'value' => '$data->licence0->licence',
+                'value' => '$data->licence0==null ? "" : $data->licence0->licence',
                 'header' => 'Licence',
             );
             $columns[] = array(
