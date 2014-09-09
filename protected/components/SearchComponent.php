@@ -501,19 +501,6 @@ class SearchComponent extends CComponent {
         $this->query_summary("'$this->q' dans tous les champs de la table journal.");
     }
 
-    /* private function aboSearch($criteria, $not_like = false) {
-      $like = $not_like ? "NOT LIKE" : "LIKE";
-      foreach (explode(" ", $this->q) as $word) {
-      if ($word != "" || $word != "") {
-      $query = "abonnements.package $like '%$word%' OR abonnements.url_site $like '%$word%' " .
-      "OR abonnements.etatcoll $like '%$word%' OR abonnements.cote $like '%$word%' " .
-      "OR abonnements.editeur_code $like '%$word%' OR abonnements.editeur_sujet $like '%$word%' " .
-      "OR abonnements.commentaire_pub $like '%$word%' ";
-      $criteria->addCondition($query, 'AND');
-      }
-      }
-      } */
-
     public function setSearch_type($search_type) {
         if (defined("self::" . strtoupper($search_type)))
             $this->search_type = $search_type;
@@ -593,7 +580,6 @@ class SearchComponent extends CComponent {
 
     public function setAdmin_query_tab($query_tab) {
         $this->admin_query_tab = $query_tab;
-// $this->refreshAdminCriteria();
     }
 
     public function setAdmin_affichage($affichage = 'abonnement') {
@@ -603,7 +589,6 @@ class SearchComponent extends CComponent {
         } else {
             $this->admin_affichage = 'abonnement';
         }
-// $this->refreshAdminCriteria();
     }
 
     public function getAdmin_affichage() {
@@ -614,24 +599,6 @@ class SearchComponent extends CComponent {
         }
     }
 
-//    private function refreshAdminCriteria() {
-//        $this->q_summary = "";
-//        if (isset($this->admin_affichage) && $this->admin_affichage == 'journal') {
-//            $this->admin_criteria = $this->adminSearch();
-//        } else {
-//            $this->admin_criteria = $this->aboadminSearch();
-//        }
-//    }
-
-    public function getAdmin_criteria() {
-        if ($this->getAdmin_affichage() == 'journal') {
-            $this->admin_criteria = $this->adminSearch();
-        } else {
-            $this->admin_criteria = $this->aboadminSearch();
-        }
-        return $this->admin_criteria;
-    }
-
     public function getAdmin_query_tab() {
         if (isset($this->admin_query_tab)) {
             return $this->admin_query_tab;
@@ -639,567 +606,59 @@ class SearchComponent extends CComponent {
             return null;
         }
     }
+ 
+   public function getAdmin_adp() {        
+        $asc = new AdminSearchComponent($this);
+        
+        if ($this->getAdmin_affichage() == 'abonnement') {
+            $aboIdList = $asc->getAboIdList();
+            $this->admin_count = count($aboIdList);
+            
+            $criteria = new CDbCriteria();
+            $criteria->addInCondition('abonnement_id', $aboIdList);
 
-    public function getAdmin_dp() {
-        $affichage = ucfirst($this->getAdmin_affichage());
 
-        $this->q_summary = "";
-        $this->getAdmin_criteria();
+            $adp = new CActiveDataProvider('Abonnement', array(
+                'criteria' => $criteria,
+                'pagination' => array(
+                'pageSize' => $this->pagesize,
+                ),
+            ));
+            
+        } else {
+            $perunilidList = $asc->getPerunilidList();
+            
+            $criteria = new CDbCriteria();
+            $criteria->addInCondition('perunilid', $perunilidList);
 
 
-        $this->admin_dp = new CActiveDataProvider(
-                $affichage::model(), array('criteria' => $this->admin_criteria,
-            'pagination' => array('pageSize' => $this->pagesize))
-        );
-
-        $this->admin_count = $this->admin_dp->totalItemCount;
-        return $this->admin_dp;
+            $adp = new CActiveDataProvider('Journal', array(
+                'criteria' => $criteria,
+                'pagination' => array(
+                'pageSize' => $this->pagesize,
+                ),
+            ));
+      }
+        
+        $this->admin_count = $adp->totalItemCount;
+        return $adp;
     }
-
+    
     public function getAdmin_count() {
         return $this->admin_count;
     }
-
-    /**
-     * Recherche selon un ou plusieurs critère du tableau $querytab : 
-     *  [perunilidcrit1]	string	"equal"	
-     *   [perunilid1]	string	""	
-     *   [perunilidcrit2]	string	"equal"	
-     *   [perunilid2]	string	""		
-     *   [titre]	string	""	
-     *   [soustitre]	string	""	
-     *   [titreabrege]	string	""	
-     *   [variantetitre]	string	""	
-     *   [faitsuitea]	string	""	
-     *   [devient]	string	""	
-     *   [editeur]	string	""	
-     *   [codeediteur]	string	""	
-     *   [issnl]	string	""	
-     *   [issn]	string	""	
-     *   [reroid]	string	""	
-     *   [nlmid]	string	""	
-     *   [coden]	string	""	
-     *   [doi]	string	""	
-     *   [urn]	string	""	
-     *   [url]	string	""	
-     *   [rss]	string	""	
-     *   [user]	string	""	
-     *   [pwd]	string	""	
-     *   [licence]	foreign key	
-     *   [statutabo]	foreign key	
-     *   [plateforme]	foreign key	
-     *   [gestion]	foreign key
-     *   [histabo]	foreign key
-     *   [support]	foreign key
-     *   [format]	foreign key
-     *   [package]	string	""	
-     *   [no_abo]	string	""	
-     *   [etatcoll]	string	""	
-     * [embargocrit]	string	"equal"
-     * [embargo]	string	""
-     * [etatcolldeba]	string	""
-     * [etatcolldebv]	string	""
-     * [etatcolldebf]	string	""
-     * [etatcollfina]	string	""
-     * [etatcollfinv]	string	""
-     * [etatcollfinf]	string	""
-     * [localisation]	string	""
-     * [cote]	string	""	
-     * [commentairepro]	string	""	
-     * [commentairepub]	string	""	
-     * [sujet]	string	""
-     * [sujetsfm]	string	""	
-     * [fmid]	string	""	
-     * [historique]	string	""	
-     * @param array $qt 
-     * @return CActiveDataProvider correspondant à la requête. NULL si aucun
-     *                             critère n'a été fourni.
-     */
-    private function adminSearch() {
-        $qt = $this->admin_query_tab;
-        $limite = 100;
-        $ct = array('equal' => '=', 'before' => '<', 'after' => '>');
-
-        $criteria = new CDbCriteria();
-        $this->joinAbo($criteria);
-
-// Jointure de la table sujet si nécessaire
-        if (trim($qt['sujet'])) {
-            $criteria->join .= 'LEFT JOIN `journal_sujet` `js` ON (`js`.`perunilid`=`t`.`perunilid`)';
-            $criteria->join .= 'LEFT JOIN `sujet` `s` ON (`s`.`sujet_id`=`js`.`sujet_id`)';
-            $criteria->addCondition("s.sujet_id ='{$qt['sujet']}'");
-            $this->query_summary("sujet = " . Sujet::model()->findByPk($qt['sujet'])->nom_fr);
-        }
-
-// Jointure de la table editeur si nécessaire
-        if (trim($qt['editeur_txt'])) {
-            $criteria->join .= 'LEFT JOIN editeur ed ON (ed.editeur_id=abonnements.editeur)';
-        }
-
-//Recherche par perunilid
-        if (trim($qt['perunilid1'])) {
-            $criteria->addCondition("t.perunilid " . $ct[$qt['perunilidcrit1']] . " '" . $qt['perunilid1'] . "'");
-            $this->query_summary("perunilid " . $ct[$qt['perunilidcrit1']] . " " . $qt['perunilid1']);
-// S'il y a un deuxième perunilid
-            if (trim($qt['perunilid2'])) {
-                $criteria->addCondition("t.perunilid " . $ct[$qt['perunilidcrit2']] . " '" . $qt['perunilid2'] . "'");
-                $this->query_summary("perunilid " . $ct[$qt['perunilidcrit2']] . " " . $qt['perunilid2']);
-            }
-        }
-
-        if (isset($qt['corecollection'])) {
-            if ($qt['corecollection'] == 'VRAI') { // Joindre la corecollection BiUM
-                $criteria->join .= 'INNER JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id = ' . self::BiUM_Corecollection;
-                $this->query_summary("avec la core collection BiUM");
-            } elseif ($qt['corecollection'] == 'FAUX') { // Exclure la corecollection BiUM
-                $criteria->addCondition("t.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = " . self::BiUM_Corecollection . ")");
-                $this->query_summary("sans la core collection BiUM");
-//$criteria->join .= 'LEFT JOIN corecollection AS cc ON t.perunilid = cc.perunilid AND cc.biblio_id != ' . self::BiUM_Corecollection;
-            }
-        }
-// Jointure pour corecollection
-// $q .="LEFT JOIN corecollection AS cc ON j.perunilid = cc.perunilid ";
-// $q .="LEFT JOIN biblio AS bib ON bib.biblio_id = cc.biblio_id ";
-// Modifications : Si un champ concernant le modifications est rempli
-// 1. Création d'une requête pour la table modification
-// 2. Liste de Perunilid ou d'abonnement_id comme resultat de la requête
-//    avec une maximum selon $limite
-// 3. la liste d'id est passée à une clause IN dans la requête principale.
-        if (trim($qt['signaturecreation']) || trim($qt['signaturemodification']) || trim($qt['datecreation1']) || trim($qt['datemodif1'])) {
-
-
-            $where_string = "";
-            $where_array = array();
-
-// Préparation de la requête pour des recherche sur la création
-            if (trim($qt['datecreation1'])) {
-                $phpdate = strtotime(trim($qt['datecreation1']));
-                $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                $where_string = "stamp " . $ct[$qt['datecreationcrit1']] . " :stamp";
-                $where_array[":stamp"] = $mysqldate;
-                $this->query_summary("date de création " . $ct[$qt['datecreationcrit1']] . " " . $qt['datecreation1']);
-
-                if (trim($qt['datecreation2'])) {
-                    $phpdate = strtotime(trim($qt['datecreation2']));
-                    $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                    $where_string .= " AND stamp " . $ct[$qt['datecreationcrit2']] . " :stampi";
-                    $where_array[":stampi"] = $mysqldate;
-                    $this->query_summary(" et " . $ct[$qt['datecreationcrit2']] . " " . $qt['datecreation2']);
-                } // datecreation2
-            } // datecreation1
-// Recherche d'après le créateur
-            if (trim($qt['signaturecreation'])) {
-                $s = trim($qt['signaturecreation']);
-                if ($where_string != "")
-                    $where_string .= " AND ";
-                $where_string .= 'user_id = :sc';
-                $where_array[':sc'] = $s;
-                $this->query_summary("Signature de création = " . Utilisateur::model()->findByPk($s)->pseudo);
-            }
-
-// ---
-// Préparation de la requête pour des recherche sur la modification
-            if (trim($qt['datemodif1'])) {
-                $phpdate = strtotime(trim($qt['datemodif1']));
-                $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                if ($where_string != "")
-                    $where_string .= " AND ";
-                $where_string .= "stamp " . $ct[$qt['datemodifcrit1']] . " :stampii";
-                $where_array[":stampii"] = $mysqldate;
-                $this->query_summary("date de modification " . $ct[$qt['datemodifcrit1']] . " " . $qt['datemodif1']);
-
-
-                if (trim($qt['datemodif2'])) {
-                    $phpdate = strtotime(trim($qt['datemodif2']));
-                    $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                    $where_string .= " AND stamp " . $ct[$qt['datemodifcrit2']] . " :stampiii";
-                    $where_array[":stampiii"] = $mysqldate;
-                    $this->query_summary(" et " . $ct[$qt['datemodifcrit2']] . " " . $qt['datemodif2']);
-                } // datemodif2
-            } // datemodif1
-// Recherche d'après le modificateur
-            if (trim($qt['signaturemodification'])) {
-                $s = trim($qt['signaturemodification']);
-                if ($where_string != "")
-                    $where_string .= " AND ";
-                $where_string .= 'user_id = :sm';
-                $where_array[':sm'] = $s;
-                $this->query_summary("Signature de modification = " . Utilisateur::model()->findByPk($s)->pseudo);
-            }
-
-            $ids = array();
-            foreach (array('journal', 'abonnement') as $model) {
-                $where_string .= " AND action = :act AND model = :model";
-                $where_array[':act'] = 'Création';
-                $where_array[':model'] = $model;
-                $cmd = Yii::app()->db->createCommand()
-                        ->selectDistinct('m.model_id')
-                        ->from('modifications m')
-                        ->where($where_string)
-//->where('user_id = :sc AND action = :act AND model = :mod', array(':sc' => $s, ':act' => 'Création', ':mod' => 'journal'))
-                        ->limit($limite)
-                        ->order("stamp DESC");
-
-                $perunilids = $cmd->queryAll(true, $where_array);
-                $ids[$model] = join("','", array_map('current', $perunilids));
-            }
-
-// FIXME : ne pas ajouter la condition si $ids[$model] est vide.
-            $criteria->addCondition("t.perunilid IN ('{$ids['journal']}') OR abonnements.abonnement_id IN ('{$ids['abonnement']}')");
-        } // Modifications
-// Recherche tous les champs
-        if (trim($qt['all'])) {
-            $this->q = $qt['all'];
-            $this->journalSearch($criteria);
-        }
-
-// Recherche de tous les champs au format texte : "LIKE %$term%"
-        $textfield = @array(
-            't.titre' => explode(" ", $qt['titre']),
-            't.soustitre' => explode(" ", $qt['soustitre']),
-            't.titre_abrege' => explode(" ", $qt['titreabrege']),
-            't.titre_variante' => explode(" ", $qt['variantetitre']),
-            't.faitsuitea' => explode(" ", $qt['faitsuitea']),
-            't.devient' => explode(" ", $qt['devient']),
-            'ed.editeur' => explode(" ", $qt['editeur_txt']),
-            't.issnl' => $qt['issnl'],
-            't.issn' => $qt['issn'],
-            't.reroid' => $qt['reroid'],
-            't.nlmid' => $qt['nlmid'],
-            't.coden' => $qt['coden'],
-            't.doi' => $qt['doi'],
-            't.urn' => $qt['urn'],
-            't.url_rss' => $qt['rss'],
-            'abonnements.url_site' => $qt['url'],
-            'abonnements.editeur_code' => $qt['codeediteur'],
-            'abonnements.acces_user' => $qt['user'],
-            'abonnements.acces_pwd' => $qt['pwd'],
-            'abonnements.package' => $qt['package'],
-            'abonnements.no_abo' => $qt['no_abo'],
-            'abonnements.etatcoll' => $qt['etatcoll'],
-            'abonnements.cote' => $qt['cote'],
-            'abonnements.commentaire_pro' => $qt['commentairepro'],
-            'abonnements.commentaire_pub' => $qt['commentairepub'],
-            't.commentaire_pub' => $qt['commentairepub'],
-            't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
-            't.DEPRECATED_fmid' => $qt['fmid'],
-            //'t.DEPRECATED_historique' => $sm_name,
-            't.DEPRECATED_historique' => $qt['historique'],
-        );
-        foreach ($textfield as $column => $value) {
-// Pour champs dont on fait un recherche terme à terme
-            if (is_array($value) && count($value) > 0) {
-                $query = new CDbCriteria();
-                foreach ($value as $term) {
-                    $term = trim($term);
-                    if ($term) {
-                        $query->addSearchCondition($column, $term);
-                        $this->query_summary("$column LIKE %$term%");
-                    }
-                }
-                $criteria->mergeWith($query);
-            }
-// Pour les champs dont la recherche ne porte que sur un seul terme
-            else {
-                $value = trim($value);
-                if ($value) {
-                    $criteria->addSearchCondition($column, $value);
-                    $this->query_summary("$column LIKE %$value%");
-                }
-            }
-        }
-
-// Recherche exacte : "= $term"
-        $exact_fields = @array(
-            't.openaccess' => $qt['openaccess'],
-            't.publiunil' => $qt['publiunil'],
-            't.parution_terminee' => $qt['parution_terminee'],
-            'abonnements.licence' => $qt['licence'],
-            'abonnements.statutabo' => $qt['statutabo'],
-            'abonnements.plateforme' => $qt['plateforme'],
-            'abonnements.gestion' => $qt['gestion'],
-            'abonnements.histabo' => $qt['histabo'],
-            'abonnements.support' => $qt['support'],
-            'abonnements.format' => $qt['format'],
-            'abonnements.editeur' => $qt['editeur'],
-            'abonnements.titreexclu' => $qt['titreexclu'],
-            'abonnements.localisation' => $qt['localisation'],
-            'abonnements.etatcoll_deba' => $qt['etatcolldeba'],
-            'abonnements.etatcoll_debv' => $qt['etatcolldebv'],
-            'abonnements.etatcoll_debf' => $qt['etatcolldebf'],
-            'abonnements.etatcoll_fina' => $qt['etatcollfina'],
-            'abonnements.etatcoll_finv' => $qt['etatcollfinv'],
-            'abonnements.etatcoll_finf' => $qt['etatcollfinf'],
-            'abonnements.acces_elec_gratuit' => $qt['acces_elec_gratuit'],
-            'abonnements.acces_elec_chuv' => $qt['acces_elec_chuv'],
-            'abonnements.acces_elec_unil' => $qt['acces_elec_unil'],
-        );
-        foreach ($exact_fields as $column => $value) {
-//$value = trim($value);
-            if (strlen(trim($value)) > 0) {
-                $criteria->addCondition("$column = '$value'");
-                $this->query_summary("$column = $value");
-            }
-        }
-
-// Traitement du cas de l'embargo
-        if (trim($qt['embargo'])) {
-            $criteria->addCondition("abonnements.embargo_mois " . $ct[$qt['embargocrit']] . " '" . $qt['embargo'] . "'");
-            $this->query_summary("abonnements.embargo_mois " . $ct[$qt['embargocrit']] . " " . $qt['embargo']);
-        }
-        return $criteria;
-        /*
-          // S'il n'y auncun critère, on ne revoie rien.
-          if (!$criteria->condition) {
-          return NULL;
-          } else {
-          return new CActiveDataProvider(Journal::model(), array('criteria' => $criteria, 'pagination' => array(
-          'pageSize' => $this->pagesize)));
-          }
-         * 
-         */
+    
+    public function getAdminIds(){
+        $asc = new AdminSearchComponent($this);
+        
+        if ($this->getAdmin_affichage() == 'abonnement') {
+            return $asc->getAboIdList();
+             
+        } else {
+            return $asc->getPerunilidList();            
+      }
     }
 
-    private function aboadminSearch() {
-        $qt = $this->admin_query_tab;
-        $limite = 100;
-        $ct = array('equal' => '=', 'before' => '<', 'after' => '>');
-
-        $criteria = new CDbCriteria();
-        $criteria->join .= 'LEFT JOIN `journal` `j` ON `j`.`perunilid`=`t`.`perunilid` ';
-
-// Jointure de la table sujet si nécessaire
-        if (trim($qt['sujet'])) {
-            $criteria->join .= 'LEFT JOIN `journal_sujet` `js` ON (`js`.`perunilid`=`t`.`perunilid`)';
-            $criteria->join .= 'LEFT JOIN `sujet` `s` ON (`s`.`sujet_id`=`js`.`sujet_id`)';
-            $criteria->addCondition("s.sujet_id ='{$qt['sujet']}'");
-            $this->query_summary("sujet = " . Sujet::model()->findByPk($qt['sujet'])->nom_fr);
-        }
-
-// Jointure de la table editeur si nécessaire
-        if (trim($qt['editeur_txt'])) {
-            $criteria->join .= 'LEFT JOIN editeur ed ON (ed.editeur_id=t.editeur)';
-        }
-
-//Recherche par perunilid
-        if (trim($qt['perunilid1'])) {
-            $criteria->addCondition("t.perunilid " . $ct[$qt['perunilidcrit1']] . " '" . $qt['perunilid1'] . "'");
-            $this->query_summary("perunilid " . $ct[$qt['perunilidcrit1']] . " " . $qt['perunilid1']);
-// S'il y a un deuxième perunilid
-            if (trim($qt['perunilid2'])) {
-                $criteria->addCondition("t.perunilid " . $ct[$qt['perunilidcrit2']] . " '" . $qt['perunilid2'] . "'");
-                $this->query_summary("perunilid " . $ct[$qt['perunilidcrit2']] . " " . $qt['perunilid2']);
-            }
-        }
-
-        if (isset($qt['corecollection'])) {
-            if ($qt['corecollection'] == 'VRAI') { // Joindre la corecollection BiUM
-                $criteria->join .= 'INNER JOIN corecollection AS cc ON j.perunilid = cc.perunilid AND cc.biblio_id = ' . self::BiUM_Corecollection;
-                $this->query_summary("avec la core collection BiUM");
-            } elseif ($qt['corecollection'] == 'FAUX') { // Exclure la corecollection BiUM
-                $criteria->addCondition("j.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = " . self::BiUM_Corecollection . ")");
-                $this->query_summary("sans la core collection BiUM");
-            }
-        }
-
-// Modifications : Si un champ concernant le modifications est rempli
-// 1. Création d'une requête pour la table modification
-// 2. Liste de Perunilid ou d'abonnement_id comme resultat de la requête
-//    avec une maximum selon $limite
-// 3. la liste d'id est passée à une clause IN dans la requête principale.
-        if (trim($qt['signaturecreation']) || trim($qt['signaturemodification']) || trim($qt['datecreation1']) || trim($qt['datemodif1'])) {
-
-
-            $where_string = "";
-            $where_array = array();
-
-// Préparation de la requête pour des recherche sur la création
-            if (trim($qt['datecreation1'])) {
-                $phpdate = strtotime(trim($qt['datecreation1']));
-                $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                $where_string = "stamp " . $ct[$qt['datecreationcrit1']] . " :stamp";
-                $where_array[":stamp"] = $mysqldate;
-                $this->query_summary("date de création " . $ct[$qt['datecreationcrit1']] . " " . $qt['datecreation1']);
-
-                if (trim($qt['datecreation2'])) {
-                    $phpdate = strtotime(trim($qt['datecreation2']));
-                    $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                    $where_string .= " AND stamp " . $ct[$qt['datecreationcrit2']] . " :stampi";
-                    $where_array[":stampi"] = $mysqldate;
-                    $this->query_summary(" et " . $ct[$qt['datecreationcrit2']] . " " . $qt['datecreation2']);
-                } // datecreation2
-            } // datecreation1
-// Recherche d'après le créateur
-            if (trim($qt['signaturecreation'])) {
-                $s = trim($qt['signaturecreation']);
-                if ($where_string != "")
-                    $where_string .= " AND ";
-                $where_string .= ' (user_id = :sc';
-                $where_array[':sc'] = $s;
-                $where_string .= " AND action = :actc) ";
-                $where_array[':actc'] = 'Création';
-                $this->query_summary("Signature de création = " . Utilisateur::model()->findByPk($s)->pseudo);
-            }
-
-// ---
-// Préparation de la requête pour des recherche sur la modification
-            if (trim($qt['datemodif1'])) {
-                $phpdate = strtotime(trim($qt['datemodif1']));
-                $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                if ($where_string != "")
-                    $where_string .= " AND ";
-                $where_string .= "stamp " . $ct[$qt['datemodifcrit1']] . " :stampii";
-                $where_array[":stampii"] = $mysqldate;
-                $this->query_summary("date de modification " . $ct[$qt['datemodifcrit1']] . " " . $qt['datemodif1']);
-
-
-                if (trim($qt['datemodif2'])) {
-                    $phpdate = strtotime(trim($qt['datemodif2']));
-                    $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                    $where_string .= " AND stamp " . $ct[$qt['datemodifcrit2']] . " :stampiii";
-                    $where_array[":stampiii"] = $mysqldate;
-                    $this->query_summary(" et " . $ct[$qt['datemodifcrit2']] . " " . $qt['datemodif2']);
-                } // datemodif2
-            } // datemodif1
-// Recherche d'après le modificateur
-            if (trim($qt['signaturemodification'])) {
-                $s = trim($qt['signaturemodification']);
-                if ($where_string != "")
-                    $where_string .= " AND ";
-                $where_string .= ' (user_id = :sm';
-                $where_array[':sm'] = $s;
-                $where_string .= " AND action = :actm) ";
-                $where_array[':actm'] = 'Modification';
-                $this->query_summary("Signature de modification = " . Utilisateur::model()->findByPk($s)->pseudo);
-            }
-
-            $where_string .= " AND model = :model ";
-            $where_array[':model'] = 'abonnement';
-            $cmd = Yii::app()->db->createCommand()
-                    ->selectDistinct('m.model_id')
-                    ->from('modifications m')
-                    ->where($where_string)
-                    ->limit($limite)
-                    ->order("stamp DESC");
-
-            $perunilids = $cmd->queryAll(true, $where_array);
-            $ids = join("','", array_map('current', $perunilids));
-// Ajout de la liste des ids concerné par la modification
-            $criteria->addCondition("t.perunilid IN ('$ids')");
-        } // Modifications
-// Recherche tous les champs
-        if (trim($qt['all'])) {
-            $this->q = $qt['all'];
-            $this->journalSearch($criteria);
-        }
-
-// Recherche de tous les champs au format texte : "LIKE %$term%"
-        $textfield = @array(
-            'j.titre' => explode(" ", $qt['titre']),
-            'j.soustitre' => explode(" ", $qt['soustitre']),
-            'j.titre_abrege' => explode(" ", $qt['titreabrege']),
-            'j.titre_variante' => explode(" ", $qt['variantetitre']),
-            'j.faitsuitea' => explode(" ", $qt['faitsuitea']),
-            'j.devient' => explode(" ", $qt['devient']),
-            'ed.editeur' => explode(" ", $qt['editeur_txt']),
-            'j.issnl' => $qt['issnl'],
-            'j.issn' => $qt['issn'],
-            'j.reroid' => $qt['reroid'],
-            'j.nlmid' => $qt['nlmid'],
-            'j.coden' => $qt['coden'],
-            'j.doi' => $qt['doi'],
-            'j.urn' => $qt['urn'],
-            'j.url_rss' => $qt['rss'],
-            't.url_site' => $qt['url'],
-            't.editeur_code' => $qt['codeediteur'],
-            't.acces_user' => $qt['user'],
-            't.acces_pwd' => $qt['pwd'],
-            't.package' => $qt['package'],
-            't.no_abo' => $qt['no_abo'],
-            't.etatcoll' => $qt['etatcoll'],
-            't.cote' => $qt['cote'],
-            't.commentaire_pro' => $qt['commentairepro'],
-            't.commentaire_pub' => $qt['commentairepub'],
-            'j.commentaire_pub' => $qt['commentairepub'],
-            't.DEPRECATED_sujetsfm' => $qt['sujetsfm'],
-            't.DEPRECATED_fmid' => $qt['fmid'],
-            //'t.DEPRECATED_historique' => $sm_name,
-            't.DEPRECATED_historique' => $qt['historique'],
-        );
-        foreach ($textfield as $column => $value) {
-// Pour champs dont on fait un recherche terme à terme
-            if (is_array($value) && count($value) > 0) {
-                $query = new CDbCriteria();
-                foreach ($value as $term) {
-                    $term = trim($term);
-                    if ($term) {
-                        $query->addSearchCondition($column, $term);
-                        $this->query_summary("$column LIKE %$term%");
-                    }
-                }
-                $criteria->mergeWith($query);
-            }
-// Pour les champs dont la recherche ne porte que sur un seul terme
-            else {
-                $value = trim($value);
-                if ($value) {
-                    $criteria->addSearchCondition($column, $value);
-                    $this->query_summary("$column LIKE %$value%");
-                }
-            }
-        }
-
-// Recherche exacte : "= $term"
-        $exact_fields = @array(
-            'j.openaccess' => $qt['openaccess'],
-            'j.parution_terminee' => $qt['parution_terminee'],
-            't.licence' => $qt['licence'],
-            't.statutabo' => $qt['statutabo'],
-            't.plateforme' => $qt['plateforme'],
-            't.gestion' => $qt['gestion'],
-            't.histabo' => $qt['histabo'],
-            't.support' => $qt['support'],
-            't.format' => $qt['format'],
-            't.editeur' => $qt['editeur'],
-            't.titreexclu' => $qt['titreexclu'],
-            't.localisation' => $qt['localisation'],
-            't.etatcoll_deba' => $qt['etatcolldeba'],
-            't.etatcoll_debv' => $qt['etatcolldebv'],
-            't.etatcoll_debf' => $qt['etatcolldebf'],
-            't.etatcoll_fina' => $qt['etatcollfina'],
-            't.etatcoll_finv' => $qt['etatcollfinv'],
-            't.etatcoll_finf' => $qt['etatcollfinf'],
-            't.acces_elec_gratuit' => $qt['acces_elec_gratuit'],
-            't.acces_elec_chuv' => $qt['acces_elec_chuv'],
-            't.acces_elec_unil' => $qt['acces_elec_unil'],
-        );
-        foreach ($exact_fields as $column => $value) {
-            $value = trim($value);
-            if ($value) {
-                $criteria->addCondition("$column = '$value'");
-                $this->query_summary("$column = $value");
-            }
-        }
-
-// Traitement du cas de l'embargo
-        if (trim($qt['embargo'])) {
-            $criteria->addCondition("t.embargo_mois " . $ct[$qt['embargocrit']] . " '" . $qt['embargo'] . "'");
-            $this->query_summary("t.embargo_mois " . $ct[$qt['embargocrit']] . " " . $qt['embargo']);
-        }
-
-        return $criteria;
-        /*
-
-          // S'il n'y auncun critère, on ne revoie rien.
-          if (!$criteria->condition) {
-          return NULL;
-          } else {
-          return new CActiveDataProvider(Abonnement::model(), array('criteria' => $criteria, 'pagination' => array(
-          'pageSize' => $this->pagesize)));
-          }
-
-         */
-    }
 
     public function query_summary($log) {
         if ($this->q_summary == "") {
@@ -1216,39 +675,4 @@ class SearchComponent extends CComponent {
     public function getQuerySummary() {
         return $this->q_summary;
     }
-
-    /**
-     * La fonction joinAbo ajoute les critères communs a beaucoup de recherches
-     * dans la base PerUNIL :
-     * - Jointure avec la table abonnement
-     * - Ajouter les titres exclu seulement si l'utilisateur est authentifié
-     * - Ajouter le critère du support désiré
-     * - Trier par titre
-     * @param CDbCriteria $criteria Requête en cours de construction, passage par référence
-     */
-    private function joinAbo($criteria) {
-        $criteria->join .= 'INNER JOIN `abonnement` `abonnements` ON `abonnements`.`perunilid`=`t`.`perunilid` AND abonnements.perunilid IS NOT NULL ';
-
-//$criteria->addCondition("abonnements.perunilid IS NOT NULL");
-        if (Yii::app()->user->isGuest) {
-// Si l'utilisateur n'est pas authentifié, on ne prend pas en compte
-// les abonnements de titre exculs
-//$criteria->addCondition("abonnements.titreexclu=0");
-            $criteria->join .= " AND abonnements.titreexclu=0 ";
-        } else {
-// Si l'utilisateur est authentifié, on recherche si titreexcul n'est
-// pas null
-            if (isset($this->titreexclu)) {
-//$criteria->addCondition("abonnements.titreexclu=$this->titreexclu");
-                $criteria->join .= " AND abonnements.titreexclu=$this->titreexclu ";
-            }
-        }
-        if ($this->support > 0) {
-//$criteria->addCondition("abonnements.support=$this->support");
-            $criteria->join .= " AND abonnements.support=$this->support ";
-        }
-        $criteria->order = "titre";
-        $criteria->distinct = true;
-    }
-
 }
