@@ -17,12 +17,17 @@ class ModifModel extends CActiveRecord {
         $string = "";
         switch ($field) {
             case 'creation' || 'modification':
-                $table = ucfirst($field);
+                //$table = ucfirst($field);
                 if (!empty($this->$field)) {
                     $modif = $this->{$field . '_lk'};
                     if ($modif) {
                         // La dernière modification existe bien
-                        $string = $modif->stamp . " par " . $modif->utilisateur->pseudo;
+                        if (!empty($modif->stamp)){
+                         $string = $modif->stamp;
+                            if (!empty($modif->utilisateur)){
+                                $string .= " par " . $modif->utilisateur->pseudo;
+                            }
+                        }
                     }
                 }
                 break;
