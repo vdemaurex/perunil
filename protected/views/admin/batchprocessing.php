@@ -372,4 +372,7 @@ else{
         }
         echo "</ul>"; 
     
+        echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Retour au résultat de la recherche', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("admin/returnToSearchResults") . '"',
+        'class' => "btn btn-default  btn-sm"));
 endif;
