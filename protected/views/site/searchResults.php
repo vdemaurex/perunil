@@ -12,8 +12,8 @@ switch ($searchtype) {
 
     case 'admin':
         $titre = "admin";
-        $dp = 'admin_dp';
-        $adp = 'admin_dp';
+        $dp = 'admin_adp';
+        $adp = 'admin_adp';
         $count = 'admin_count';
         $search_url = 'admin/search';
         $clean_url = 'admin/searchclean';
@@ -93,9 +93,17 @@ if ($search_done) {
     if (Yii::app()->session['search']->maxresults > 0 && $searchtype == "simple") { // Il y a une limitation du nombre de résultats
         $msg = ", limitée à " . Yii::app()->session['search']->maxresults . " résultats,";
     }
-    Yii::app()->user->setFlash('success', "Votre recherche$msg a produit " .
-            Yii::app()->session['totalItemCount'] .
-            " résultat(s).<br/>" .
+    
+    $type = Yii::app()->session['search']->getAdmin_affichage();
+    $verbe = "trouvé";
+    if (Yii::app()->session['totalItemCount'] > 1){
+        if ($type == 'journal'){
+        $type = 'journaux';}
+        else{
+        $type .= "s";}
+        $verbe .= "s";
+    }
+    Yii::app()->user->setFlash('success', "<b>" . Yii::app()->session['totalItemCount'] ." $type $verbe </b><br/>" .
             Yii::app()->session['search']->getQuerySummary());
 } else {
     //
