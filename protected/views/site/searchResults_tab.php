@@ -12,8 +12,8 @@ switch ($searchtype) {
 
     case 'admin':
         $titre = "admin";
-        $dp = 'admin_dp';
-        $adp = 'admin_dp';
+        $dp = 'admin_adp';
+        $adp = 'admin_adp';
         $count = 'admin_count';
         $search_url = 'admin/search';
         $clean_url = 'admin/searchclean';
