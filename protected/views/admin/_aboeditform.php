@@ -59,11 +59,15 @@
         'id' => 'abonnement-_aboeditform-form',
         'enableAjaxValidation' => false,
     ));
-    ?>
-
-    <p class="note">Les champs marqué d'un asterisque (<span class="required">*</span>) doivent obligatoirement être remplis.</p>
-
-    <?php echo $form->errorSummary($model); ?>
+    
+	if (!$model->isNewRecord)
+	{ 
+		?><p class="note">Edition de l'abonnement id = <?= $model->abonnement_id; ?></p><?php
+	}
+	else{
+		?> <p class="note">Edition d'un nouvel abonnement.<p><?php
+	}
+    echo $form->errorSummary($model); ?>
 
     <table class="detail-view">
         <tbody>
