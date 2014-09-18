@@ -353,8 +353,8 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
             </tr>
 
             <tr >
-                <td><b>Signature de création</b></td>
-                <td>
+                <td><b>Création</b></td>
+                <td class="form-inline">
                     <?php
                     $this->widget('SelectWidget', array(
                         'model' => Utilisateur::model(),
@@ -362,23 +362,7 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
                         'column' => "pseudo",
                         'selected' => r($this, 'signaturecreation')));
                     ?>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Signature de modification</b></td>
-                <td>
-                    <?php
-                    $this->widget('SelectWidget', array(
-                        'model' => Utilisateur::model(),
-                        'select_name' => "signaturemodification",
-                        'column' => "pseudo",
-                        'selected' => r($this, 'signaturemodification')));
-                    ?>
-                </td>
-            </tr>
-            <tr >
-                <td><b>Date de création</b></td>
-                <td class="form-inline"><select name="datecreationcrit1"  class="form-control">
+                 <select name="datecreationcrit1"  class="form-control">
                         <option value="after"  <?= r($this, 'datecreationcrit1', "after", 'selected'); ?>>&gt;</option>        
                         <option value="before" <?= r($this, 'datecreationcrit1', "before", 'selected'); ?>>&lt;</option>
                         /<option value="equal"  <?= r($this, 'datecreationcrit1', "equal", 'selected'); ?>>=</option>
@@ -392,8 +376,16 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
                     <input type="text" id="datepicker2" value="<?= r($this, 'datecreation2'); ?>" size="10" name="datecreation2" class="form-control"></td>
             </tr>
             <tr>
-                <td><b>Date de modification</b></td>
-                <td class="form-inline"><select name="datemodifcrit1"  class="form-control">
+                <td><b>Modification</b></td>
+                <td class="form-inline">
+                    <?php
+                    $this->widget('SelectWidget', array(
+                        'model' => Utilisateur::model(),
+                        'select_name' => "signaturemodification",
+                        'column' => "pseudo",
+                        'selected' => r($this, 'signaturemodification')));
+                    ?>
+                 <select name="datemodifcrit1"  class="form-control">
                         <option value="after"  <?= r($this, 'datemodifcrit1', "after", 'selected'); ?>>&gt;</option>
                         <option value="before" <?= r($this, 'datemodifcrit1', "before", 'selected'); ?>>&lt;</option>
                         <option value="equal"  <?= r($this, 'datemodifcrit1', "equal", 'selected'); ?>>=</option>
@@ -404,7 +396,8 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
                         <option value="after"  <?= r($this, 'datemodifcrit2', "after", 'selected'); ?>>&gt;</option>
                         <option value="equal"  <?= r($this, 'datemodifcrit2', "equal", 'selected'); ?>>=</option>
                     </select>&nbsp;&nbsp;
-                    <input type="text" id="datepicker4" value="<?= r($this, 'datemodif2'); ?>" size="10" name="datemodif2" class="form-control"></td>
+                    <input type="text" id="datepicker4" value="<?= r($this, 'datemodif2'); ?>" size="10" name="datemodif2" class="form-control">
+                </td>
             </tr>
             <tr >
                 <td><b>Historique de modifications</b></td>
