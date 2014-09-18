@@ -85,6 +85,7 @@ $this->widget('zii.widgets.CDetailView', array(
     'data' => $model,
     'attributes' => $fields,
     'formatter' => new FrFormatter(),
+    'htmlOptions' => array('class' => 'table table-striped table-condensed'),
 ));
 
 $tabviewparam = array();
@@ -122,7 +123,7 @@ foreach ($abos as $abo) {
         'data' => array('abo' => $abo, 'jrn' => $model),
     );
 
-
+    
     $i++;
 }
 ?>
@@ -142,7 +143,7 @@ foreach ($abos as $abo) {
     }
 </style>
 <?php
-$this->widget('CTabView', $tabviewparam);
+$this->widget('PUCTabView', $tabviewparam);
 
 
 //if (!Yii::app()->user->isGuest && !$model->getIsNewRecord() && !$dialogue) {

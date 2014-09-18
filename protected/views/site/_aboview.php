@@ -104,5 +104,6 @@ $this->widget('zii.widgets.CDetailView', array(
     'data' => $abo,
     'attributes' => $fields,
     'formatter' => new FrFormatter(),
+    'htmlOptions' => array('class' => 'table table-striped table-condensed'),
 ));
 ?>
