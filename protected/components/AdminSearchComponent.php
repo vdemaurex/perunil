@@ -139,7 +139,10 @@ class AdminSearchComponent extends SearchComponent
         }
 
         // recherche des la dernière modification
-        if (trim($this->queryTab['datemodif1']) || trim($this->queryTab['signaturemodification']) || trim($this->queryTab['datecreation1']) || trim($this->queryTab['signaturecreation'])) {
+		if (trim($this->queryTab['datemodif1'])
+			|| trim($this->queryTab['signaturemodification']) 
+			|| trim($this->queryTab['datecreation1']) 
+			|| trim($this->queryTab['signaturecreation'])) {
 
             $this->searchModif();
             $this->searchCreation();
@@ -233,21 +236,27 @@ class AdminSearchComponent extends SearchComponent
      */
     private function searchModif()
     {
-        $this->cmd->join("modifications AS m", 'a.modification = m.id');
 
-        // Préparation de la requête pour des recherche sur la modification
-        if (trim($this->queryTab['datemodif1'])) {
-            $phpdate = strtotime(trim($this->queryTab['datemodif1']));
-            $mysqldate = date('Y-m-d H:i:s', $phpdate);
-            $operateur = $this->ct[$this->queryTab['datemodifcrit1']];
-            $this->cmd->andWhere("m.stamp $operateur :stampii", array(":stampii" => $mysqldate));
-            $this->sc->query_summary("date de modification $operateur " . $this->queryTab['datemodif1']);
+		if (strpos($this->cmd->from,"journal")){
+			$this->cmd->join("modifications AS m", 'j.modification = m.id');
+		}
+		else{
+			$this->cmd->join("modifications AS m", 'a.modification = m.id');
+		}
 
-            // Deuxième date de modification
-            if (trim($this->queryTab['datemodif2'])) {
-                $phpdate = strtotime(trim($this->queryTab['datemodif2']));
-                $mysqldate = date('Y-m-d H:i:s', $phpdate);
-                $operateur = $this->ct[$this->queryTab['datemodifcrit2']];
+		// Préparation de la requête pour des recherche sur la modification
+		if (trim($this->queryTab['datemodif1'])) {
+			$phpdate = strtotime(trim($this->queryTab['datemodif1']));
+			$mysqldate = date('Y-m-d H:i:s', $phpdate);
+			$operateur = $this->ct[$this->queryTab['datemodifcrit1']];
+			$this->cmd->andWhere("m.stamp $operateur :stampii", array(":stampii" => $mysqldate));
+			$this->sc->query_summary("date de modification $operateur " . $this->queryTab['datemodif1']);
+
+			// Deuxième date de modification
+			if (trim($this->queryTab['datemodif2'])) {
+				$phpdate = strtotime(trim($this->queryTab['datemodif2']));
+				$mysqldate = date('Y-m-d H:i:s', $phpdate);
+				$operateur = $this->ct[$this->queryTab['datemodifcrit2']];
                 $this->cmd->andWhere("m.stamp $operateur :stampiii", array(":stampiii" => $mysqldate));
                 $this->sc->query_summary(" et $operateur " . $this->queryTab['datemodif2']);
             } // datemodif2
@@ -265,7 +274,12 @@ class AdminSearchComponent extends SearchComponent
      */
     private function searchCreation()
     {
-        $this->cmd->join("modifications AS c", 'a.modification = c.id');
+	if (strpos($this->cmd->from,"journal")){
+			$this->cmd->join("modifications AS c", 'j.modification = c.id');
+		}
+        else{
+		$this->cmd->join("modifications AS c", 'a.modification = c.id');
+	}
 
         // Préparation de la requête pour des recherche sur la création
         if (trim($this->queryTab['datecreation1'])) {
