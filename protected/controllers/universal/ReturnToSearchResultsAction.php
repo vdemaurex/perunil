@@ -10,20 +10,20 @@ class ReturnToSearchResultsAction extends CAction {
             //$controller->render('/site/searchResults', array('search_done' => true, 'searchtype' => Yii::app()->session['searchtype']));
             switch (Yii::app()->session['searchtype']) {
                 case 'adv':
-                    $url = $controller->createUrl("site/advSearchResults");
+                    $url = Yii::app()->createUrl("site/advSearchResults");
                     break;
 
                 case 'admin':
-                    $url = $controller->createUrl("admin/searchResults");
+                    $url = Yii::app()->createUrl("admin/searchResults");
                     break;
 
                 default: // simple
-                    $url = $controller->createUrl("site/simpleSearchResults");
+                    $url = Yii::app()->createUrl("site/simpleSearchResults");
                     break;
             }
         } else {
             // Aucune donnée sur une ancienne recherche, retrour à la recherche simple
-            $url = $this->createUrl("site/simpleSearch");
+            $url = Yii::app()->createUrl("site/simpleSearch");
         }
         
         $controller->redirect($url);
