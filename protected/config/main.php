@@ -103,6 +103,7 @@ return array(
     'params' => array(
         // this is used in contact page
         'adminEmail' => 'wwwperun@unil.ch',
+        'contactEmail' => 'vincent.demaurex@chuv.ch',
         'productiondate' => '01.04.2013',
     ),
 );
