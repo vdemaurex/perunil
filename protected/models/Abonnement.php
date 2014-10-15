@@ -332,6 +332,8 @@ class Abonnement extends ModifModel {
             $desc .= "<dt>Editeur</dt><dd>" . $this->editeur0->editeur . "</dd>";
         if (isset($this->localisation0) && isset($this->localisation0->localisation))
             $desc .= "<dt>Localisation</dt><dd>" . $this->localisation0->localisation . "</dd>";
+        if (isset($this->commentaire_etatcoll) && $this->commentaire_etatcoll != "")
+            $desc .= "<dt>Commentaire état de collection</dt><dd>" . $this->commentaire_etatcoll . "</dd>";
         if (isset($this->etatcoll) && $this->etatcoll != "")
             $desc .= "<dt>Etatcoll</dt><dd>" . $this->etatcoll . "</dd>";
         $desc .= "</dl></small>";
