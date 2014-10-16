@@ -1,12 +1,14 @@
 <?php
-
+/**
+ * La classe SiteController gère toute la partie publique du site, accessible sans authentification.
+ */
 class SiteController extends Controller {
 
     public $support;
     public $field;
 
     /**
-     * Declares class-based actions.
+     * Declaration des classes actions.
      */
     public function actions() {
         return array(
@@ -25,7 +27,7 @@ class SiteController extends Controller {
     }
 
     /**
-     * Action d'entrée dans PérUnil : la recherche simple. 
+     * Action d'entrée dans PérUnil : la recherche simple.
      */
     public function actionIndex() {
         $this->activate_session_search_component();
@@ -34,6 +36,15 @@ class SiteController extends Controller {
         $this->render('simpleSearch');
     }
 
+	/**
+	 * Traitement du formulaire de recherche simple et affichage des résultats.
+	 * Indexes attendus dans tableau $_GET:
+	 * 'q' => le ou les mots recherchés par l'utilisateur.
+	 * 'support' => le type de support: n'importe le quel(0), papier (1) ou électronique (2).
+	 * 'field' => type de recherche, selon les constantes définie dans SearchComponent.
+	 * 'maxresults' => nombre de resultat maximum retrounés par la requête. -1 pour ne pas mettre de limite.
+	 * 'depotlegal' => si TRUE, ajout les périodiques du dépot légal BCU à la recherche.
+	 */
     public function actionSimpleSearchResults() {
         Yii::app()->session['searchtype'] = 'simple';
         $this->activate_session_search_component();
@@ -141,10 +152,14 @@ class SiteController extends Controller {
             $model->attributes = $_POST['ContactForm'];
             if ($model->validate()) {
                 $headers = "From: {$model->email}\r\nReply-To: {$model->email}";
-                mail(Yii::app()->params['adminEmail'], $model->subject, $model->body, $headers);
-                Yii::app()->user->setFlash('contact', 'Thank you for contacting us. We will respond to you as soon as possible.');
+                mail(Yii::app()->params['contactEmail'], $model->getErrorTypeStr(), $model->body, $headers);
+                Yii::app()->user->setFlash('contact', 'Merci pour votre commentaire. Nous le traiterons dans les plus brefs délais.');
                 $this->refresh();
             }
+        }
+        else{
+            // Nouveau formulaire
+            $model->lasturl = Yii::app()->request->urlReferrer;
         }
         $this->render('contact', array('model' => $model));
     }

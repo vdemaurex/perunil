@@ -9,18 +9,28 @@ class ContactForm extends CFormModel
 {
 	public $name;
 	public $email;
-	public $subject;
+        public $errortype;
+        public $lasturl;
+        public $missinglink;
 	public $body;
 	public $verifyCode;
 
+        public $errorlist = array(
+            'BROKENLINK'    => "Lien cassé ou faux",
+            'TEXTERROR'     => "Faute d'orthographe ou grammaticale",
+            'DATAERROR'     => "Information erronée ou pas à jour",
+            'MISSINGLINK'   => "Suggestion de lien manquant",
+            'NEWABOREQUEST' => "Suggestion de nouvel abonnement",
+            'OTHER'         => "Autre"
+        );
+        
 	/**
-	 * Declares the validation rules.
+	 * Règles de validation
 	 */
 	public function rules()
 	{
 		return array(
-			// name, email, subject and body are required
-			array('name, email, subject, body', 'required'),
+			array('name, email, errortype, lasturl', 'required'),
 			// email has to be a valid email address
 			array('email', 'email'),
 			// verifyCode needs to be entered correctly
@@ -28,18 +38,23 @@ class ContactForm extends CFormModel
 		);
 	}
 
-	/**
-	 * Declares customized attribute labels.
-	 * If not declared here, an attribute would have a label that is
-	 * the same as its name with the first letter in upper case.
-	 */
+
 	public function attributeLabels()
 	{
 		return array(
-			'verifyCode'=>'Code de vérification',
-                        'name'      =>'Nom',
-                        'subject'   =>'Sujet',
-                        'body'      =>'Votre message',
+			'verifyCode'     =>'Code de vérification',
+                        'name'           =>'Nom',
+                        'errortype'      =>"Type d'erreur",
+                        'lasturl'        =>"Adresse URL de la page qui contient le problème",
+                        'missinglink'   =>"Adresse URL du lien cassé, faux ou manquant",
+                        'body'           =>'Commentaires ou précisions',
 		);
 	}
+        
+        public function getErrorTypeStr(){
+            if (!empty($this->errortype)){
+                return $this->errorlist[$this->errortype];
+            }
+            return "Erreur non spécifiée";
+        }
 }

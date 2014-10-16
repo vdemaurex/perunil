@@ -37,9 +37,9 @@
 
 
         <script>
-            (function(i, s, o, g, r, a, m) {
+            (function (i, s, o, g, r, a, m) {
                 i['GoogleAnalyticsObject'] = r;
-                i[r] = i[r] || function() {
+                i[r] = i[r] || function () {
                     (i[r].q = i[r].q || []).push(arguments)
                 }, i[r].l = 1 * new Date();
                 a = s.createElement(o),
@@ -180,6 +180,9 @@
                                                 echo CHtml::link('Logout (' . Yii::app()->user->name . ')', array('/site/logout'), array('visible' => !Yii::app()->user->isGuest));
                                             }
                                             ?> &nbsp;
+                                        </div>
+                                        <div style="float:right;">
+                                        <?php echo CHtml::link('[Signaler une erreur]',array('site/contact')); ?>
                                         </div>
                                     </div><!-- footer -->
 
