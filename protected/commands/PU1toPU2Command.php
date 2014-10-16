@@ -1,15 +1,28 @@
 <?php
+/**
+ * Script de migration de la base Pérunil 1 vers la base Pérunil 2
+ * 
+ * Pour l'executer : ./protected/yiic pu1topu2
+ */
 
-//ini_set("max_execution_time", "120");
+// Beaucoup de mémoire est nécessaire pour parcourir tous les fichier
 ini_set("memory_limit", "2400M");
 
 class PU1toPU2Command extends CConsoleCommand {
 
+    /**
+     * Affiche l'aide du script.
+     * @return 
+     */
     public function getHelp() {
         $out = "Effectue les tâches de migrations pour transformer la base PU1 en PU2. La base PU1 doit comporter le champs \n\n";
         return $out . parent::getHelp();
     }
 
+    /**
+     * Script principal.
+     * @param array $args
+     */
     public function run($args) {
 
 
@@ -45,21 +58,18 @@ class PU1toPU2Command extends CConsoleCommand {
         $puidfs = array_map('current', $puidfs2D);
         unset($puidfs2D);
         // Pour tous les perunilid-fusion, classé par perunilid
-//        foreach ($this->debugset as $idfusion) {
+
         foreach ($puidfs as $i => $idfusion) {
-            //for ($idfusion = self::PuIdMin; $idfusion <= self::PuIdMax; $idfusion++) {
+
             echo "   > $idfusion \n";
-
-
             //      Récupérer les lignes, classée par dernière modification
-//            $sql = "SELECT * FROM `journals_fusion` WHERE `perunilid_fusion` = $idfusion ORDER BY `datemodif` DESC;";
             $sql = "SELECT * FROM `journals_fusion` WHERE `perunilid_fusion` = $idfusion ORDER BY `etatcolldeba` DESC;";
             $rows = Yii::app()->dbpu1->createCommand($sql)->queryAll();
 
 
             if (!empty($rows)) { // Au moins une ligne à traiter
                 echo "      - contient " . count($rows) . " lignes\n";
-
+                
                 // Avec la ligne contenant le plus haut perunilid, créer une entrée journal
                 $journal = $this->buildJournal($rows);
 
@@ -70,7 +80,6 @@ class PU1toPU2Command extends CConsoleCommand {
             } else { // Aucune ligne à traiter
                 echo "      - ne contient aucune ligne \n";
             }
-
 
             echo "   >----------------------------------------------------\n\n";
         }
