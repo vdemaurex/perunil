@@ -132,7 +132,7 @@ Description des symboles utilisés
 
        <tr>
         <td>
-            <span class="glyphicon glyphicon-ban-circle"></span>
+            <span class="glyphicon glyphicon-ban-circle" style="color:red;"></span>
         </td>
         <td>
             Titre exclu de la licence souscrite par l’UNIL, CHUV et BCUL.
@@ -147,6 +147,14 @@ Description des symboles utilisés
             sur le campus de l'Université de Lausanne (UNIL) ou de l'Hôpital académique (CHUV),
             ainsi que dans les différents sites de la BCUL, les informations nécessaires à 
             la connexion s’affichent en cliquant le lien « Accéder en ligne ».
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span class="glyphicon glyphicon-warning-sign" style="color:orange;"></span>
+        </td>
+        <td>
+            Problème d'accès.
         </td>
     </tr>
 </table>
