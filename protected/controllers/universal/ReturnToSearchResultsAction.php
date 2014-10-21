@@ -23,7 +23,7 @@ class ReturnToSearchResultsAction extends CAction {
             }
         } else {
             // Aucune donnée sur une ancienne recherche, retrour à la recherche simple
-            $url = Yii::app()->createUrl("site/simpleSearch");
+            $url = Yii::app()->createUrl("site/index");
         }
         
         $controller->redirect($url);
