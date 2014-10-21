@@ -140,7 +140,7 @@ Description des symboles utilisés
     </tr>
            <tr>
         <td>
-            <span class="glyphicon glyphicon-lock"></span>
+            <span class="glyphicon glyphicon-lock" style="color:BlueViolet;"></span>
         </td>
         <td>
             Accès au texte intégral protégé par mot de passe. Si vous vous trouvez 

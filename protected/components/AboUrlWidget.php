@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Génère le lien pour accéder aux abonnement. Si nécessaire prévoit l'affichage
+ * d'une fenêtre avec le mot de passe.
+ */
 class AboUrlWidget extends CWidget {
 
     public $jrn;
@@ -15,20 +18,23 @@ class AboUrlWidget extends CWidget {
     private $papier;
     private $papier_link = "Cliquer pour accéder à la notice du catalogue collectif vaudois RERO.";
 
+    /**
+     * Initialisation des variables utilisée dans ce Widget.
+     */
     public function init() {
         // Initialisation des variables
         $this->papier = (isset($this->abo->support0) && $this->abo->support0->support == "papier");
         if (!$this->papier) {
             $this->url = $this->abo->url_site;
-//            if (isset($this->abo->plateforme0) && $this->abo->plateforme0->plateforme != "") {
-//                $this->link_text = "({$this->abo->plateforme0->plateforme})";
-//            } else {
-//                //$this->link_text = preg_replace('/(?<=^.{22}).{4,}(?=.{20}$)/', '...', $this->url);
-//                $this->link_text = "";
-//            }
         }
     }
 
+    
+    /**
+     * Affiche le lien vers l'abonnement en ligne ou vers Rero pour les 
+     * abonnement papier. Traite les cas particulier de connexion avec
+     * mot de passe.
+     */
     public function run() {
         // 
         // Traitement des jouraux papier
@@ -45,35 +51,14 @@ class AboUrlWidget extends CWidget {
             }
             return;
         }
-//        if ($this->papier) {
-//            if (isset($this->abo->localisation0)) {
-//                // Texte du lien et de la cote
-//                $cote = "";
-//                $texte = CHtml::encode($this->abo->localisation0->localisation);
-//                if (isset($this->abo->cote) && $this->abo->cote != "") {
-//                    $cote = " <small>[cote : {$this->abo->cote}]</small>";
-//                }
-//
-//                // Si le reroid existe, on ajoute un lien vers rero
-//                if ($this->jrn->reroid) {
-//                    $url = "http://opac.rero.ch/get_bib_record.cgi?db=vd&rero_id=" . $this->jrn->reroid;
-//                    echo CHtml::link(
-//                            $texte, $url, array('target' => '_blank', 'title' => $this->papier_link)) . $cote;
-//                } else {
-//                    echo $texte . $cote;
-//                }
-//            } else {
-//                echo CHtml::encode("Périodique papier");
-//            }
-//            return;
-//        }
+
         //
         // Traitement des journaux électronique
         //
         if ((isset($this->abo->acces_user) && $this->abo->acces_user != "") || (isset($this->abo->acces_pwd) && $this->abo->acces_pwd != "")) {
             //$src = Yii::app()->baseUrl . "/images/login_16.png";
             //echo CHtml::image($src, "Login", array('title' => "Protégé par mot de passe")) . "&nbsp;";
-            echo '<span class="glyphicon glyphicon-lock"></span>&nbsp;';
+            echo '<span class="glyphicon glyphicon-lock" style="color:BlueViolet;"></span>&nbsp;';
             //echo CHtml::link(CHtml::encode($this->link_text), $this->url, array(
             echo CHtml::link(CHtml::encode("Accéder en ligne $this->link_text"), $this->url, array(
                 'target' => '_blank',
