@@ -58,7 +58,8 @@ veuillez contacter le <a href="http://www.unil.ch/ci/fr/home/menuguid/help-desk.
 
 	<p class="note">Les champs marqué d'un asterisque (<span class="required">*</span>) doivent obligatoirement être remplis.</p>
 
-	<?php echo $form->errorSummary($model); ?>
+
+	<?php echo  $form->errorSummary($model,NULL, NULL, array('class'=> "alert alert-danger"));?>
 
 	<div class="form-group">
 		<?php echo $form->labelEx($model,'name'); ?>

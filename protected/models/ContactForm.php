@@ -33,6 +33,7 @@ class ContactForm extends CFormModel
 			array('name, email, errortype, lasturl', 'required'),
 			// email has to be a valid email address
 			array('email', 'email'),
+                        array('body, missinglink', 'safe'),
 			// verifyCode needs to be entered correctly
 			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements()),
 		);

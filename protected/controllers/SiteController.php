@@ -147,14 +147,29 @@ class SiteController extends Controller {
      * Displays the contact page
      */
     public function actionContact() {
-        $model = new ContactForm;
+        $model = new ContactForm; 
         if (isset($_POST['ContactForm'])) {
             $model->attributes = $_POST['ContactForm'];
-            if ($model->validate()) {
-                $headers = "From: {$model->email}\r\nReply-To: {$model->email}";
-                mail(Yii::app()->params['contactEmail'], $model->getErrorTypeStr(), $model->body, $headers);
-                Yii::app()->user->setFlash('contact', 'Merci pour votre commentaire. Nous le traiterons dans les plus brefs délais.');
-                $this->refresh();
+            if ($model->validate() ) {
+                $headers  = 'MIME-Version: 1.0' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+                $headers .= 'To: '. Yii::app()->params['contactEmail'] . "\r\n";
+                $headers .=  "From: {$model->email}\r\nReply-To: {$model->email}";
+                $to = Yii::app()->params['adminEmail'];
+                $subject = $model->getErrorTypeStr();
+                $message = $this->renderPartial(
+                        'contactMail', 
+                        array('contactForm' => $model),
+                        true);
+
+                $sent = mail($to, $subject, $message, $headers);
+               if(!$sent){
+                    Yii::app()->user->setFlash('error', "Un problème est survenu durant l'envoi de votre message. Merci de contacter directement ". Yii::app()->params['adminEmail']);
+                }
+                else{
+                    Yii::app()->user->setFlash('contact', 'Merci pour votre commentaire. Nous le traiterons dans les plus brefs délais.');
+                    $this->refresh();
+                }
             }
         }
         else{
