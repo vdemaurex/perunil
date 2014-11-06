@@ -302,13 +302,12 @@ class AdminController extends Controller {
                 //
                 // Ne conserver que les corecollection avec un nombre
                 $nouvcc = array_filter($_POST['Journal']['corecollection']);
-                // Pour chacun des sujet du journal :
+                // Pour chacun des bibliothèques du journal :
                 foreach ($model->corecollection as $cc) {
-                // Si le sujet n'existe pas dans la liste des nouveaux sujets
-                //  Supprimer ce sujet de journal
                     $key = array_search($cc->biblio_id, $nouvcc);
                     if ($key === false) {
-                        $cc->delete();
+                        $lienCC = Corecollection::model()->findByPk(array('perunilid' => $model->perunilid, 'biblio_id' => $cc->biblio_id));
+                        $lienCC->delete();
                     } else {
                         // Si le sujet existe dans la liste des nouveaux sujets
                         //    Supprimer le sujet de liste des nouveaux sujets
