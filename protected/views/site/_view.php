@@ -187,9 +187,9 @@ foreach ($abos as $i => $abo) {
                         if (isset($abo->plateforme0) && !empty($abo->plateforme0->plateforme)) {
                             echo $abo->plateforme0->plateforme;
                         }
-                        if (!empty($data->openaccess)) {
+                        if (!empty($abo->openaccess)) {
                             ?>
-                            <img  style="float:right" src="<?= Yii::app()->baseUrl; ?>/images/open-access-logo_16.png"/>
+                    <img  style="float:right" src="<?= Yii::app()->baseUrl; ?>/images/open-access-logo_16.png" title="Revue openaccess" alt="Openaccess"/>
                             <?php
                         }
                     }

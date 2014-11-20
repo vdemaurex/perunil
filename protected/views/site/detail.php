@@ -40,14 +40,12 @@ $fields = array(
     'issn',
     'issnl',
     'nlmid',
-    'reroid',
     'doi',
     'coden',
     'urn',
     array('name' => 'publiunil', 'label' => 'Est une publication UNIL ?', 'type' => 'boolean'),
     array('name' => 'url_rss', 'value' => "<a href='" . $model->url_rss . "' target='_blank'>" . $model->url_rss . "</a>", 'type' => 'raw', 'label' => "Flux RSS du périodique"),
     array('name' => 'parution_terminee', 'label' => 'Parution terminée ?', 'type' => 'boolean'),
-    array('name' => 'openaccess', 'label' => 'Openaccess (gratuit) ?', 'type' => 'boolean'),
     array('name' => 'commentaire_pub', 'label' => 'Remarques'),
 );
 

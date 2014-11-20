@@ -341,7 +341,7 @@ class AdminSearchComponent extends SearchComponent
             'ed.editeur' => explode(" ", $this->queryTab['editeur_txt']),
             'j.issnl' => $this->queryTab['issnl'],
             'j.issn' => $this->queryTab['issn'],
-            'j.reroid' => $this->queryTab['reroid'],
+            'a.reroid' => $this->queryTab['reroid'],
             'j.nlmid' => $this->queryTab['nlmid'],
             'j.coden' => $this->queryTab['coden'],
             'j.doi' => $this->queryTab['doi'],
@@ -457,7 +457,7 @@ class AdminSearchComponent extends SearchComponent
     private function searchExactTerm()
     {
         $exact_fields = @array(
-            'j.openaccess' => $this->queryTab['openaccess'],
+            'a.openaccess' => $this->queryTab['openaccess'],
             'j.parution_terminee' => $this->queryTab['parution_terminee'],
             'j.publiunil' => $this->queryTab['publiunil'],
             'a.titreexclu' => $this->queryTab['titreexclu'],

@@ -256,7 +256,7 @@ class SearchComponent extends CComponent {
             $this->query_summary("sans les abonnements UNIL et CHUV.");
         }
         if (!isset($this->adv_query_tab['openaccess']) || !$this->adv_query_tab['openaccess']) {
-            $c->andWhere("a.acces_elec_gratuit !=1 && j.openaccess !=1");
+            $c->andWhere("a.acces_elec_gratuit !=1 && a.openaccess !=1");
             $this->query_summary("sans les jouraux Openaccess.");
         }
 

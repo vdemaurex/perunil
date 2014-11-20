@@ -90,12 +90,12 @@ class Abonnement extends ModifModel {
         return array(
             array('titreexclu, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'numerical', 'integerOnly' => true),
             array('package,commentaire_etatcoll, etatcoll, cote, editeur_sujet', 'length', 'max' => 250),
-            array('no_abo, acces_user, acces_pwd', 'length', 'max' => 50),
+            array('reroid, no_abo, acces_user, acces_pwd', 'length', 'max' => 50),
             array('url_site', 'length', 'max' => 2083),
             array('editeur_code', 'length', 'max' => 100),
             array('commentaire_pro, commentaire_pub', 'length', 'max' => 500),
             array('perunilid', 'length', 'max' => 20),
-            array('titre, issn,perunilid, journal_titre', 'safe'),
+            array('titre, issn,perunilid, journal_titre, openaccess', 'safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             array('journal_titre, abonnement_id, titreexclu, package, no_abo, url_site, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, acces_user, acces_pwd,commentaire_etatcoll, etatcoll, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, cote, editeur_code, editeur_sujet, commentaire_pro, commentaire_pub, perunilid, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence', 'safe', 'on' => 'search'),
@@ -143,6 +143,7 @@ class Abonnement extends ModifModel {
             'package' => 'Nom du package',
             'no_abo' => 'Numéro d\'abonnement',
             'url_site' => 'Url Site',
+            'openaccess' => "Openaccess",
             'acces_elec_gratuit' => 'Acces Elec Gratuit',
             'acces_elec_unil' => 'Acces Elec Unil',
             'acces_elec_chuv' => 'Acces Elec Chuv',
@@ -157,6 +158,7 @@ class Abonnement extends ModifModel {
             'etatcoll_fina' => 'Année de fin',
             'etatcoll_finv' => 'Dernier volume',
             'etatcoll_finf' => 'Dernier numéro',
+            'reroid' => "Rero id",
             'cote' => 'Cote',
             'editeur_code' => 'Editeur Code',
             'editeur_sujet' => 'Editeur Sujet',

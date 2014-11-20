@@ -165,7 +165,7 @@ class SimpleSearchComponent extends SearchComponent {
             "j.issn",
             "j.issnl",
             "j.nlmid",
-            "j.reroid",
+            //"j.reroid", //11.11.14 champ déplacé dans la table abonnement
             "j.doi",
             "j.coden",
             "j.urn",
@@ -180,6 +180,7 @@ class SimpleSearchComponent extends SearchComponent {
             "a.acces_pwd",
             "a.etatcoll",
             "a.cote",
+            "a.reroid",
             "a.editeur_code",
             "a.editeur_sujet",
             "a.commentaire_pub",

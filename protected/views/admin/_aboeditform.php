@@ -95,6 +95,11 @@
                     <?php echo $form->checkbox($model, 'acces_elec_gratuit'); ?> <label style="display: inline;">Libre</label><?php echo $form->error($model, 'acces_elec_gratuit'); ?>
                 </td>
             </tr>
+            <tr class="even">
+                <th><?php echo $form->labelEx($model, 'openaccess', array('class' => "control-label")); ?></th>
+                <td colspan="3"><?php echo $form->radioButtonList($model, 'openaccess', array(true => 'Oui', false => 'Non'), array('labelOptions' => array('style' => 'display:inline;width:150px;'), 'template' => "{input} {label}", 'separator' => '&nbsp;&nbsp;&nbsp;')); ?><?php echo $form->error($model, 'openaccess'); ?></td>
+            </tr>
+            
             <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'package', array('class' => "control-label")); ?></th>
                 <td colspan="3"><?php echo $form->textField($model, 'package', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'package'); ?></td>
@@ -232,6 +237,10 @@
                 </td>
             </tr>  
 
+            <tr class="even">
+                <th><?php echo $form->labelEx($model, 'reroid', array('class' => "control-label")); ?></th>
+                <td colspan="3"><?php echo $form->textField($model, 'reroid', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'reroid'); ?></td>
+            </tr> 
             <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'cote', array('class' => "control-label")); ?></th>
                 <td colspan="3"><?php echo $form->textField($model, 'cote', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'cote'); ?></td>

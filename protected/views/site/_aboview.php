@@ -25,6 +25,7 @@ $fields = array(
     'abonnement_id',
     //array('name' => 'url_site', 'value' => $url, 'type' => 'raw', 'label' => "URL du périodique"),
     //'url_site',
+    array('name' => 'openaccess', 'label' => 'Openaccess ?', 'type' => 'boolean'),
     'package',
     array(
         'name' => 'url_site',
@@ -34,6 +35,7 @@ $fields = array(
     'commentaire_etatcoll',
     'etatcoll',
     'cote',
+    'reroid',
     'editeur_code',
     'editeur_sujet',
     'commentaire_pub',
