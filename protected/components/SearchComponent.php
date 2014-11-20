@@ -616,6 +616,9 @@ class SearchComponent extends CComponent {
             
             $criteria = new CDbCriteria();
             $criteria->addInCondition('abonnement_id', $aboIdList);
+            $criteria->with = array('jrn');  
+            $criteria->order = 'jrn.titre'; 
+
 
 
             $adp = new CActiveDataProvider('Abonnement', array(
@@ -630,6 +633,7 @@ class SearchComponent extends CComponent {
             
             $criteria = new CDbCriteria();
             $criteria->addInCondition('perunilid', $perunilidList);
+            $criteria->order = "titre";
 
 
             $adp = new CActiveDataProvider('Journal', array(
