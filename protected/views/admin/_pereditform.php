@@ -1,3 +1,18 @@
+<script>
+    /* Chargement des selects avec Ajax*/
+    $(document).ready(function() {
+        $('#btnCheckURL').click(function() {
+            var url = $('#inputURL').val();
+            if (/^(http|https|ftp):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url)) {
+                window.open(url);
+            } else {
+                alert("L'url n'est pas valide.");
+            }
+            
+        });
+    });
+
+</script>
 <div class="form">
 
     <?php
@@ -85,7 +100,20 @@
 
             <tr class="even">
                 <th><?php echo $form->labelEx($model, 'url_rss', array('class' => "control-label")); ?></th>
-                <td colspan="3"><?php echo $form->textField($model, 'url_rss', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'url_rss'); ?></td>
+                <td colspan="3">
+                    
+                    <?php
+                    echo $form->textField($model, 'url_rss', array('id' => 'inputURL', 'class' => "form-control input-sm", 'style' => $textfieldstyle . ';float: left;'));
+                    echo $form->error($model, 'url_rss');
+                    echo "&nbsp;";
+                    echo CHtml::htmlButton('<span class="glyphicon glyphicon-new-window"></span>', array(
+                        'id' => 'btnCheckURL',
+                        'class' => "btn btn-default  btn-sm"));
+                    ?>
+                </td>
+                
+                
+                
             </tr>
             <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'commentaire_pub', array('class' => "control-label")); ?></th>
