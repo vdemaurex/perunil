@@ -32,14 +32,17 @@ switch ($searchtype) {
 <h2>Résultats de la recherche <?php echo $titre; ?></h2>
 <div style="margin-bottom: 1em;">
     <?php
-    echo CHtml::htmlButton('<span class="glyphicon glyphicon-backward"> </span> Modifier les critères de recherche', array(
+    echo CHtml::htmlButton('<span class="glyphicon glyphicon-circle-arrow-left"> </span> Modifier la recherche', array(
         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($search_url) . '"',
-        'class' => "btn btn-default  btn-sm"));
-    echo " ";
-    echo CHtml::htmlButton('Nouvelle recherche', array(
-        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($clean_url) . '"',
         'class' => "btn btn-primary  btn-sm"));
-    echo " ";
+    
+    echo CHtml::htmlButton('<span class="glyphicon glyphicon-search"></span> Nouvelle recherche', array(
+        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl($clean_url) . '"',
+        'class' => "btn btn-primary  btn-sm margin5pxleft"));
+    
+    if ($search_done && !Yii::app()->user->isGuest){
+        $this->renderPartial('/admin/_adminSearchButton');
+    }
 //    if ($titre == "simple") {
 //        echo CHtml::htmlButton('Affichage liste', array(
 //            'onclick' => 'js:document.location.href="' . Yii::app()->request->requestUri . '&typeAffichage=1"',
@@ -68,7 +71,7 @@ if ($search_done) {
     // Affichage des résultat pour les admins
     else {
         // echo CHtml::beginForm(CHtml::normalizeUrl(array('admin/fusion')),'post', array('id' =>'fusionform'));
-        $this->renderPartial('/admin/_adminSearchButton');
+        //$this->renderPartial('/admin/_adminSearchButton');
 
         if (Yii::app()->session['search']->admin_affichage == 'abonnement') {
             // Affichage par abonnement

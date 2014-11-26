@@ -63,14 +63,14 @@ if (Yii::app()->user->isGuest) {
                 if (!Yii::app()->user->isGuest) {
                     echo '<div class="pull-right" style="padding-left: 5px; padding-right: 5px;">';
                     echo CHtml::htmlButton('<span class="glyphicon glyphicon-search"></span> Détail', array(
-                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/detail", array("id" => $data->perunilid)) . '"',
-                'class' => "btn btn-default  btn-xs"));
-                    echo " " . CHtml::button('Editer', array(
+                        'onclick' => 'js:document.location.href="' . Yii::app()->createUrl("site/detail", array("id" => $data->perunilid)) . '"',
+                        'class' => "btn btn-default  btn-xs"));
+                    echo " " . CHtml::htmlButton('<span class="glyphicon glyphicon-pencil"></span> Editer', array(
                         'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/peredit/', array('perunilid' => $data->perunilid)) . '"',
                         'class' => "btn btn-primary btn-xs"));
                     // echo CHtml::link("Editer", array('admin/peredit/perunilid/' . $data->perunilid));
 
-                    echo " | ";
+                    echo "<div class='fusion pull-right hide'> ";
 
                     // Fusion
                     echo CHTml::checkBox("perunilid[$data->perunilid]", false, array('value' => $data->perunilid));
@@ -87,6 +87,7 @@ if (Yii::app()->user->isGuest) {
                     echo " " . CHtml::submitButton(
                             'Fusion !', array('class' => "btn btn-default btn-xs",
                         'form' => "fusionform"));
+                    echo '</div>';
                     echo '</div>';
                 }
                 ?>   
@@ -195,6 +196,22 @@ foreach ($abos as $i => $abo) {
                     }
                     ?>
                 </div>
+                <?php    
+                if (!Yii::app()->user->isGuest){
+                    // L'utilisateur est admin, on affiche les bouton détail et 
+                    // modification pour l'abonnement.
+                    echo '<div class="col-md-1">';
+                    echo " " . CHtml::htmlButton(
+                            '<span class="glyphicon glyphicon-pencil"></span>', 
+                            array(
+                                'onclick' => 'js:document.location.href="' . Yii::app()->createUrl('admin/aboedit/perunilid/'.$data->perunilid .'/aboid/'.$abo->abonnement_id) . '"',
+                                'class' => "btn btn-primary btn-xs")
+                            );
+                    echo '</div>';
+                }
+                        
+                        
+                ?>
 
 
             </td>
