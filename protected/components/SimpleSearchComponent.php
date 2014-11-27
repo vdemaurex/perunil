@@ -7,15 +7,33 @@
  */
 class SimpleSearchComponent extends SearchComponent {
 
+    /**
+     * Commande SQL construite par cette classe, encapsulée dans un objet CDbCommand.
+     * @var CDbCommand 
+     */
     private $cmd;
-    private $params;
+    
+    /**
+     * Liste des colonnes de titre où s'effectue par défaut la recherche.
+     * @var array 
+     */
     private $cols = array('titre', 'titre_abrege', 'titre_variante', 'soustitre', 'faitsuitea', 'devient', 'a.commentaire_etatcoll');
 
     public function __construct() {
         $this->cmd = $cmd = Yii::app()->db->createCommand();
-        $this->params = array();
     }
 
+    /**
+     * Retourne un objet CDbCommand contenant une requête basée sur les paramètres
+     * fournis.
+     * @param string $query_str Chaîne de caractères contenant les terme à 
+     *                          rechercher.
+     * @param string $search_type Type de recherche à effectué, basé sur les 
+     *                            constantes de la classe SearchComponent.
+     * @return CDbCommand
+     * @throws CException Levée si $search_type ne correspond à aucun type de
+     *                    recherche connu.
+     */
     public function getSimpleCdbCommand($query_str, $search_type) {
         Yii::app()->session['search']->emptyQuerySummary();
         // Si q ne contient qu'une seule lettre, on cherche TBEGIN
@@ -27,22 +45,28 @@ class SimpleSearchComponent extends SearchComponent {
         // Création des requêtes.
         switch ($search_type) {
             case self::TBEGIN:
+                $query_str = trim($query_str);
+                // Recherche par début de titre, uniquement dans la colonne titre
                 Yii::app()->session['search']->query_summary("Recherche d'un titre commençant par '$query_str'");
                 $this->cmdWhereRaw($query_str . "%", array("titre"));
                 break;
 
             case self::TEXACT:
+                // Recherche par titre exact, uniquement dans la colonne titre
+                $query_str = trim($query_str);
                 Yii::app()->session['search']->query_summary("Recherche d'un titre correspondant exactement à '$query_str'");
-                $this->cmdWhereRaw($query_str);
+                $this->cmdWhereRaw($query_str, array("titre"));
                 break;
 
             case self::TWORDS:
+                // Recherche chaque mot indépendament dans les colones de titres
                 $cleanedQuery = $this->clean_search($query_str);
                 Yii::app()->session['search']->query_summary("Recherche d'un titre contenant au moins un de ces mots : '$cleanedQuery'");
                 $this->cmdWhereWord($cleanedQuery);
                 break;
 
             case self::JRNALL:
+                // Recherche chaque mot indépendament dans tous les champs de toutes les tables.
                 $cleanedQuery = $this->clean_search($query_str);
                 Yii::app()->session['search']->query_summary("Recherche dans l'ensemble des champs de la base Pérunil des mots '$cleanedQuery'");
                 $this->cmdWhereAll($cleanedQuery);
@@ -56,6 +80,11 @@ class SimpleSearchComponent extends SearchComponent {
         return $this->cmd;
     }
 
+    /**
+     * Spécifie les clauses SELECT, FROM et JOIN de la requête. Les tables
+     * sont jointes selon les critères stockés dans l'objet de session
+     * Yii::app()->session['search'], instance de SearchComponent.
+     */
     private function cmdSelectJoin() {
         $this->cmd->select("j.perunilid");
         $this->cmd->distinct = true;
@@ -95,6 +124,11 @@ class SimpleSearchComponent extends SearchComponent {
         }
     }
 
+    /**
+     * Spécifie les clauses ORDER BY et LIMIT de la requête selon les critères 
+     * stockés dans l'objet de session Yii::app()->session['search'], 
+     * instance de SearchComponent.
+     */
     private function cmdOrderLimit() {
         $this->cmd->order('titre');
         if (Yii::app()->session['search']->maxresults > 0) {
@@ -102,6 +136,15 @@ class SimpleSearchComponent extends SearchComponent {
         }
     }
 
+    /**
+     * Recherche exact de la chaîne de caractères passée en paramètre. Par
+     * défaut la recherche porte sur toutes les colonnnes, sauf si le paramètre
+     * cols est fourni.
+     * @param string $str Chaine de caractère à recherche. Peut contenir les
+     *                    caractères d'échappement de MySQL, ex: '%'.
+     * @param array $cols Tableau contenant la liste des colonne où $str doit 
+     *                    être recherché. Si non fourni, $this->cols est utilisé.
+     */
     private function cmdWhereRaw($str, $cols = null) {
         if (empty($cols)) {
             $cols = $this->cols;
@@ -115,6 +158,15 @@ class SimpleSearchComponent extends SearchComponent {
         }
     }
 
+    /**
+     * La chaîne de caractère $str est séparée en mots. Chacun de ces mot est
+     * recherché dans toutes les colonnes spécifiées par $this->cols. Les mots
+     * sont recherchés selon le schéma %$word%. 
+     * La requête ainsi construite est ajoutée à la clause WHERE de $this->cmd.
+     * @param string $str Chaîne de caractères dont les mots doivent être
+     *                    recherchés indépendament dans les colonnes définies 
+     *                    dans $this->cols.
+     */
     private function cmdWhereWord($str) {
 
         $words = explode(" ", $str);
@@ -126,13 +178,11 @@ class SimpleSearchComponent extends SearchComponent {
             $filter_where_data = array();
             // Pour chaque colone, on cherche les mots
             foreach ($this->cols as $col) {
-
-                // Avec troncature gauche
-//                $filter_where[] = "$col LIKE :{$col}trunk{$i}A OR $col LIKE :{$col}trunk{$i}B";
-//                $filter_where_data[":{$col}trunk{$i}A"] = "$word%";
-//                $filter_where_data[":{$col}trunk{$i}B"] = "% $word%";
                 // Avec recherche en milieu de mot
                 $rand = rand (1000 , 9999 );
+                // un numéro unique est généré pour s'assurer que l'association
+                // entre les unités de la requête préformatée et le tableau de
+                // paramètres est unique.
                 $filter_where[] = "$col LIKE :trunk{$rand}";
                 $filter_where_data[":trunk{$rand}"] = "%$word%";
             }// Fin boucle mots
@@ -140,6 +190,16 @@ class SimpleSearchComponent extends SearchComponent {
         } // Fin boucle colonne
     }
 
+    /**
+     * La chaîne de caractère $str est séparée en mots. Chacun de ces mot est
+     * recherché dans toutes les colonnes de toutes les tables de la base pour
+     * lesquelles une telle recherche est pertinente.Les mots
+     * sont recherchés selon le schéma %$word%. 
+     * La requête ainsi construite est ajoutée à la clause WHERE de $this->cmd.
+     * @param string $str Chaîne de caractères dont les mots doivent être
+     *                    recherchés indépendament dans toutes les colonnes 
+     *                    de toutes les tables
+     */
     private function cmdWhereAll($str) {
         // Jointure des tables liées à abonnement
         $this->cmd->leftJoin("plateforme   AS pl", "a.plateforme   = pl.plateforme_id");
@@ -220,34 +280,3 @@ class SimpleSearchComponent extends SearchComponent {
         }
     }
 }
-
-/*
- * ARCHIVES
- */
-
-//    private function cmdWhereWord($str){
-//
-//            $words = explode(" ", $str);
-//            $where = "";
-//            foreach ($words as $word) {
-//                if (empty($word)) {
-//                    continue;
-//                }
-//                $wq = "";
-//
-//                // Pour chaque colone, on cherche les mots
-//                foreach ($this->cols as $col) {
-//                    $cq = ' `' . $col . '` LIKE "' . $word . '%" OR ';
-//                    $cq .= ' `' . $col . '` LIKE "% ' . $word . '%"  ';
-//
-//                    $wq .= " $cq OR ";              
-//                }// Fin boucle mots
-//                
-//                $wq = trim($wq, "OR ");
-//                $where .= " ( $wq ) AND";
-//            } // Fin boucle colonne
-//            
-//            // Suppression d'un opérateur surnuméraire
-//            $where = trim($where, "AND ");
-//            $this->cmd->where($where);
-//        }
