@@ -178,6 +178,7 @@ foreach ($abos as $i => $abo) {
                 <div class="col-md-4">
                     <?php
                     if ($abo->papier) {
+                        // Abonnement papier, localisation et eventuelement la cote.
                         if (isset($abo->localisation0)) {
                             echo CHtml::encode($abo->localisation0->localisation);
                             if (isset($abo->cote) && $abo->cote != "") {
@@ -185,9 +186,16 @@ foreach ($abos as $i => $abo) {
                             }
                         }
                     } else { // électronique
+                        // Si elle des disponible, on affiche la plateforme
                         if (isset($abo->plateforme0) && !empty($abo->plateforme0->plateforme)) {
                             echo $abo->plateforme0->plateforme;
                         }
+                        // Sinon, on affiche le nom de domaine où est hébérgé le journal
+                        elseif (!empty ($abo->url_site)){
+                            echo $abo->getDomaineName();
+                        }
+                        
+                        // Affichage du logo Openaccess
                         if (!empty($data->openaccess)) {
                             ?>
                             <img  style="float:right" src="<?= Yii::app()->baseUrl; ?>/images/open-access-logo_16.png"/>
