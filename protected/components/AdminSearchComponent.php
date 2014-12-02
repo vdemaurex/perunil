@@ -202,21 +202,19 @@ class AdminSearchComponent extends SearchComponent
     }
 
     /**
-     * Recherche de la case à cocher Corecollection. 
-     * Si $this->queryTab['corecollection'] == 'VRAI' : Joint la table corecollection avec comme
-     * critère que la bibliothèque corresponde à self::BiUM_Corecollection.
-     * Si $this->queryTab['corecollection'] == 'FAUX' : Exclu la bibliothèque self::BiUM_Corecollection
-     * des résultat de la recherche
+     * Joint la table corecollection avec comme critère la valeur dans
+     * $this->queryTab['corecollection'].
+     * @return null si la valeur de $this->queryTab['corecollection'] ne
+     *              correspond à aucune valeur de bibliothèque
      */
     private function searchCorecollection()
     {
-        if ($this->queryTab['corecollection'] == 'VRAI') { // Joindre la corecollection BiUM
-            $this->cmd->join("corecollection AS cc", 'j.perunilid = cc.perunilid AND cc.biblio_id = ' . self::BiUM_Corecollection);
-            $this->sc->query_summary("avec la core collection BiUM");
-        } elseif ($this->queryTab['corecollection'] == 'FAUX') { // Exclure la corecollection BiUM
-            $this->cmd->andWhere("j.perunilid NOT IN (SELECT c.perunilid FROM corecollection AS c WHERE c.biblio_id = " . self::BiUM_Corecollection . ")");
-            $this->sc->query_summary("sans la core collection BiUM");
+        $biblio = Biblio::model()->findByPk($this->queryTab['corecollection']);
+        if (!$biblio){
+            return;
         }
+        $this->cmd->join("corecollection AS cc", 'j.perunilid = cc.perunilid AND cc.biblio_id = ' . $this->queryTab['corecollection']);
+        $this->sc->query_summary("dans la core collection " . $biblio->biblio);
     }
 
     /**

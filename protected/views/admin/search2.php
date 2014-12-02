@@ -243,9 +243,8 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
 
             <tr>
                 <td><b>Core collection BiUM</b></td>
-                <td><input type="radio" value="VRAI" name="corecollection" <?= r($this, 'corecollection', "VRAI", 'checked'); ?>> Oui  |  
-                    <input type="radio" value="FAUX" name="corecollection" <?= r($this, 'corecollection', "FAUX", 'checked'); ?>> Non  |  
-                    <input type="radio" value="IGNORER" name="corecollection" <?= r($this, 'corecollection', "IGNORER", 'checked'); ?>> Ignorer
+                <td>
+                    <?php $this->widget('SelectWidget', array('model' => Biblio::model(), 'selected' => r($this, 'corecollection'), 'select_name' => "corecollection")); ?>
                 </td>
             </tr>
             <tr >
