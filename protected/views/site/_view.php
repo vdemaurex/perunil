@@ -104,8 +104,8 @@ if ($data->soustitre):
                     <small>
     <?php
     if ($data->soustitre != "") {
-        if (strlen($data->soustitre) >= 80) {
-            echo substr($data->soustitre, 0, 80) . " ... ";
+        if (strlen($data->soustitre) >= 90) {
+            echo Encoding::truncate($data->soustitre, 90) . " ... ";
         } else {
             echo CHtml::encode($data->soustitre);
         }    
