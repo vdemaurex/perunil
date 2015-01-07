@@ -103,7 +103,7 @@ veuillez contacter le <a href="http://www.unil.ch/ci/fr/home/menuguid/help-desk.
 		<?php $this->widget('CCaptcha'); ?>
 		<?php echo $form->textField($model,'verifyCode', array('class' => "form-control")); ?>
 		</div>
-		<div class="hint">Veuilliez entrer les lettres comme elles apparaissent dans l'image ci-dessus.
+		<div class="hint">Veuillez entrer les lettres comme elles apparaissent dans l'image ci-dessus.
 		<br/>Les lettres ne sont pas sensibles à la casse.</div>
 		<?php echo $form->error($model,'verifyCode'); ?>
 	</div>
