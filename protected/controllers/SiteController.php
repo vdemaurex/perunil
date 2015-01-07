@@ -1,4 +1,5 @@
 <?php
+
 /**
  * La classe SiteController gère toute la partie publique du site, accessible sans authentification.
  */
@@ -36,15 +37,15 @@ class SiteController extends Controller {
         $this->render('simpleSearch');
     }
 
-	/**
-	 * Traitement du formulaire de recherche simple et affichage des résultats.
-	 * Indexes attendus dans tableau $_GET:
-	 * 'q' => le ou les mots recherchés par l'utilisateur.
-	 * 'support' => le type de support: n'importe le quel(0), papier (1) ou électronique (2).
-	 * 'field' => type de recherche, selon les constantes définie dans SearchComponent.
-	 * 'maxresults' => nombre de resultat maximum retrounés par la requête. -1 pour ne pas mettre de limite.
-	 * 'depotlegal' => si TRUE, ajout les périodiques du dépot légal BCU à la recherche.
-	 */
+    /**
+     * Traitement du formulaire de recherche simple et affichage des résultats.
+     * Indexes attendus dans tableau $_GET:
+     * 'q' => le ou les mots recherchés par l'utilisateur.
+     * 'support' => le type de support: n'importe le quel(0), papier (1) ou électronique (2).
+     * 'field' => type de recherche, selon les constantes définie dans SearchComponent.
+     * 'maxresults' => nombre de resultat maximum retrounés par la requête. -1 pour ne pas mettre de limite.
+     * 'depotlegal' => si TRUE, ajout les périodiques du dépot légal BCU à la recherche.
+     */
     public function actionSimpleSearchResults() {
         Yii::app()->session['searchtype'] = 'simple';
         $this->activate_session_search_component();
@@ -56,14 +57,19 @@ class SiteController extends Controller {
             Yii::app()->session['search']->support = isset($_GET['support']) ? $_GET['support'] : '0';
             Yii::app()->session['search']->search_type = isset($_GET['field']) ? $_GET['field'] : SearchComponent::TWORDS;
             Yii::app()->session['search']->maxresults = isset($_GET['maxresults']) ? $_GET['maxresults'] : '-1'; // infini par défaut
-            Yii::app()->session['search']->depotlegal = filter_input(INPUT_GET,'depotlegal',FILTER_VALIDATE_BOOLEAN);//isset($_GET['depotlegal']);
-            Yii::app()->session['search']->simple_query_str = $_GET['q'];
+            Yii::app()->session['search']->depotlegal = filter_input(INPUT_GET, 'depotlegal', FILTER_VALIDATE_BOOLEAN); //isset($_GET['depotlegal']);
+            $q = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING);
+            
+            if (class_exists("Normalizer", $autoload = false)) {
+                $q = Normalizer::normalize($q);
+            }
+            Yii::app()->session['search']->simple_query_str = $q;
         }
         // Si une recherche a été sauvegardée
         if (isset(Yii::app()->session['search']->simple_query_str)) {
             $search_done = true;
         }
-        
+
         // Affichage tableau
 //        if ($typeAffichage == NULL && empty(Yii::app()->session['typeAffichage'])){
 //            Yii::app()->session['typeAffichage'] = 1;
@@ -73,7 +79,7 @@ class SiteController extends Controller {
 //        }
 //
 //        if (Yii::app()->session['typeAffichage'] == 1){
-            $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
+        $this->render('searchResults', array('search_done' => $search_done, 'searchtype' => 'simple'));
 //        }
 //        else{
 //            $this->render('searchResults_tab', array('search_done' => $search_done, 'searchtype' => 'simple'));
@@ -147,32 +153,28 @@ class SiteController extends Controller {
      * Displays the contact page
      */
     public function actionContact() {
-        $model = new ContactForm; 
+        $model = new ContactForm;
         if (isset($_POST['ContactForm'])) {
             $model->attributes = $_POST['ContactForm'];
-            if ($model->validate() ) {
-                $headers  = 'MIME-Version: 1.0' . "\r\n";
+            if ($model->validate()) {
+                $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-                $headers .= 'To: '. Yii::app()->params['contactEmail'] . "\r\n";
-                $headers .=  "From: {$model->email}\r\nReply-To: {$model->email}";
+                $headers .= 'To: ' . Yii::app()->params['contactEmail'] . "\r\n";
+                $headers .= "From: {$model->email}\r\nReply-To: {$model->email}";
                 $to = Yii::app()->params['adminEmail'];
                 $subject = $model->getErrorTypeStr();
                 $message = $this->renderPartial(
-                        'contactMail', 
-                        array('contactForm' => $model),
-                        true);
+                        'contactMail', array('contactForm' => $model), true);
 
                 $sent = mail($to, $subject, $message, $headers);
-               if(!$sent){
-                    Yii::app()->user->setFlash('error', "Un problème est survenu durant l'envoi de votre message. Merci de contacter directement ". Yii::app()->params['adminEmail']);
-                }
-                else{
+                if (!$sent) {
+                    Yii::app()->user->setFlash('error', "Un problème est survenu durant l'envoi de votre message. Merci de contacter directement " . Yii::app()->params['adminEmail']);
+                } else {
                     Yii::app()->user->setFlash('contact', 'Merci pour votre commentaire. Nous le traiterons dans les plus brefs délais.');
                     $this->refresh();
                 }
             }
-        }
-        else{
+        } else {
             // Nouveau formulaire
             $model->lasturl = Yii::app()->request->urlReferrer;
         }
@@ -231,8 +233,6 @@ class SiteController extends Controller {
             ));
         }
     }
-
- 
 
     //
 // Function pour nettoyer les critères de recherche (mots vides, ponctuation...)
