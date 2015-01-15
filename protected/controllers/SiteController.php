@@ -159,7 +159,7 @@ class SiteController extends Controller {
             if ($model->validate()) {
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-                $headers .= 'To: ' . Yii::app()->params['contactEmail'] . "\r\n";
+                $headers .= 'To: ' . Yii::app()->params['adminEmail'] . "\r\n";
                 $headers .= "From: {$model->email}\r\nReply-To: {$model->email}";
                 $to = Yii::app()->params['adminEmail'];
                 $subject = $model->getErrorTypeStr();

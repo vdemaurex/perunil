@@ -98,12 +98,12 @@ return array(
         //'connectionID' => 'db',
         ),
     ),
-    // application-level parameters that can be accessed
-    // using Yii::app()->params['paramName']
+    // Paramètres accessibles partout dans l'application
+    // en utilisant Yii::app()->params['paramName']
     'params' => array(
         // this is used in contact page
-        'adminEmail' => 'wwwperun@unil.ch',
-        'contactEmail' => 'vincent@demaurex.fr',
-        'productiondate' => '20.10.2014',
+        //'adminEmail' => 'wwwperun@unil.ch',
+        'adminEmail' => 'Mathilde.Panes@chuv.ch',
+        'productiondate' => '31.01.2015',
     ),
 );
