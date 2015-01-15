@@ -57,8 +57,16 @@ $search_results = $row->getSearchResults();
         // 1. Affichage du choix des journaux 
         $radioData = array();
         foreach ($search_results as $perunilid => $title) {
+            $jrn = Journal::model()->findByPk($perunilid);
+            $data = "";
+            if (isset($jrn->issn)){
+                $data .= ", issn : " .$jrn->issn;
+            }
+            if (isset($jrn->issnl)){
+                $data .= ", issnl : " . $jrn->issn;
+            }
             $url = Yii::app()->createUrl('/admin/peredit/perunilid/' . $perunilid);
-            $radioData[$perunilid] = $title . ", n° " . CHtml::link($perunilid,$url, array('target'=>'_blank', 'title'=> "Ouvrir l'édition du journal dans une nouvelle fenêtre"));
+            $radioData[$perunilid] = $title . $data. ", n° " . CHtml::link($perunilid,$url, array('target'=>'_blank', 'title'=> "Ouvrir l'édition du journal dans une nouvelle fenêtre"));
         }
 
         $radioData['SPECIFIED'] = '<hr>Indiquez le perunilid :';
