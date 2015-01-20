@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `abonnement` (
   `etatcoll_finv` mediumint(9) DEFAULT NULL,
   `etatcoll_finf` mediumint(9) DEFAULT NULL,
   `reroid` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `reroholdid` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
   `cote` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
   `editeur_code` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Code de la revue chez l''éditeur',
   `editeur_sujet` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Sujet chez l''éditeur, anc. "keywords"',
@@ -119,6 +120,17 @@ CREATE TABLE IF NOT EXISTS `editeur` (
   PRIMARY KEY (`editeur_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `fournisseur`
+--
+
+CREATE TABLE IF NOT EXISTS `fournisseur` (
+  `fournisseur_id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `fournisseur` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`fournisseur_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 -- --------------------------------------------------------
 
 --
@@ -329,4 +341,10 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `pseudo` (`pseudo`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/;
+
+
+-- Insertion d'un utilisateur par défaut : login : admin; mot de passe : admin
+INSERT INTO `utilisateur`
+(nom, email, pseudo,
+mot_de_passe, status) VALUES
+('Administrateur','admin@exemple.com','admin','21232f297a57a5a743894a0e4a801fc3','Administration');
