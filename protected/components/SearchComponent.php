@@ -523,6 +523,8 @@ class SearchComponent extends CComponent {
         // Suppression de guillemet et apostrophes
         $var = str_replace('"', " ", $var);
         $var = str_replace("'", " ", $var);
+        $var = str_replace("’", " ", $var);
+        $var = str_replace("ʼ", " ", $var);
 
         $var = " " . $var . " ";
         $var = str_ireplace(",", "", $var);
