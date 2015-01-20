@@ -146,7 +146,12 @@
                 <th><?php echo $form->labelEx($model, 'editeur', array('class' => "control-label")); ?></th>
                 <td colspan="3">
                     <input type="hidden" data-placeholder="Sélectionnez un éditeur.." class="input-xlarge" id="editeurSelect" name="Abonnement[editeur]" >
-                    <?php /*
+                    <?php 
+                    echo CHtml::link(
+                            'Liste editeurs',
+                            Yii::app()->request->hostInfo . $this->createUrl('admin/listEditor'),
+                            array('target'=>'_blank'));
+                    /*
                       $this->widget('SelectWidget', array(
                       'model' => Editeur::model(),
                       'frm_classname' => get_class($model),

@@ -1,6 +1,7 @@
 <?php
 
-class AdminController extends Controller {
+class AdminController extends Controller
+{
 
     public $support = 0;
     public $last = null; // Dernier formulaire reçu.
@@ -28,7 +29,8 @@ class AdminController extends Controller {
         'support',
         'licence');
 
-    public function filters() {
+    public function filters()
+    {
         return array(
             'accessControl',
         );
@@ -38,7 +40,8 @@ class AdminController extends Controller {
      * Règles d'accès : seul les utilisateurs authentifiés peuvent se connecter.
      * @return type
      */
-    public function accessRules() {
+    public function accessRules()
+    {
         return array(
             array('deny', // deny anything else
                 'users' => array('?'),
@@ -50,7 +53,8 @@ class AdminController extends Controller {
      * Listes les actions qui sont définies sous forme de classe
      * @return array
      */
-    public function actions() {
+    public function actions()
+    {
         return array(
             'returnToSearchResults' => 'application.controllers.universal.ReturnToSearchResultsAction',
             'batchprocessing' => 'application.controllers.admin.BatchProcessingAction',
@@ -63,23 +67,25 @@ class AdminController extends Controller {
     /**
      * Page d'accueil de l'administration.
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $this->render('index');
     }
-    
-    public function actionEmptycache(){
+
+    public function actionEmptycache()
+    {
         Yii::app()->cache->flush();
         Yii::app()->user->setFlash('success', "Le cache de la base de donnée à été réinitialisé.");
         $this->redirect(Yii::app()->request->urlReferrer);
     }
-
 
     /**
      * Affichage de la liste d'abonnement destiné à la modification par lot
      * 
      * @return null
      */
-    public function actionGridViewDialog() {
+    public function actionGridViewDialog()
+    {
         if (Yii::app()->session['search']->admin_affichage != 'abonnement') {
             Yii::app()->session['search']->admin_affichage = 'abonnement';
         }
@@ -87,7 +93,8 @@ class AdminController extends Controller {
         $this->render('gridviewdialog');
     }
 
-    public function actionAboduplicate($perunilid, $aboid) {
+    public function actionAboduplicate($perunilid, $aboid)
+    {
 
         $originalAbo = Abonnement::model()->findByPk($aboid);
         $copiedAbo = $originalAbo->copy();
@@ -101,7 +108,8 @@ class AdminController extends Controller {
         $this->redirect($url);
     }
 
-    public function actionJrnduplicate($perunilid) {
+    public function actionJrnduplicate($perunilid)
+    {
         $originalJrn = Journal::model()->findByPk($perunilid);
         $copiedJrn = $originalJrn->copy();
         if (!$copiedJrn) { // echec
@@ -123,7 +131,8 @@ class AdminController extends Controller {
      *
      * @return null
      */
-    public function actionFusion() {
+    public function actionFusion()
+    {
 // Définition de l'URL de retour.
         if (!isset($_POST['REQUEST_URI'])) {
             $returnUrl = Yii::app()->user->returnUrl;
@@ -190,7 +199,8 @@ class AdminController extends Controller {
         $this->redirect($returnUrl);
     }
 
-    public function actionMesmodifications($days = 1) {
+    public function actionMesmodifications($days = 1)
+    {
 
         if (($days < 1) || ($days > 30)) {
             $days = 1;
@@ -218,7 +228,8 @@ class AdminController extends Controller {
             ($days == 1 ? "les dernières 24 heures." : "les $days derniers jours.")));
     }
 
-    public function actionUrlDetail($model, $id) {
+    public function actionUrlDetail($model, $id)
+    {
         if ($model == 'Journal') {
             $this->redirect($this->createUrl("site/detail/" . $id));
         }
@@ -241,14 +252,15 @@ class AdminController extends Controller {
      *                       
      * @return null
      */
-    public function actionPeredit($perunilid = null) {
+    public function actionPeredit($perunilid = null)
+    {
 
         $asBeenSaved = FALSE;
         if (isset($perunilid)) {
             $model = Journal::model()->findByPk($perunilid);
         }
         if (!isset($model)) {
-            
+
             $model = new Journal;
         }
 
@@ -258,7 +270,7 @@ class AdminController extends Controller {
             if ($model->validate()) {
                 // Le formulaire est valide
                 // Enregistrement des changements des attributs du journal.
-               
+
                 if ($model->save()) {
                     $model->refresh();
                     $str = "Le périodique «" . CHtml::link($model->titre, array("site/detail/" . $model->perunilid)) . "» a bien été enregistré.";
@@ -266,9 +278,9 @@ class AdminController extends Controller {
                     $asBeenSaved = true;
                 } else { // L'enregistrement à échoué.
                     Yii::app()->user->setFlash('error', "Le périodique «{$_POST['Journal']['titre']}» n'a pas été enregistré.");
-                } 
-                 
-                
+                }
+
+
                 //
                 // GESTION DES SUJETS
                 //
@@ -322,18 +334,15 @@ class AdminController extends Controller {
                     $cc->biblio_id = $biblio_id;
                     $cc->save();
                 }
-
-                
             } else { // La validation n'a pas passé
                 Yii::app()->user->setFlash('notice', "Le formulaire contient des erreurs");
             }
         }
 
-        if ($asBeenSaved){
+        if ($asBeenSaved) {
             //$this->redirect(CController::createUrl('/admin/peredit/perunilid/' . $model->perunilid));
             $this->redirect($this->createUrl("site/detail/" . $model->perunilid));
-        }
-        else{
+        } else {
             $this->render('peredit', array('model' => $model));
         }
     }
@@ -344,7 +353,8 @@ class AdminController extends Controller {
      * @param type $aboid ID de l'abonnement à éditer. Si NULL, nouvel abonnement.
      * @throws CException Levée si l'id du journal est invalide.
      */
-    public function actionAboedit($perunilid, $aboid = NULL) {
+    public function actionAboedit($perunilid, $aboid = NULL)
+    {
 //$this->layout = 'rightSidebar';
         $asBeenSaved = FALSE;
         $jrn = Journal::model()->findByPk($perunilid);
@@ -386,16 +396,16 @@ class AdminController extends Controller {
 
         // Ajout du script jquery Select2 pour charger les select avec Ajax
         $this->addSelect2();
-        
-        if ($asBeenSaved){
+
+        if ($asBeenSaved) {
             $this->redirect($this->createUrl("site/detail/$abo->perunilid#$abo->abonnement_id"));
-        }
-        else{
+        } else {
             $this->render('aboedit', array('jrn' => $jrn, 'model' => $abo));
         }
     }
 
-    public function actionAbodelete($perunilid, $aboid) {
+    public function actionAbodelete($perunilid, $aboid)
+    {
         $abo = Abonnement::model()->findByPk($aboid);
         if (!isset($aboid) || !isset($abo)) {
             throw new CException("Impossible de supprimer l'abonnement (id = $aboid ) car il n'existe pas.");
@@ -409,7 +419,8 @@ class AdminController extends Controller {
         }
     }
 
-    public function actionJrndelete($perunilid) {
+    public function actionJrndelete($perunilid)
+    {
         $jrn = Journal::model()->findByPk($perunilid);
         if (!isset($perunilid) || !isset($jrn)) {
             throw new CException("Impossible de supprimer le journal (id = $perunilid ) car il n'existe pas.");
@@ -427,7 +438,8 @@ class AdminController extends Controller {
         }
     }
 
-    public function actionSearch() {
+    public function actionSearch()
+    {
 
         $this->activate_session_search_component();
 
@@ -442,7 +454,16 @@ class AdminController extends Controller {
         $this->render('search2');
     }
 
-    function actionEditorSelect() {
+    function actionListEditor(){
+        $this->render('listEditor');
+    }
+
+
+    /**
+     * Fonction utilisée par le selecteur d'éditeur de AboEdit
+     */
+    function actionEditorSelect()
+    {
 
         $ret = null;
 
@@ -454,12 +475,18 @@ class AdminController extends Controller {
         }
 
         if (!empty($term)) {
-            $q = new CDbCriteria(array(
-                'condition' => "editeur LIKE :ed",
-                'params' => array(':ed' => "%$term%"),
-                'limit' => $limit,
-                    ));
-            $models = Editeur::model()->findAll($q);
+            // Si le terme est numérique, on recherce l'id
+            $term_id = filter_input(INPUT_GET, 'term', FILTER_VALIDATE_INT);
+            if ($term_id > 0) {
+                $models[] = Editeur::model()->findByPk($term);
+            } else {
+                $q = new CDbCriteria(array(
+                    'condition' => "editeur LIKE :ed",
+                    'params' => array(':ed' => "%$term%"),
+                    'limit' => $limit,
+                ));
+                $models = Editeur::model()->findAll($q);
+            }
             if (count($models) > 0) {
                 $result = array();
                 foreach ($models as $ed) {
@@ -495,7 +522,8 @@ class AdminController extends Controller {
         echo CJSON::encode($ret);
     }
 
-    public function actionSearchResults() {
+    public function actionSearchResults()
+    {
 
         Yii::app()->session['searchtype'] = 'admin';
         $this->activate_session_search_component();
@@ -517,7 +545,8 @@ class AdminController extends Controller {
 // $this->render('search', $render_params);        
     }
 
-    public function actionSetaffichage($affichage) {
+    public function actionSetaffichage($affichage)
+    {
         if ($affichage == 'journal') {
             Yii::app()->session['search']->admin_affichage = 'journal';
         } else {
@@ -527,12 +556,14 @@ class AdminController extends Controller {
         $this->redirect(Yii::app()->request->urlReferrer);
     }
 
-    public function actionSearchclean() {
+    public function actionSearchclean()
+    {
         unset(Yii::app()->session['search']);
         $this->redirect($this->createUrl("admin/search"));
     }
 
-    public function actionAddSmallListEntry($type, $id) {
+    public function actionAddSmallListEntry($type, $id)
+    {
 // Récupération de la classe de la liste
         $model = new $type();
         $colname = strtolower($type);
@@ -567,7 +598,8 @@ class AdminController extends Controller {
         }
     }
 
-    public function actionRefreshselect($type) {
+    public function actionRefreshselect($type)
+    {
 // Récupération de la classe de la liste
         $model = new $type();
         if (!$model) {
@@ -584,7 +616,8 @@ class AdminController extends Controller {
     /**
      * Gestion des utilisateurs
      */
-    public function actionUsers() {
+    public function actionUsers()
+    {
 //TODO : Implémenter la gestion des utilisateurs.
         $this->render('users');
     }
@@ -592,12 +625,14 @@ class AdminController extends Controller {
     /**
      * Recherche et consultation des modification
      */
-    public function actionModifications() {
+    public function actionModifications()
+    {
 //TODO : Implémenter la consultation des modifications
         $this->render('modifications');
     }
 
-    public function actionCsvimportcancel() {
+    public function actionCsvimportcancel()
+    {
         unset(Yii::app()->session['modif']);
         unset(Yii::app()->session['ajout']);
         Yii::app()->user->setFlash('success', "L'imporation du fichier à été annulée");
@@ -605,11 +640,13 @@ class AdminController extends Controller {
 //$this->render('csvimport', array('model' => new CsvImportForm()));
     }
 
-    private function addSelect2 (){
+    private function addSelect2()
+    {
         // Ajout du script jquery Select2 pour charger les select avec Ajax
         $baseUrl = Yii::app()->baseUrl;
         $cs = Yii::app()->getClientScript();
         $cs->registerScriptFile($baseUrl . '/js/select2-3.4.8/select2.js');
         $cs->registerCssFile($baseUrl . '//js/select2-3.4.8/select2.css');
     }
+
 }
