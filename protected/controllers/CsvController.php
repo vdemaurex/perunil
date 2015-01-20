@@ -278,6 +278,7 @@ class CsvController extends Controller {
             "j.titre              AS journal-titre",
             "j.issn               AS journal-issn",
             "j.issnl              AS journal-issnl",
+            "j.reroid             AS journal-reroid",
             "a.perunilid          AS perunilid",
             "a.abonnement_id      AS abonnement_id",
             "a.titreexclu         AS titreexclu",

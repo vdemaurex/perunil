@@ -525,7 +525,9 @@ class SearchComponent extends CComponent {
         $var = str_replace("'", " ", $var);
         $var = str_replace("’", " ", $var);
         $var = str_replace("ʼ", " ", $var);
+        $var = str_replace("&#39;", " ", $var);
 
+        
         $var = " " . $var . " ";
         $var = str_ireplace(",", "", $var);
         $var = str_ireplace(". ", " ", $var);
@@ -539,6 +541,7 @@ class SearchComponent extends CComponent {
         $var = str_ireplace(" of ", " ", $var);
         $var = str_ireplace(" de ", " ", $var);
         $var = str_ireplace(" du ", " ", $var);
+        $var = str_ireplace(" l ", " ", $var);
         $var = str_ireplace(" le ", " ", $var);
         $var = str_ireplace(" les ", " ", $var);
         $var = str_ireplace(" des ", " ", $var);
