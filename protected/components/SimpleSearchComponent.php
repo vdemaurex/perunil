@@ -241,6 +241,8 @@ class SimpleSearchComponent extends SearchComponent {
             "a.acces_pwd",
             "a.etatcoll",
             "a.cote",
+            "a.reroid",
+            "a.reroholdid",
             "a.editeur_code",
             "a.editeur_sujet",
             "a.commentaire_pub",

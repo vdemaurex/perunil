@@ -132,6 +132,14 @@
                 </td>
             </tr>
             <tr class="odd">
+                <th><?php echo $form->labelEx($model, 'reroid', array('class' => "control-label")); ?></th>
+                <td colspan="3"><?php echo $form->textField($model, 'reroid', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'reroid'); ?></td>
+            </tr>
+            <tr class="odd">
+                <th><?php echo $form->labelEx($model, 'reroholdid', array('class' => "control-label")); ?></th>
+                <td colspan="3"><?php echo $form->textField($model, 'reroholdid', array('class' => "form-control input-sm", 'style' => $textfieldstyle)); ?><?php echo $form->error($model, 'reroholdid'); ?></td>
+            </tr>
+            <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'plateforme', array('class' => "control-label")); ?></th>
                 <td colspan="3">
                     <?php

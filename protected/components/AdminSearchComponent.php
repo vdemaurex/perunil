@@ -353,6 +353,8 @@ class AdminSearchComponent extends SearchComponent
             'a.no_abo' => $this->queryTab['no_abo'],
             'a.etatcoll' => $this->queryTab['etatcoll'],
             'a.cote' => $this->queryTab['cote'],
+            'a.reroid' => $this->queryTab['aboreroid'],
+            'a.reroholdid' => $this->queryTab['reroholdid'],
             'a.commentaire_pro' => explode(" ", $this->queryTab['commentairepro']),
             'a.commentaire_pub' => explode(" ", $this->queryTab['commentairepub']),
             'j.commentaire_pub' => explode(" ", $this->queryTab['commentairepub']),

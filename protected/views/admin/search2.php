@@ -195,9 +195,16 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
                 </td>
             </tr>
             <tr>
-                <td><b>RERO ID</b></td>
+                <td><b>Journal.reroid</b></td>
                 <td class="form-inline"><input type="text" value="<?= r($this, 'reroid'); ?>" size="20" name="reroid" class="form-control">
                     |  <b>NLM ID </b><input type="text" value="<?= r($this, 'nlmid'); ?>" size="20" name="nlmid" class="form-control">
+                </td>
+            </tr>
+            <tr>
+                <td><b>Reroholdid</b></td>
+                <td class="form-inline">
+                    <input type="text" value="<?= r($this, 'reroholdid'); ?>" size="20" name="reroholdid" class="form-control">
+                    |  <b>Abonnement.Reroid </b> <input type="text" value="<?= r($this, 'aboreroid'); ?>" size="20" name="aboreroid" class="form-control">
                 </td>
             </tr>
             <tr>

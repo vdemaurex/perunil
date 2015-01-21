@@ -88,13 +88,13 @@ class Abonnement extends ModifModel {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('titreexclu, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf, plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence, fournisseur', 'numerical', 'integerOnly' => true),
+            array('titreexclu, acces_elec_gratuit, acces_elec_unil, acces_elec_chuv, embargo_mois, etatcoll_deba, etatcoll_debv, etatcoll_debf, etatcoll_fina, etatcoll_finv, etatcoll_finf,  plateforme, editeur, histabo, statutabo, localisation, gestion, format, support, licence, fournisseur', 'numerical', 'integerOnly' => true),
             array('package,commentaire_etatcoll, etatcoll, cote, editeur_sujet', 'length', 'max' => 250),
             array('no_abo, acces_user, acces_pwd', 'length', 'max' => 50),
             array('url_site', 'length', 'max' => 2083),
             array('editeur_code', 'length', 'max' => 100),
             array('commentaire_pro, commentaire_pub', 'length', 'max' => 500),
-            array('perunilid', 'length', 'max' => 20),
+            array('perunilid, reroid, reroholdid', 'length', 'max' => 20),
             array('titre, issn,perunilid, journal_titre', 'safe'),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.

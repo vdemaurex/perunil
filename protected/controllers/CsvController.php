@@ -300,6 +300,8 @@ class CsvController extends Controller {
             "a.etatcoll_finv      AS etatcoll_finv",
             "a.etatcoll_finf      AS etatcoll_finf",
             "a.cote               AS cote",
+            "a.reroid             AS reroid",
+            "a.reroholdid         AS reroholdid",
             "a.editeur_code       AS editeur_code",
             "a.editeur_sujet      AS editeur_sujet",
             "a.commentaire_pro    AS commentaire_pro",
@@ -324,8 +326,8 @@ class CsvController extends Controller {
             "lic.licence          AS Nom-licence",
             "a.fournisseur        AS fournisseur",
             "four.fournisseur     AS Nom-fournisseur",
-            "ac.stamp             AS creation",
-            "am.stamp             AS modification"
+            "ac.stamp             AS Date-creation",
+            "am.stamp             AS Date-modification"
         ));
 
         // Traitement différent selon le type d'affichage actuel

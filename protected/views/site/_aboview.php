@@ -34,6 +34,8 @@ $fields = array(
     'commentaire_etatcoll',
     'etatcoll',
     'cote',
+    'reroid',
+    'reroholdid',
     'editeur_code',
     'editeur_sujet',
     'commentaire_pub',
