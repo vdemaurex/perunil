@@ -491,6 +491,7 @@ class AdminSearchComponent extends SearchComponent
             'a.format' => $this->queryTab['format'],
             'a.editeur' => $this->queryTab['editeur'],
             'a.localisation' => $this->queryTab['localisation'],
+            'a.fournisseur'  => $this->queryTab['fournisseur'],
         );
         foreach ($exact_fields as $column => $value) {
             $this->searchExactWord($column, $value, true);

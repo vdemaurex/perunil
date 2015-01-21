@@ -13,7 +13,7 @@
         <b>Sélection du type de liste à modifier :</b>
         </p>
         <?php
-        $types = array('Plateforme', 'Editeur', 'Histabo', 'Statutabo', 'Localisation', 'Gestion', 'Format', 'Support', 'Licence');
+        $types = array('Plateforme', 'Editeur', 'Histabo', 'Statutabo', 'Localisation', 'Gestion', 'Format', 'Support', 'Licence', 'Fournisseur');
         $items = array();
 
         foreach ($types as $t) {

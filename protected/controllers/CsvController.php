@@ -13,7 +13,8 @@ class CsvController extends Controller {
         'gestion',
         'format',
         'support',
-        'licence'
+        'licence',
+        'fournisseur'
     );
 
     /**
@@ -321,6 +322,8 @@ class CsvController extends Controller {
             "sprt.support         AS Nom-support",
             "a.licence            AS licence",
             "lic.licence          AS Nom-licence",
+            "a.fournisseur        AS fournisseur",
+            "four.fournisseur     AS Nom-fournisseur",
             "ac.stamp             AS creation",
             "am.stamp             AS modification"
         ));
@@ -351,6 +354,7 @@ class CsvController extends Controller {
         $command->leftJoin("format frm", "a.format    = frm.format_id");
         $command->leftJoin("support sprt", "a.support   = sprt.support_id");
         $command->leftJoin("licence lic", "a.licence   = lic.licence_id");
+        $command->leftJoin("fournisseur four", "a.fournisseur   = four.fournisseur_id");
 
         $command->leftJoin("modifications jm", "j.modification = jm.id");
         $command->leftJoin("modifications jc", "j.creation     = jc.id");

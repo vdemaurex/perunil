@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `abonnement` (
   `format` smallint(6) DEFAULT NULL,
   `support` smallint(6) DEFAULT NULL,
   `licence` smallint(6) DEFAULT NULL,
+  `fournisseur` smallint(6) DEFAULT NULL,
   `creation` bigint(20) DEFAULT NULL,
   `modification` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`abonnement_id`),
@@ -79,7 +80,8 @@ CREATE TABLE IF NOT EXISTS `abonnement` (
   KEY `gestion` (`gestion`),
   KEY `format` (`format`),
   KEY `support` (`support`),
-  KEY `licence` (`licence`)
+  KEY `licence` (`licence`),
+  KEY `fournisseur` (`fournisseur`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------

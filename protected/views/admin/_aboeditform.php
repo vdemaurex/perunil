@@ -236,6 +236,18 @@
                     ?>
                 </td>
             </tr>  
+            
+            <tr class="odd">
+                <th><?php echo $form->labelEx($model, 'fournisseur', array('class' => "control-label")); ?></th>
+                <td colspan="3">
+                    <?php
+                    $this->widget('SelectWidget', array(
+                        'model' => Fournisseur::model(),
+                        'frm_classname' => get_class($model),
+                        'selected' => isset($model->fournisseur) ? $model->fournisseur : ''));
+                    ?>
+                </td>
+            </tr> 
 
             <tr class="odd">
                 <th><?php echo $form->labelEx($model, 'cote', array('class' => "control-label")); ?></th>

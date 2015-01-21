@@ -63,6 +63,7 @@ if ($abo->support == 1) {
 // Ajout des détails réservés aux utilisateurs authentifiés
 if (!Yii::app()->user->isGuest) {
 
+    $fields[] = @array('name' => 'fournisseur', 'value' => $abo->fournisseur0->fournisseur, 'label' => 'Fournisseur');
     $fields[] = array('name' => 'acces_user', 'label' => "Nom d'utilisateur");
     $fields[] = array('name' => 'acces_pwd', 'label' => "Mot de passe");
     $fields[] = 'commentaire_pro';

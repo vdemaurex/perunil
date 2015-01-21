@@ -385,6 +385,7 @@ class CSVRow extends CComponent {
             "sujet" => "",
             "plateforme" => "",
             "licence" => "",
+            "fournisseur" => "",
             "statutabo" => "",
             "localisation" => "",
             "yt0" => "Chercher"

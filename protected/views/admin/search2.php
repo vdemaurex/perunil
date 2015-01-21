@@ -170,6 +170,12 @@ function r($controller, $name, $comparaisonterm = null, $replacmenttext = null) 
                 <td><b>Code de la revue chez l'éditeur</b></td>
                 <td><input type="text" value="<?= r($this, 'codeediteur'); ?>" size="60" name="codeediteur" class="form-control"></td>
             </tr>
+            <tr >
+                <td><b>Fournisseur</b></td>
+                <td >
+                    <?php $this->widget('SelectWidget', array('model' => Fournisseur::model(), 'selected' => r($this, 'fournisseur'))); ?>
+                </td>
+            </tr>
             <tr ><td ><b>Publication Unil</b></td><td >
                     <input type="radio" value="1" name="publiunil" <?= r($this, 'publiunil', "1", 'checked'); ?>> Oui  |  
                     <input type="radio" value="0" name="publiunil" <?= r($this, 'publiunil', "0", 'checked'); ?>> Non  |  

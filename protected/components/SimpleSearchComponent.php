@@ -210,6 +210,7 @@ class SimpleSearchComponent extends SearchComponent {
         $this->cmd->leftJoin("gestion      AS ge", "a.gestion      = ge.gestion_id");
         $this->cmd->leftJoin("format       AS fo", "a.format       = fo.format_id");
         $this->cmd->leftJoin("licence      AS li", "a.licence      = li.licence_id");
+        $this->cmd->leftJoin("fournisseur  AS four", "a.fournisseur  = four.fournisseur_id");
 
 
         // Colonnes de recherche
@@ -260,6 +261,7 @@ class SimpleSearchComponent extends SearchComponent {
             $cols[] = "j.DEPRECATED_fmid";
             $cols[] = "j.DEPRECATED_historique";
             $cols[] = "a.commentaire_pro";
+            $cols[] = "four.fournisseur";
         }
 
         // Boucle sur toutes les colonnes

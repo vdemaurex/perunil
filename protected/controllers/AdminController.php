@@ -27,7 +27,8 @@ class AdminController extends Controller
         'gestion',
         'format',
         'support',
-        'licence');
+        'licence',
+        'fournisseur');
 
     public function filters()
     {
