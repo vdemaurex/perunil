@@ -31,6 +31,9 @@ $search_results = $row->getSearchResults();
       <tr>
           <td><?php echo $row->noRow;?></td>
           <td>
+              
+              <?php echo "<span style='margin-right: 1em; white-space: nowrap;'><em >titre : </em>'{$row->getJrnTitle()}';</span> ";?>
+              <?php echo "<span style='margin-right: 1em; white-space: nowrap;'><em >ISSN : </em>{$row->getJrnISSN()};</span> ";?>
              <?php
              foreach ($row->getValidValues() as $column => $value) {
                  if (!empty($value)){

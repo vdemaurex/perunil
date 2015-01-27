@@ -299,6 +299,16 @@ class CSVRow extends CComponent {
             return null;
         }
     }
+    
+    public function getJrnISSN() {
+        if (!empty($this->jrn)) {
+            return $this->jrn->issn;
+        } elseif (!empty($this->search_journal_issn)) {
+            return $this->search_journal_issn;
+        } else {
+            return null;
+        }
+    }
 
     public function getAboid() {
         if (!empty($this->DBAbo))
