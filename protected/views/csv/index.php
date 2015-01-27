@@ -47,21 +47,9 @@ $this->breadcrumbs = array(
         <ol>
             <li>Effectuer une recherche puis exportez le résultat de cette recherche au format CSV.</li>
             <li>Ouvrez le fichier dans Excel.
-                <dl>
-                    <dt>Modifier les données :</dt>
-                    <dd>
-                        Si la colonne id (perunilid, abonnement_id, plateforme_id, ..._id) contient un numéro, les données de cette entrée sont modifiées dans la base.
-                        Si il y a plusieurs modifications successives pour un même id, seule la première est prise en compte.
-                    </dd>
-
-                    <dt>Ajouter des données :</dt>
-                    <dd>
-                        Si la colonne id ne contient aucun numéro, une nouvelle entrée est crée dans la base.
-                        Par exemple : nouveau journal, nouvel abonnement, nouvelle plateforme, ...
-                    </dd>
-                </dl>
-            </li>
             <li>Importez le fichier modifié à l'aide du formulaire ci-dessus.</li>
         </ol>
+        
+        Consultez <a href="https://github.com/vdemaure/perunil/wiki/Exportation-et-importation-CSV" target="_blank">le mode d'emploi complet</a> pour l'imporation csv pour plus de détails.
     </div>
 </div>

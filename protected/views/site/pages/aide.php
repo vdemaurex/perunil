@@ -3,6 +3,14 @@ $this->pageTitle=Yii::app()->name . ' - Aide';
 $this->breadcrumbs=array(
 	'Aide',
 );
+
+if (!Yii::app()->user->isGuest){
+    ?>
+<div class="alert alert-warning" role="alert">
+Consultez <a href="https://github.com/vdemaure/perunil/wiki" target="_blank">le mode d'emploi de PérUNIL pour les administrateurs</a> pour plus d'informations.
+</div>
+    <?php
+}
 ?>
 
 <?php $this->beginWidget('CMarkdown');?>
