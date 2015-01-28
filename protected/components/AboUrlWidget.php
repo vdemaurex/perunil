@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Génère le lien pour accéder aux abonnement. Si nécessaire prévoit l'affichage
  * d'une fenêtre avec le mot de passe.
  */
-class AboUrlWidget extends CWidget {
+class AboUrlWidget extends CWidget
+{
 
     public $jrn;
     public $abo;
@@ -21,7 +23,8 @@ class AboUrlWidget extends CWidget {
     /**
      * Initialisation des variables utilisée dans ce Widget.
      */
-    public function init() {
+    public function init()
+    {
         // Initialisation des variables
         $this->papier = (isset($this->abo->support0) && $this->abo->support0->support == "papier");
         if (!$this->papier) {
@@ -29,13 +32,13 @@ class AboUrlWidget extends CWidget {
         }
     }
 
-    
     /**
      * Affiche le lien vers l'abonnement en ligne ou vers Rero pour les 
      * abonnement papier. Traite les cas particulier de connexion avec
      * mot de passe.
      */
-    public function run() {
+    public function run()
+    {
         // 
         // Traitement des jouraux papier
         //
@@ -55,6 +58,12 @@ class AboUrlWidget extends CWidget {
         //
         // Traitement des journaux électronique
         //
+                    // Si l'état de l'abonnement est à "Problème d'accès"
+        if ($this->abo->statutabo == 4) {
+            $this->link_title = "L'accès online à cette publication est momentanément impossible.";
+            echo '<span class="glyphicon glyphicon-warning-sign" style="color:orange;"></span>&nbsp;';
+        }
+
         if ((isset($this->abo->acces_user) && $this->abo->acces_user != "") || (isset($this->abo->acces_pwd) && $this->abo->acces_pwd != "")) {
             //$src = Yii::app()->baseUrl . "/images/login_16.png";
             //echo CHtml::image($src, "Login", array('title' => "Protégé par mot de passe")) . "&nbsp;";
@@ -106,30 +115,28 @@ class AboUrlWidget extends CWidget {
             $this->endWidget('zii.widgets.jui.CJuiDialog');
         } else {
             // Aucun mot de passe n'est requis
-            
-            // Si l'état de l'abonnement est à "Problème d'accès"
-            if($this->abo->statutabo == 4){
-                $this->link_title = "L'accès online à cette publication est momentanément impossible.";
-                echo '<span class="glyphicon glyphicon-warning-sign" style="color:orange;"></span>&nbsp;';
-            }
-            
+
+
             echo CHtml::link(
                     //CHtml::encode($this->link_text), 
                     CHtml::encode("Accéder en ligne $this->link_text"), $this->url, array('target' => '_blank', 'title' => $this->link_title));
         }
     }
 
-    private function isCHUV() {
+    private function isCHUV()
+    {
         $ip_tab = explode('.', $this->getRealIpAddr());
         return $ip_tab[0] == '155' && $ip_tab[1] == '105';
     }
 
-    private function isUNIL() {
+    private function isUNIL()
+    {
         $ip_tab = explode('.', $this->getRealIpAddr());
         return $ip_tab[0] == '130' && $ip_tab[1] == '223';
     }
 
-    private function getRealIpAddr() {
+    private function getRealIpAddr()
+    {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
